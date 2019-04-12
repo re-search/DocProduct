@@ -13,3 +13,6 @@ Initial Tasks:
 --I believe that one of the members has unlimited TPU instances. Will confirm. But even if we don't, colab offers free TPU, so maybe code it for TPU use either way. 
 --Useful Colab notebook, end-to-end fine tuning + prediction using BERT on TPU https://colab.research.google.com/github/tensorflow/tpu/blob/master/tools/colab/bert_finetuning_with_cloud_tpus.ipynb
 --May or may not want to fine tune BERT (not fine tune BERT for now?0
+
+TFRecords data download:
+https://drive.google.com/drive/folders/1Q6Em4Y5PMSOMl_E-HwEMeE9v76XzhBQv?usp=sharing
