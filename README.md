@@ -16,3 +16,6 @@ Initial Tasks:
 
 TFRecords data download:
 https://drive.google.com/drive/folders/1Q6Em4Y5PMSOMl_E-HwEMeE9v76XzhBQv?usp=sharing
+
+CSV data download with BioBERT embeddings:
+https://drive.google.com/drive/folders/1kYD57uStDd4kXyb3JOYCTQd92Al6Il4K?usp=sharing
