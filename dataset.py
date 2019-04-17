@@ -234,7 +234,7 @@ def create_generator_for_bert(
 
 
 def _qa_ele_to_length(yield_dict):
-    return tf.shape(yield_dict['q_input_ids'])[0]
+    return tf.shape(yield_dict['q_input_ids'])[0]+tf.shape(yield_dict['a_input_ids'])[0]
 
 
 def create_dataset_for_bert(
@@ -247,7 +247,8 @@ def create_dataset_for_bert(
         batch_size=32,
         dynamic_padding=False,
         bucket_batch_sizes=[64, 32, 16],
-        bucket_boundaries=[50, 150]):
+        bucket_boundaries=[100, 300],
+        element_length_func=_qa_ele_to_length):
 
     def gen(): return create_generator_for_bert(
         data_dir=data_dir,
@@ -296,7 +297,7 @@ def create_dataset_for_bert(
     if dynamic_padding:
         dataset = dataset.apply(
             tf.data.experimental.bucket_by_sequence_length(
-                element_length_func=_qa_ele_to_length,
+                element_length_func=element_length_func,
                 bucket_batch_sizes=bucket_batch_sizes,
                 bucket_boundaries=bucket_boundaries,
             ))
