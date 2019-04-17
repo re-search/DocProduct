@@ -116,7 +116,7 @@ class InputExample(object):
         self.label = label
 
 
-def convert_single_example(tokenizer, example, max_seq_length=256):
+def convert_single_example(tokenizer, example, max_seq_length=256, dynamic_padding=False):
     """Converts a single `InputExample` into a single `InputFeatures`."""
 
     if isinstance(example, PaddingInputExample):
@@ -147,25 +147,26 @@ def convert_single_example(tokenizer, example, max_seq_length=256):
     input_mask = [1] * len(input_ids)
 
     # Zero-pad up to the sequence length.
-    while len(input_ids) < max_seq_length:
-        input_ids.append(0)
-        input_mask.append(0)
-        segment_ids.append(0)
+    if not dynamic_padding:
+        while len(input_ids) < max_seq_length:
+            input_ids.append(0)
+            input_mask.append(0)
+            segment_ids.append(0)
 
-    assert len(input_ids) == max_seq_length
-    assert len(input_mask) == max_seq_length
-    assert len(segment_ids) == max_seq_length
+        assert len(input_ids) == max_seq_length
+        assert len(input_mask) == max_seq_length
+        assert len(segment_ids) == max_seq_length
 
     return input_ids, input_mask, segment_ids, example.label
 
 
-def convert_examples_to_features(tokenizer, examples, max_seq_length=256):
+def convert_examples_to_features(tokenizer, examples, max_seq_length=256, dynamic_padding=False):
     """Convert a set of `InputExample`s to a list of `InputFeatures`."""
 
     input_ids, input_masks, segment_ids, labels = [], [], [], []
     for example in examples:
         input_id, input_mask, segment_id, label = convert_single_example(
-            tokenizer, example, max_seq_length
+            tokenizer, example, max_seq_length, dynamic_padding=dynamic_padding
         )
         input_ids.append(input_id)
         input_masks.append(input_mask)
@@ -179,11 +180,11 @@ def convert_examples_to_features(tokenizer, examples, max_seq_length=256):
     )
 
 
-def convert_text_to_feature(text, tokenizer, max_seq_length):
+def convert_text_to_feature(text, tokenizer, max_seq_length, dynamic_padding=False):
     example = InputExample(
         guid=None, text_a=text)
     features = convert_examples_to_features(
-        tokenizer, [example], max_seq_length)
+        tokenizer, [example], max_seq_length, dynamic_padding=dynamic_padding)
     return features
 
 
@@ -191,7 +192,8 @@ def create_generator_for_bert(
         data_dir,
         tokenizer,
         mode='train',
-        max_seq_length=256):
+        max_seq_length=256,
+        dynamic_padding=False):
     file_list = glob(os.path.join(data_dir, '*.csv'))
     for full_file_path in file_list:
         # full_file_path = os.path.join(data_dir, file_name)
@@ -207,9 +209,9 @@ def create_generator_for_bert(
 
         for _, row in df.iterrows():
             q_features = convert_text_to_feature(
-                row.question, tokenizer, max_seq_length)
+                row.question, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
             a_features = convert_text_to_feature(
-                row.answer, tokenizer, max_seq_length)
+                row.answer, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
             if mode == 'train':
                 yield {
                     "q_input_ids": q_features[0],
@@ -231,6 +233,10 @@ def create_generator_for_bert(
                 }
 
 
+def _qa_ele_to_length(yield_dict):
+    return tf.shape(yield_dict['q_input_ids'])[0]
+
+
 def create_dataset_for_bert(
         data_dir,
         tokenizer=None,
@@ -238,13 +244,17 @@ def create_dataset_for_bert(
         max_seq_length=256,
         shuffle_buffer=10000,
         prefetch=128,
-        batch_size=32):
+        batch_size=32,
+        dynamic_padding=False,
+        bucket_batch_sizes=[64, 32, 16],
+        bucket_boundaries=[50, 150]):
 
     def gen(): return create_generator_for_bert(
         data_dir=data_dir,
         tokenizer=tokenizer,
         mode=mode,
-        max_seq_length=max_seq_length)
+        max_seq_length=max_seq_length,
+        dynamic_padding=dynamic_padding)
 
     output_types = {
         'q_input_ids': tf.int32,
@@ -254,14 +264,24 @@ def create_dataset_for_bert(
         'a_input_masks': tf.int32,
         'a_segment_ids': tf.int32
     }
-    output_shapes = {
-        'q_input_ids': [max_seq_length],
-        'q_input_masks': [max_seq_length],
-        'q_segment_ids': [max_seq_length],
-        'a_input_ids': [max_seq_length],
-        'a_input_masks': [max_seq_length],
-        'a_segment_ids': [max_seq_length]
-    }
+    if dynamic_padding:
+        output_shapes = {
+            'q_input_ids': [None],
+            'q_input_masks': [None],
+            'q_segment_ids': [None],
+            'a_input_ids': [None],
+            'a_input_masks': [None],
+            'a_segment_ids': [None]
+        }
+    else:
+        output_shapes = {
+            'q_input_ids': [max_seq_length],
+            'q_input_masks': [max_seq_length],
+            'q_segment_ids': [max_seq_length],
+            'a_input_ids': [max_seq_length],
+            'a_input_masks': [max_seq_length],
+            'a_segment_ids': [max_seq_length]
+        }
     if mode == 'train':
         output_types.update({'labels': tf.int32})
         output_shapes.update({'labels': []})
@@ -273,8 +293,16 @@ def create_dataset_for_bert(
     )
     if mode == 'train':
         dataset = dataset.shuffle(shuffle_buffer)
+    if dynamic_padding:
+        dataset = dataset.apply(
+            tf.data.experimental.bucket_by_sequence_length(
+                element_length_func=_qa_ele_to_length,
+                bucket_batch_sizes=bucket_batch_sizes,
+                bucket_boundaries=bucket_boundaries,
+            ))
+    else:
+        dataset = dataset.batch(batch_size)
 
     dataset = dataset.prefetch(prefetch)
 
-    dataset = dataset.batch(batch_size)
     return dataset
