@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 
 import tensorflow as tf
+import tensorflow.keras.backend as K
 
 
 class QAFFN(tf.keras.layers.Layer):
@@ -78,20 +79,13 @@ class QAFFN(tf.keras.layers.Layer):
         return q_ffn_embedding, a_ffn_embedding
 
 
-@tf.function
-def qa_pair_loss(q_embedding, a_embedding):
-    if q_embedding is not None and a_embedding is not None:
-        q_embedding = q_embedding / \
-            tf.norm(q_embedding, axis=-1, keepdims=True)
-        a_embedding = a_embedding / \
-            tf.norm(a_embedding, axis=-1, keepdims=True)
-        similarity_vector = tf.reshape(
-            tf.matmul(q_embedding, a_embedding, transpose_b=True), [-1, ])
-        target = tf.reshape(tf.eye(q_embedding.shape[0]), [-1, ])
-        loss = tf.keras.losses.binary_crossentropy(target, similarity_vector)
-        return loss
-    else:
-        return 0
+def stack_two_tensor(tensor_a, tensor_b):
+    if tensor_a is not None and tensor_b is not None:
+        return tf.stack([tensor_a, tensor_b], axis=1)
+    elif tensor_a is not None:
+        return tf.expand_dims(tensor_a, axis=1)
+    elif tensor_b is not None:
+        return tf.expand_dims(tensor_b, axis=1)
 
 
 class MedicalQAModel(tf.keras.Model):
@@ -102,8 +96,9 @@ class MedicalQAModel(tf.keras.Model):
     def call(self, inputs):
         q_bert_embedding = inputs.get('q_vectors')
         a_bert_embedding = inputs.get('a_vectors')
-
-        return self.qa_ffn_layer((q_bert_embedding, a_bert_embedding))
+        q_embedding, a_embedding = self.qa_ffn_layer(
+            (q_bert_embedding, a_bert_embedding))
+        return stack_two_tensor(q_embedding, a_embedding)
 
 
 class BioBert(tf.keras.Model):

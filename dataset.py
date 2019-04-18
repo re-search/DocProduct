@@ -32,12 +32,11 @@ def create_generator_for_ffn(
                 '[[', '').replace(']]', ''), sep=' ')
             a_vectors = np.fromstring(row.answer_bert.replace(
                 '[[', '').replace(']]', ''), sep=' ')
-            if mode == 'train':
+            if mode in ['train', 'eval']:
                 yield {
                     "q_vectors": q_vectors,
-                    "a_vectors": a_vectors,
-                    "labels": 1
-                }
+                    "a_vectors": a_vectors
+                }, 1
             else:
                 yield {
                     "q_vectors": q_vectors,
@@ -67,9 +66,11 @@ def create_dataset_for_ffn(
         'a_vectors': [hidden_size],
     }
 
-    if mode == 'train':
-        output_types.update({'labels': tf.int32})
-        output_shapes.update({'labels': []})
+    if mode in ['train', 'eval']:
+        output_types = (output_types, tf.int32)
+        output_shapes = (output_shapes, [])
+        # output_types.update({'labels': tf.int32})
+        # output_shapes.update({'labels': []})
 
     dataset = tf.data.Dataset.from_generator(
         generator=gen,

@@ -4,44 +4,51 @@ import tensorflow as tf
 import tensorflow.keras.backend as K
 
 from dataset import create_dataset_for_ffn
-from models import MedicalQAModel, qa_pair_loss
+from models import MedicalQAModel
+
+
+def qa_pair_loss(y_true, y_pred):
+    y_true = tf.eye(y_pred.shape[0])*2-1
+    q_embedding, a_embedding = tf.unstack(y_pred, axis=1)
+    q_embedding = q_embedding / \
+        tf.norm(q_embedding, axis=-1, keepdims=True)
+    a_embedding = a_embedding / \
+        tf.norm(a_embedding, axis=-1, keepdims=True)
+    similarity_matrix = tf.matmul(
+        q_embedding, a_embedding, transpose_b=True)
+    return tf.norm(y_true - similarity_matrix)
 
 
 def train_ffn(args):
     d = create_dataset_for_ffn(
         args.data_path, batch_size=args.batch_size, shuffle_buffer=100000)
+    eval_d = create_dataset_for_ffn(
+        args.data_path, batch_size=args.batch_size, mode='eval')
     medical_qa_model = MedicalQAModel()
     optimizer = tf.keras.optimizers.Adam()
-    medical_qa_model.compile(optimizer=optimizer)
+    medical_qa_model.compile(
+        optimizer=optimizer, loss=qa_pair_loss)
 
     epochs = args.num_epochs
     loss_metric = tf.keras.metrics.Mean()
-    K.set_learning_phase(1)
 
-    # Iterate over epochs.
-    for epoch in range(epochs):
-        print('Start of epoch %d' % (epoch,))
+    medical_qa_model.fit(d, epochs=epochs, validation_data=eval_d)
+    medical_qa_model.summary()
+    K.set_learning_phase(0)
+    print(medical_qa_model(next(iter(eval_d))[0]))
+    q_embedding, a_embedding = tf.unstack(
+        medical_qa_model(next(iter(eval_d))[0]), axis=1)
 
-        # Iterate over the batches of the dataset.
-        for step, x_batch_train in enumerate(d):
-            with tf.GradientTape() as tape:
-                q_embedding, a_embedding = medical_qa_model(x_batch_train)
-                loss = qa_pair_loss(q_embedding, a_embedding)
+    q_embedding = q_embedding / tf.norm(q_embedding, axis=-1, keepdims=True)
+    a_embedding = a_embedding / tf.norm(a_embedding, axis=-1, keepdims=True)
 
-            grads = tape.gradient(loss, medical_qa_model.trainable_variables)
-            optimizer.apply_gradients(
-                zip(grads, medical_qa_model.trainable_variables))
+    batch_score = tf.reduce_sum(q_embedding*a_embedding, axis=-1)
+    baseline_score = tf.reduce_mean(
+        tf.matmul(q_embedding, tf.transpose(a_embedding)))
 
-            loss_metric(loss)
-
-            if step % 100 == 0:
-                print('step %s: mean loss = %s' %
-                      (step, loss_metric.result()))
-
-    tf.keras.models.save_model(
-        medical_qa_model,
-        args.model_path
-    )
+    print('Eval Batch Cos similarity')
+    print(tf.reduce_mean(batch_score))
+    print('Baseline: {0}'.format(baseline_score))
 
 
 if __name__ == "__main__":
@@ -50,7 +57,7 @@ if __name__ == "__main__":
                         default='models/', help='path for saving trained models')
     parser.add_argument('--data_path', type=str,
                         default='/content/gdrive/', help='path for saving trained models')
-    parser.add_argument('--num_epochs', type=int, default=5)
+    parser.add_argument('--num_epochs', type=int, default=1)
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--learning_rate', type=float, default=0.001)
     parser.add_argument('--validation_split', type=float, default=0.2)
