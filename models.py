@@ -15,7 +15,6 @@ class QAFFN(tf.keras.layers.Layer):
             hidden_size=768,
             dropout=0.1,
             residual=True,
-            activation=tf.keras.layers.ReLU(),
             name='QAFFN'):
         """Feed-forward layers for question and answer.
         The input to this layer should be a two-elements tuple (q_embeddnig, a_embedding).
@@ -38,17 +37,14 @@ class QAFFN(tf.keras.layers.Layer):
         self.hidden_size = hidden_size
         self.dropout = dropout
         self.residual = residual
-        self.activation = activation
         self.q_ffn = tf.keras.layers.Dense(
             units=hidden_size,
-            use_bias=True,
-            activation=activation
+            use_bias=True
         )
 
         self.a_ffn = tf.keras.layers.Dense(
             units=hidden_size,
-            use_bias=True,
-            activation=activation
+            use_bias=True
         )
         self.q_ffn.build([1, self.hidden_size])
         self.a_ffn.build([1, self.hidden_size])
@@ -56,6 +52,7 @@ class QAFFN(tf.keras.layers.Layer):
     def _bert_to_ffn(self, bert_embedding, ffn_layer):
         if bert_embedding is not None:
             ffn_embedding = ffn_layer(bert_embedding)
+            ffn_embedding = tf.keras.layers.ReLU()(ffn_embedding)
             if self.dropout > 0:
                 ffn_embedding = tf.keras.layers.Dropout(
                     self.dropout)(ffn_embedding)

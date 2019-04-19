@@ -38,6 +38,8 @@ def train_ffn(args):
     print(tf.reduce_mean(batch_score))
     print('Baseline: {0}'.format(baseline_score))
 
+    medical_qa_model.save_weights(args.model_path, overwrite=True)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -45,8 +47,8 @@ if __name__ == "__main__":
                         default='models/', help='path for saving trained models')
     parser.add_argument('--data_path', type=str,
                         default='/content/gdrive/', help='path for saving trained models')
-    parser.add_argument('--num_epochs', type=int, default=1)
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--num_epochs', type=int, default=30)
+    parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--learning_rate', type=float, default=0.001)
     parser.add_argument('--validation_split', type=float, default=0.2)
 
