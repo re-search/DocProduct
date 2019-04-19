@@ -19,29 +19,29 @@ def create_generator_for_ffn(
         # full_file_path = os.path.join(data_dir, file_name)
         if not os.path.exists(full_file_path):
             raise FileNotFoundError("File %s not found" % full_file_path)
-        df = pd.read_csv(full_file_path)
+        for df in pd.read_csv(full_file_path, chunksize=10**5):
 
-        # so train test split
-        if mode == 'train':
-            df, _ = train_test_split(df, test_size=0.2, random_state=SEED)
-        else:
-            _, df = train_test_split(df, test_size=0.2, random_state=SEED)
-
-        for _, row in df.iterrows():
-            q_vectors = np.fromstring(row.question_bert.replace(
-                '[[', '').replace(']]', ''), sep=' ')
-            a_vectors = np.fromstring(row.answer_bert.replace(
-                '[[', '').replace(']]', ''), sep=' ')
-            if mode in ['train', 'eval']:
-                yield {
-                    "q_vectors": q_vectors,
-                    "a_vectors": a_vectors
-                }, 1
+            # so train test split
+            if mode == 'train':
+                df, _ = train_test_split(df, test_size=0.2, random_state=SEED)
             else:
-                yield {
-                    "q_vectors": q_vectors,
-                    "a_vectors": a_vectors,
-                }
+                _, df = train_test_split(df, test_size=0.2, random_state=SEED)
+
+            for _, row in df.iterrows():
+                q_vectors = np.fromstring(row.question_bert.replace(
+                    '[[', '').replace(']]', ''), sep=' ')
+                a_vectors = np.fromstring(row.answer_bert.replace(
+                    '[[', '').replace(']]', ''), sep=' ')
+                if mode in ['train', 'eval']:
+                    yield {
+                        "q_vectors": q_vectors,
+                        "a_vectors": a_vectors
+                    }, 1
+                else:
+                    yield {
+                        "q_vectors": q_vectors,
+                        "a_vectors": a_vectors,
+                    }
 
 
 def create_dataset_for_ffn(
@@ -198,37 +198,37 @@ def create_generator_for_bert(
         # full_file_path = os.path.join(data_dir, file_name)
         if not os.path.exists(full_file_path):
             raise FileNotFoundError("File %s not found" % full_file_path)
-        df = pd.read_csv(full_file_path)
+        for df in pd.read_csv(full_file_path, chunksize=10**5):
 
-        # so train test split
-        if mode == 'train':
-            df, _ = train_test_split(df, test_size=0.2, random_state=SEED)
-        else:
-            _, df = train_test_split(df, test_size=0.2, random_state=SEED)
-
-        for _, row in df.iterrows():
-            q_features = convert_text_to_feature(
-                row.question, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
-            a_features = convert_text_to_feature(
-                row.answer, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
-            if mode in ['train', 'eval']:
-                yield {
-                    "q_input_ids": q_features[0],
-                    "q_input_masks": q_features[1],
-                    "q_segment_ids": q_features[2],
-                    "a_input_ids": a_features[0],
-                    "a_input_masks": a_features[1],
-                    "a_segment_ids": a_features[2],
-                }, 1
+            # so train test split
+            if mode == 'train':
+                df, _ = train_test_split(df, test_size=0.2, random_state=SEED)
             else:
-                yield {
-                    "q_input_ids": q_features[0],
-                    "q_input_masks": q_features[1],
-                    "q_segment_ids": q_features[2],
-                    "a_input_ids": a_features[0],
-                    "a_input_masks": a_features[1],
-                    "a_segment_ids": a_features[2],
-                }
+                _, df = train_test_split(df, test_size=0.2, random_state=SEED)
+
+            for _, row in df.iterrows():
+                q_features = convert_text_to_feature(
+                    row.question, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
+                a_features = convert_text_to_feature(
+                    row.answer, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
+                if mode in ['train', 'eval']:
+                    yield {
+                        "q_input_ids": q_features[0],
+                        "q_input_masks": q_features[1],
+                        "q_segment_ids": q_features[2],
+                        "a_input_ids": a_features[0],
+                        "a_input_masks": a_features[1],
+                        "a_segment_ids": a_features[2],
+                    }, 1
+                else:
+                    yield {
+                        "q_input_ids": q_features[0],
+                        "q_input_masks": q_features[1],
+                        "q_segment_ids": q_features[2],
+                        "a_input_ids": a_features[0],
+                        "a_input_masks": a_features[1],
+                        "a_segment_ids": a_features[2],
+                    }
 
 
 def _qa_ele_to_length(yield_dict):
