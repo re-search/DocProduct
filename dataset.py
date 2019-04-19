@@ -69,8 +69,6 @@ def create_dataset_for_ffn(
     if mode in ['train', 'eval']:
         output_types = (output_types, tf.int32)
         output_shapes = (output_shapes, [])
-        # output_types.update({'labels': tf.int32})
-        # output_shapes.update({'labels': []})
 
     dataset = tf.data.Dataset.from_generator(
         generator=gen,
@@ -213,7 +211,7 @@ def create_generator_for_bert(
                 row.question, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
             a_features = convert_text_to_feature(
                 row.answer, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
-            if mode == 'train':
+            if mode in ['train', 'eval']:
                 yield {
                     "q_input_ids": q_features[0],
                     "q_input_masks": q_features[1],
@@ -221,8 +219,7 @@ def create_generator_for_bert(
                     "a_input_ids": a_features[0],
                     "a_input_masks": a_features[1],
                     "a_segment_ids": a_features[2],
-                    "labels": 1
-                }
+                }, 1
             else:
                 yield {
                     "q_input_ids": q_features[0],
@@ -284,9 +281,9 @@ def create_dataset_for_bert(
             'a_input_masks': [max_seq_length],
             'a_segment_ids': [max_seq_length]
         }
-    if mode == 'train':
-        output_types.update({'labels': tf.int32})
-        output_shapes.update({'labels': []})
+    if mode in ['train', 'eval']:
+        output_types = (output_types, tf.int32)
+        output_shapes = (output_shapes, [])
 
     dataset = tf.data.Dataset.from_generator(
         generator=gen,

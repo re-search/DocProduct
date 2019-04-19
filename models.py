@@ -53,7 +53,6 @@ class QAFFN(tf.keras.layers.Layer):
         self.q_ffn.build([1, self.hidden_size])
         self.a_ffn.build([1, self.hidden_size])
 
-    @tf.function
     def _bert_to_ffn(self, bert_embedding, ffn_layer):
         if bert_embedding is not None:
             ffn_embedding = ffn_layer(bert_embedding)
@@ -62,11 +61,7 @@ class QAFFN(tf.keras.layers.Layer):
                     self.dropout)(ffn_embedding)
 
             if self.residual:
-                try:
-                    ffn_embedding += bert_embedding
-                except:
-                    raise ValueError('Incompatible shape for res connection, got {0}, {1}'.format(
-                        ffn_embedding.shape, bert_embedding.shape))
+                ffn_embedding += bert_embedding
         else:
             ffn_embedding = None
 
@@ -105,7 +100,6 @@ class BioBert(tf.keras.Model):
     def __init__(self, name=''):
         super(BioBert, self).__init__(name=name)
 
-    @tf.function
     def _create_bert_input_tensor(self, inputs):
         with_question = None
         with_answer = None
@@ -118,18 +112,18 @@ class BioBert(tf.keras.Model):
             seq_length = tf.shape(inputs['a_input_ids'])[-1]
 
         # if with both q and a, convert them to (2*batch_size, seq_length)
-        if with_question and with_answer:
+        if with_question is not None and with_answer is not None:
             input_ids = tf.reshape(tf.stack(
                 [inputs['q_input_ids'], inputs['a_input_ids']], axis=1), (-1, seq_length))
             input_masks = tf.reshape(tf.stack(
                 [inputs['q_input_masks'], inputs['a_input_masks']], axis=1), (-1, seq_length))
             segment_ids = tf.reshape(tf.stack(
                 [inputs['q_segment_ids'], inputs['a_segment_ids']], axis=1), (-1, seq_length))
-        elif with_question:
+        elif with_question is not None:
             input_ids = inputs['q_input_ids']
             input_masks = inputs['q_input_masks']
             segment_ids = inputs['q_segment_ids']
-        elif with_answer:
+        elif with_answer is not None:
             input_ids = inputs['a_input_ids']
             input_masks = inputs['a_input_masks']
             segment_ids = inputs['a_segment_ids']
@@ -138,11 +132,11 @@ class BioBert(tf.keras.Model):
                 list(inputs.keys())))
         return input_ids, input_masks, segment_ids, with_question, with_answer
 
-    @tf.function
     def _create_bert_output_tensor(self, bert_output, with_question, with_answer):
+        a_bert_embedding = None
+        q_bert_embedding = None
         max_seq_length = tf.shape(bert_output)[-2]
         hidden_size = tf.shape(bert_output)[-1]
-        true_tensor = tf.convert_to_tensor(True)
         if with_question is not None and with_answer is not None:
             # reshape to (batch_size, 2, max_seq_len, hidden_size)
             # and split back to two tensors
@@ -152,13 +146,9 @@ class BioBert(tf.keras.Model):
                 bert_output, axis=1)
         elif with_question is not None:
             q_bert_embedding = bert_output
-            a_bert_embedding = None
         elif with_answer is not None:
             a_bert_embedding = bert_output
-            q_bert_embedding = None
-        else:
-            a_bert_embedding = None
-            q_bert_embedding = None
+
         return q_bert_embedding, a_bert_embedding
 
     def call(self, inputs):
@@ -195,17 +185,20 @@ class MedicalQAModelwithBert(tf.keras.Model):
             residual=residual,
             activation=activation)
 
-    @tf.function
     def _avg_across_token(self, tensor):
         if tensor is not None:
             tensor = tf.reduce_mean(tensor, axis=1)
         return tensor
 
     def call(self, inputs):
+
         q_bert_embedding, a_bert_embedding = self.biobert(inputs)
 
         # according to USE, the DAN network average embedding across tokens
         q_bert_embedding = self._avg_across_token(q_bert_embedding)
         a_bert_embedding = self._avg_across_token(a_bert_embedding)
 
-        return self.qa_ffn_layer((q_bert_embedding, a_bert_embedding))
+        q_embedding, a_embedding = self.qa_ffn_layer(
+            (q_bert_embedding, a_bert_embedding))
+
+        return stack_two_tensor(q_embedding, a_embedding)
