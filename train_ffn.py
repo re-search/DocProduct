@@ -5,18 +5,7 @@ import tensorflow.keras.backend as K
 
 from dataset import create_dataset_for_ffn
 from models import MedicalQAModel
-
-
-def qa_pair_loss(y_true, y_pred):
-    y_true = tf.eye(y_pred.shape[0])*2-1
-    q_embedding, a_embedding = tf.unstack(y_pred, axis=1)
-    q_embedding = q_embedding / \
-        tf.norm(q_embedding, axis=-1, keepdims=True)
-    a_embedding = a_embedding / \
-        tf.norm(a_embedding, axis=-1, keepdims=True)
-    similarity_matrix = tf.matmul(
-        q_embedding, a_embedding, transpose_b=True)
-    return tf.norm(y_true - similarity_matrix)
+from loss import qa_pair_loss
 
 
 def train_ffn(args):
@@ -35,7 +24,6 @@ def train_ffn(args):
     medical_qa_model.fit(d, epochs=epochs, validation_data=eval_d)
     medical_qa_model.summary()
     K.set_learning_phase(0)
-    print(medical_qa_model(next(iter(eval_d))[0]))
     q_embedding, a_embedding = tf.unstack(
         medical_qa_model(next(iter(eval_d))[0]), axis=1)
 
