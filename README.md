@@ -19,3 +19,7 @@ https://drive.google.com/drive/folders/1Q6Em4Y5PMSOMl_E-HwEMeE9v76XzhBQv?usp=sha
 
 CSV data download with BioBERT embeddings:
 https://drive.google.com/drive/folders/1kYD57uStDd4kXyb3JOYCTQd92Al6Il4K?usp=sharing
+
+4-21-19
+CSV data of /r/AskDocs Questions and Answers. 
+https://drive.google.com/open?id=1t5tWWv5xkkU-YerJZabu-QMBajaqAnDB
