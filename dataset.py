@@ -44,7 +44,7 @@ def create_dataset_for_ffn(
         mode='train',
         hidden_size=768,
         shuffle_buffer=10000,
-        prefetch=128,
+        prefetch=10000,
         batch_size=32):
 
     def gen(): return create_generator_for_ffn(
@@ -224,7 +224,7 @@ def create_dataset_for_bert(
         mode='train',
         max_seq_length=256,
         shuffle_buffer=10000,
-        prefetch=128,
+        prefetch=10000,
         batch_size=32,
         dynamic_padding=False,
         bucket_batch_sizes=[64, 32, 16],
