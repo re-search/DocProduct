@@ -32,16 +32,11 @@ def create_generator_for_ffn(
                     '[[', '').replace(']]', ''), sep=' ')
                 a_vectors = np.fromstring(row.answer_bert.replace(
                     '[[', '').replace(']]', ''), sep=' ')
+                vectors = np.stack([q_vectors, a_vectors], axis=0)
                 if mode in ['train', 'eval']:
-                    yield {
-                        "q_vectors": q_vectors,
-                        "a_vectors": a_vectors
-                    }, 1
+                    yield vectors, 1
                 else:
-                    yield {
-                        "q_vectors": q_vectors,
-                        "a_vectors": a_vectors,
-                    }
+                    yield vectors
 
 
 def create_dataset_for_ffn(
@@ -56,15 +51,9 @@ def create_dataset_for_ffn(
         data_dir=data_dir,
         mode=mode)
 
-    output_types = {
-        'q_vectors': tf.float32,
-        'a_vectors': tf.float32
-    }
+    output_types = tf.float32
 
-    output_shapes = {
-        'q_vectors': [hidden_size],
-        'a_vectors': [hidden_size],
-    }
+    output_shapes = [2, hidden_size]
 
     if mode in ['train', 'eval']:
         output_types = (output_types, tf.int32)
@@ -213,26 +202,20 @@ def create_generator_for_bert(
                     row.answer, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
                 if mode in ['train', 'eval']:
                     yield {
-                        "q_input_ids": q_features[0],
-                        "q_input_masks": q_features[1],
-                        "q_segment_ids": q_features[2],
-                        "a_input_ids": a_features[0],
-                        "a_input_masks": a_features[1],
-                        "a_segment_ids": a_features[2],
+                        "input_ids": np.stack([q_features[0], a_features[0]], axis=0),
+                        "input_masks": np.stack([q_features[1], a_features[1]], axis=0),
+                        "segment_ids": np.stack([q_features[2], a_features[2]], axis=0),
                     }, 1
                 else:
                     yield {
-                        "q_input_ids": q_features[0],
-                        "q_input_masks": q_features[1],
-                        "q_segment_ids": q_features[2],
-                        "a_input_ids": a_features[0],
-                        "a_input_masks": a_features[1],
-                        "a_segment_ids": a_features[2],
+                        "input_ids": np.stack([q_features[0], a_features[0]], axis=0),
+                        "input_masks": np.stack([q_features[1], a_features[1]], axis=0),
+                        "segment_ids": np.stack([q_features[2], a_features[2]], axis=0),
                     }
 
 
 def _qa_ele_to_length(yield_dict):
-    return tf.shape(yield_dict['q_input_ids'])[0]+tf.shape(yield_dict['a_input_ids'])[0]
+    return tf.shape(yield_dict['input_ids'])[1]
 
 
 def create_dataset_for_bert(
@@ -255,32 +238,10 @@ def create_dataset_for_bert(
         max_seq_length=max_seq_length,
         dynamic_padding=dynamic_padding)
 
-    output_types = {
-        'q_input_ids': tf.int32,
-        'q_input_masks': tf.int32,
-        'q_segment_ids': tf.int32,
-        'a_input_ids': tf.int32,
-        'a_input_masks': tf.int32,
-        'a_segment_ids': tf.int32
-    }
-    if dynamic_padding:
-        output_shapes = {
-            'q_input_ids': [None],
-            'q_input_masks': [None],
-            'q_segment_ids': [None],
-            'a_input_ids': [None],
-            'a_input_masks': [None],
-            'a_segment_ids': [None]
-        }
-    else:
-        output_shapes = {
-            'q_input_ids': [max_seq_length],
-            'q_input_masks': [max_seq_length],
-            'q_segment_ids': [max_seq_length],
-            'a_input_ids': [max_seq_length],
-            'a_input_masks': [max_seq_length],
-            'a_segment_ids': [max_seq_length]
-        }
+    output_types = [tf.int32, tf.int32, tf.int32]
+
+    output_shapes = [[2, None],  [2, None],  [2, None]]
+
     if mode in ['train', 'eval']:
         output_types = (output_types, tf.int32)
         output_shapes = (output_shapes, [])
