@@ -9,11 +9,21 @@ from sklearn.model_selection import train_test_split
 SEED = 42
 
 
+def _float_list_feature(value):
+    """Returns a float_list from a float / double."""
+    return tf.train.Feature(float_list=tf.train.FloatList(value=value))
+
+
+def _int64_feature(value):
+    """Returns an int64_list from a bool / enum / int / uint."""
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+
+
 def create_generator_for_ffn(
-        data_dir,
+        file_list,
         mode='train'):
 
-    file_list = glob(os.path.join(data_dir, '*.csv'))
+    # file_list = glob(os.path.join(data_dir, '*.csv'))
 
     for full_file_path in file_list:
         # full_file_path = os.path.join(data_dir, file_name)
@@ -39,6 +49,32 @@ def create_generator_for_ffn(
                     yield vectors
 
 
+def ffn_serialize_fn(features):
+    features_tuple = {'features': _float_list_feature(
+        features[0].flatten()), 'labels': _int64_feature(features[1])}
+    example_proto = tf.train.Example(
+        features=tf.train.Features(feature=features_tuple))
+    return example_proto.SerializeToString()
+
+
+def make_tfrecord(data_dir, generator_fn, serialize_fn):
+    file_list = glob(os.path.join(data_dir, '*.csv'))
+    train_tf_record_file_list = [
+        f.replace('.csv', '_train.tfrecord') for f in file_list]
+    test_tf_record_file_list = [
+        f.replace('.csv', '_test.tfrecord') for f in file_list]
+    for full_file_path, train_tf_record_file_path, test_tf_record_file_path in zip(file_list, train_tf_record_file_list, test_tf_record_file_list):
+        print('Converting file {0} to TF Record'.format(full_file_path))
+        with tf.io.TFRecordWriter(train_tf_record_file_path) as writer:
+            for features in generator_fn([full_file_path], mode='train'):
+                example = serialize_fn(features)
+                writer.write(example)
+        with tf.io.TFRecordWriter(test_tf_record_file_path) as writer:
+            for features in generator_fn([full_file_path], mode='eval'):
+                example = serialize_fn(features)
+                writer.write(example)
+
+
 def create_dataset_for_ffn(
         data_dir,
         mode='train',
@@ -47,23 +83,24 @@ def create_dataset_for_ffn(
         prefetch=10000,
         batch_size=32):
 
-    def gen(): return create_generator_for_ffn(
-        data_dir=data_dir,
-        mode=mode)
+    tfrecord_file_list = glob(os.path.join(
+        data_dir, '*_{0}.tfrecord'.format((mode))))
+    if not tfrecord_file_list:
+        print('TF Record not found')
+        make_tfrecord(data_dir, create_generator_for_ffn, ffn_serialize_fn)
 
-    output_types = tf.float32
+    dataset = tf.data.TFRecordDataset(tfrecord_file_list)
 
-    output_shapes = [2, hidden_size]
+    def _parse_ffn_example(example_proto):
+        feature_description = {
+            'features': tf.io.FixedLenFeature([2*768], tf.float32),
+            'labels': tf.io.FixedLenFeature([], tf.int64, default_value=0),
+        }
+        feature_dict = tf.io.parse_single_example(
+            example_proto, feature_description)
+        return tf.reshape(feature_dict['features'], (2, 768)), feature_dict['labels']
+    dataset = dataset.map(_parse_ffn_example)
 
-    if mode in ['train', 'eval']:
-        output_types = (output_types, tf.int32)
-        output_shapes = (output_shapes, [])
-
-    dataset = tf.data.Dataset.from_generator(
-        generator=gen,
-        output_types=output_types,
-        output_shapes=output_shapes
-    )
     if mode == 'train':
         dataset = dataset.shuffle(shuffle_buffer)
 
