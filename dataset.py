@@ -9,11 +9,21 @@ from sklearn.model_selection import train_test_split
 SEED = 42
 
 
+def _float_list_feature(value):
+    """Returns a float_list from a float / double."""
+    return tf.train.Feature(float_list=tf.train.FloatList(value=value))
+
+
+def _int64_feature(value):
+    """Returns an int64_list from a bool / enum / int / uint."""
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+
+
 def create_generator_for_ffn(
-        data_dir,
+        file_list,
         mode='train'):
 
-    file_list = glob(os.path.join(data_dir, '*.csv'))
+    # file_list = glob(os.path.join(data_dir, '*.csv'))
 
     for full_file_path in file_list:
         # full_file_path = os.path.join(data_dir, file_name)
@@ -32,16 +42,37 @@ def create_generator_for_ffn(
                     '[[', '').replace(']]', ''), sep=' ')
                 a_vectors = np.fromstring(row.answer_bert.replace(
                     '[[', '').replace(']]', ''), sep=' ')
+                vectors = np.stack([q_vectors, a_vectors], axis=0)
                 if mode in ['train', 'eval']:
-                    yield {
-                        "q_vectors": q_vectors,
-                        "a_vectors": a_vectors
-                    }, 1
+                    yield vectors, 1
                 else:
-                    yield {
-                        "q_vectors": q_vectors,
-                        "a_vectors": a_vectors,
-                    }
+                    yield vectors
+
+
+def ffn_serialize_fn(features):
+    features_tuple = {'features': _float_list_feature(
+        features[0].flatten()), 'labels': _int64_feature(features[1])}
+    example_proto = tf.train.Example(
+        features=tf.train.Features(feature=features_tuple))
+    return example_proto.SerializeToString()
+
+
+def make_tfrecord(data_dir, generator_fn, serialize_fn):
+    file_list = glob(os.path.join(data_dir, '*.csv'))
+    train_tf_record_file_list = [
+        f.replace('.csv', '_train.tfrecord') for f in file_list]
+    test_tf_record_file_list = [
+        f.replace('.csv', '_test.tfrecord') for f in file_list]
+    for full_file_path, train_tf_record_file_path, test_tf_record_file_path in zip(file_list, train_tf_record_file_list, test_tf_record_file_list):
+        print('Converting file {0} to TF Record'.format(full_file_path))
+        with tf.io.TFRecordWriter(train_tf_record_file_path) as writer:
+            for features in generator_fn([full_file_path], mode='train'):
+                example = serialize_fn(features)
+                writer.write(example)
+        with tf.io.TFRecordWriter(test_tf_record_file_path) as writer:
+            for features in generator_fn([full_file_path], mode='eval'):
+                example = serialize_fn(features)
+                writer.write(example)
 
 
 def create_dataset_for_ffn(
@@ -49,32 +80,27 @@ def create_dataset_for_ffn(
         mode='train',
         hidden_size=768,
         shuffle_buffer=10000,
-        prefetch=128,
+        prefetch=10000,
         batch_size=32):
 
-    def gen(): return create_generator_for_ffn(
-        data_dir=data_dir,
-        mode=mode)
+    tfrecord_file_list = glob(os.path.join(
+        data_dir, '*_{0}.tfrecord'.format((mode))))
+    if not tfrecord_file_list:
+        print('TF Record not found')
+        make_tfrecord(data_dir, create_generator_for_ffn, ffn_serialize_fn)
 
-    output_types = {
-        'q_vectors': tf.float32,
-        'a_vectors': tf.float32
-    }
+    dataset = tf.data.TFRecordDataset(tfrecord_file_list)
 
-    output_shapes = {
-        'q_vectors': [hidden_size],
-        'a_vectors': [hidden_size],
-    }
+    def _parse_ffn_example(example_proto):
+        feature_description = {
+            'features': tf.io.FixedLenFeature([2*768], tf.float32),
+            'labels': tf.io.FixedLenFeature([], tf.int64, default_value=0),
+        }
+        feature_dict = tf.io.parse_single_example(
+            example_proto, feature_description)
+        return tf.reshape(feature_dict['features'], (2, 768)), feature_dict['labels']
+    dataset = dataset.map(_parse_ffn_example)
 
-    if mode in ['train', 'eval']:
-        output_types = (output_types, tf.int32)
-        output_shapes = (output_shapes, [])
-
-    dataset = tf.data.Dataset.from_generator(
-        generator=gen,
-        output_types=output_types,
-        output_shapes=output_shapes
-    )
     if mode == 'train':
         dataset = dataset.shuffle(shuffle_buffer)
 
@@ -213,26 +239,20 @@ def create_generator_for_bert(
                     row.answer, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
                 if mode in ['train', 'eval']:
                     yield {
-                        "q_input_ids": q_features[0],
-                        "q_input_masks": q_features[1],
-                        "q_segment_ids": q_features[2],
-                        "a_input_ids": a_features[0],
-                        "a_input_masks": a_features[1],
-                        "a_segment_ids": a_features[2],
+                        "input_ids": np.stack([q_features[0], a_features[0]], axis=0),
+                        "input_masks": np.stack([q_features[1], a_features[1]], axis=0),
+                        "segment_ids": np.stack([q_features[2], a_features[2]], axis=0),
                     }, 1
                 else:
                     yield {
-                        "q_input_ids": q_features[0],
-                        "q_input_masks": q_features[1],
-                        "q_segment_ids": q_features[2],
-                        "a_input_ids": a_features[0],
-                        "a_input_masks": a_features[1],
-                        "a_segment_ids": a_features[2],
+                        "input_ids": np.stack([q_features[0], a_features[0]], axis=0),
+                        "input_masks": np.stack([q_features[1], a_features[1]], axis=0),
+                        "segment_ids": np.stack([q_features[2], a_features[2]], axis=0),
                     }
 
 
 def _qa_ele_to_length(yield_dict):
-    return tf.shape(yield_dict['q_input_ids'])[0]+tf.shape(yield_dict['a_input_ids'])[0]
+    return tf.shape(yield_dict['input_ids'])[1]
 
 
 def create_dataset_for_bert(
@@ -241,7 +261,7 @@ def create_dataset_for_bert(
         mode='train',
         max_seq_length=256,
         shuffle_buffer=10000,
-        prefetch=128,
+        prefetch=10000,
         batch_size=32,
         dynamic_padding=False,
         bucket_batch_sizes=[64, 32, 16],
@@ -255,32 +275,10 @@ def create_dataset_for_bert(
         max_seq_length=max_seq_length,
         dynamic_padding=dynamic_padding)
 
-    output_types = {
-        'q_input_ids': tf.int32,
-        'q_input_masks': tf.int32,
-        'q_segment_ids': tf.int32,
-        'a_input_ids': tf.int32,
-        'a_input_masks': tf.int32,
-        'a_segment_ids': tf.int32
-    }
-    if dynamic_padding:
-        output_shapes = {
-            'q_input_ids': [None],
-            'q_input_masks': [None],
-            'q_segment_ids': [None],
-            'a_input_ids': [None],
-            'a_input_masks': [None],
-            'a_segment_ids': [None]
-        }
-    else:
-        output_shapes = {
-            'q_input_ids': [max_seq_length],
-            'q_input_masks': [max_seq_length],
-            'q_segment_ids': [max_seq_length],
-            'a_input_ids': [max_seq_length],
-            'a_input_masks': [max_seq_length],
-            'a_segment_ids': [max_seq_length]
-        }
+    output_types = [tf.int32, tf.int32, tf.int32]
+
+    output_shapes = [[2, None],  [2, None],  [2, None]]
+
     if mode in ['train', 'eval']:
         output_types = (output_types, tf.int32)
         output_shapes = (output_shapes, [])
