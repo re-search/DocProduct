@@ -1,7 +1,7 @@
 from tensorflow import keras
 import tensorflow.keras.backend as K
-from keras_pos_embd import PositionEmbedding
-from keras_layer_normalization import LayerNormalization
+from ..keras_pos_embd import PositionEmbedding
+from ..keras_layer_normalization import LayerNormalization
 
 
 class TokenEmbedding(keras.layers.Embedding):
@@ -118,5 +118,6 @@ class EmbeddingSimilarity(keras.layers.Layer):
 
     def call(self, inputs, mask=None, **kwargs):
         inputs, embeddings = inputs
-        outputs = K.bias_add(K.dot(inputs, K.transpose(embeddings)), self.bias)
+        outputs = K.bias_add(
+            K.dot(inputs, K.transpose(embeddings)), self.bias)
         return keras.activations.softmax(outputs)

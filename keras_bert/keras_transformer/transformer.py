@@ -1,10 +1,10 @@
 from tensorflow import keras
 import numpy as np
-from keras_layer_normalization import LayerNormalization
-from keras_multi_head import MultiHeadAttention
-from keras_position_wise_feed_forward import FeedForward
-from keras_pos_embd import TrigPosEmbedding
-from keras_embed_sim import EmbeddingRet, EmbeddingSim
+from ..keras_layer_normalization import LayerNormalization
+from ..keras_multi_head import MultiHeadAttention
+from ..keras_position_wise_feed_forward import FeedForward
+from ..keras_pos_embd import TrigPosEmbedding
+from ..keras_embed_sim import EmbeddingRet, EmbeddingSim
 
 
 __all__ = [
@@ -44,7 +44,8 @@ def _wrap_layer(name, input_layer, build_func, dropout_rate=0.0, trainable=True)
         dropout_layer = build_output
     if isinstance(input_layer, list):
         input_layer = input_layer[0]
-    add_layer = keras.layers.Add(name='%s-Add' % name)([input_layer, dropout_layer])
+    add_layer = keras.layers.Add(name='%s-Add' %
+                                 name)([input_layer, dropout_layer])
     normal_layer = LayerNormalization(
         trainable=trainable,
         name='%s-Norm' % name,
@@ -447,8 +448,10 @@ def decode(model, tokens, start_token, end_token, pad_token, max_len=10000, max_
                 batch_outputs.append(decoder_inputs[i])
                 max_input_len = max(max_input_len, len(tokens[i]))
         for i in range(len(batch_inputs)):
-            batch_inputs[i] += [pad_token] * (max_input_len - len(batch_inputs[i]))
-        predicts = model.predict([np.asarray(batch_inputs), np.asarray(batch_outputs)])
+            batch_inputs[i] += [pad_token] * \
+                (max_input_len - len(batch_inputs[i]))
+        predicts = model.predict(
+            [np.asarray(batch_inputs), np.asarray(batch_outputs)])
         for i in range(len(predicts)):
             last_token = np.argmax(predicts[i][-1])
             decoder_inputs[index_map[i]].append(last_token)

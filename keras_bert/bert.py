@@ -3,11 +3,12 @@ import tensorflow as tf
 from tensorflow import keras
 import tensorflow.keras.backend as K
 import numpy as np
-from keras_pos_embd import PositionEmbedding
-from keras_layer_normalization import LayerNormalization
-from keras_transformer import get_encoders
-from keras_transformer import get_custom_objects as get_encoder_custom_objects
-from .layers import (get_inputs, get_embedding, TokenEmbedding, EmbeddingSimilarity, Masked, Extract)
+from .keras_pos_embd import PositionEmbedding
+from .keras_layer_normalization import LayerNormalization
+from .keras_transformer import get_encoders
+from .keras_transformer import get_custom_objects as get_encoder_custom_objects
+from .layers import (get_inputs, get_embedding,
+                     TokenEmbedding, EmbeddingSimilarity, Masked, Extract)
 
 
 __all__ = [
@@ -103,7 +104,8 @@ def get_model(token_num,
         name='MLM-Dense',
     )(transformed)
     mlm_norm_layer = LayerNormalization(name='MLM-Norm')(mlm_dense_layer)
-    mlm_pred_layer = EmbeddingSimilarity(name='MLM-Sim')([mlm_norm_layer, embed_weights])
+    mlm_pred_layer = EmbeddingSimilarity(
+        name='MLM-Sim')([mlm_norm_layer, embed_weights])
     masked_layer = Masked(name='MLM')([mlm_pred_layer, inputs[-1]])
     extract_layer = Extract(index=0, name='Extract')(transformed)
     nsp_dense_layer = keras.layers.Dense(
@@ -118,7 +120,8 @@ def get_model(token_num,
         trainable=trainable,
         name='NSP',
     )(nsp_dense_layer)
-    model = keras.models.Model(inputs=inputs, outputs=[masked_layer, nsp_pred_layer])
+    model = keras.models.Model(inputs=inputs, outputs=[
+                               masked_layer, nsp_pred_layer])
     model.compile(
         optimizer=keras.optimizers.Adam(lr=lr),
         loss=keras.losses.sparse_categorical_crossentropy,
@@ -178,7 +181,8 @@ def gen_batch_inputs(sentence_pairs,
     nsp_outputs = np.zeros((batch_size,))
     mapping = {}
     if swap_sentence_rate > 0.0:
-        indices = [index for index in range(batch_size) if np.random.random() < swap_sentence_rate]
+        indices = [index for index in range(
+            batch_size) if np.random.random() < swap_sentence_rate]
         mapped = indices[:]
         np.random.shuffle(mapped)
         for i in range(len(mapped)):
@@ -189,8 +193,10 @@ def gen_batch_inputs(sentence_pairs,
     token_inputs, segment_inputs, masked_inputs = [], [], []
     mlm_outputs = []
     for i in range(batch_size):
-        first, second = sentence_pairs[i][0], sentence_pairs[mapping.get(i, i)][1]
-        segment_inputs.append(([0] * (len(first) + 2) + [1] * (seq_len - (len(first) + 2)))[:seq_len])
+        first, second = sentence_pairs[i][0], sentence_pairs[mapping.get(
+            i, i)][1]
+        segment_inputs.append(
+            ([0] * (len(first) + 2) + [1] * (seq_len - (len(first) + 2)))[:seq_len])
         tokens = [TOKEN_CLS] + first + [TOKEN_SEP] + second + [TOKEN_SEP]
         tokens = tokens[:seq_len]
         tokens += [TOKEN_PAD] * (seq_len - len(tokens))
@@ -220,6 +226,8 @@ def gen_batch_inputs(sentence_pairs,
         token_inputs.append(token_input)
         masked_inputs.append(masked_input)
         mlm_outputs.append(mlm_output)
-    inputs = [np.asarray(x) for x in [token_inputs, segment_inputs, masked_inputs]]
-    outputs = [np.asarray(np.expand_dims(x, axis=-1)) for x in [mlm_outputs, nsp_outputs]]
+    inputs = [np.asarray(x)
+              for x in [token_inputs, segment_inputs, masked_inputs]]
+    outputs = [np.asarray(np.expand_dims(x, axis=-1))
+               for x in [mlm_outputs, nsp_outputs]]
     return inputs, outputs

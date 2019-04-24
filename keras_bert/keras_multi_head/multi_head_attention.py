@@ -1,6 +1,6 @@
 from tensorflow import keras
 import tensorflow.keras.backend as K
-from keras_self_attention import ScaledDotProductAttention
+from ..keras_self_attention import ScaledDotProductAttention
 
 
 class MultiHeadAttention(keras.layers.Layer):
@@ -84,7 +84,8 @@ class MultiHeadAttention(keras.layers.Layer):
             q = k = v = input_shape
         feature_dim = v[-1]
         if feature_dim % self.head_num != 0:
-            raise IndexError('Invalid head number %d with the given input dim %d' % (self.head_num, feature_dim))
+            raise IndexError('Invalid head number %d with the given input dim %d' % (
+                self.head_num, feature_dim))
         self.Wq = self.add_weight(
             shape=(q[-1], feature_dim),
             initializer=self.kernel_initializer,
@@ -160,7 +161,8 @@ class MultiHeadAttention(keras.layers.Layer):
     def _reshape_from_batches(x, head_num):
         input_shape = K.shape(x)
         batch_size, seq_len, feature_dim = input_shape[0], input_shape[1], input_shape[2]
-        x = K.reshape(x, (batch_size // head_num, head_num, seq_len, feature_dim))
+        x = K.reshape(x, (batch_size // head_num,
+                          head_num, seq_len, feature_dim))
         x = K.permute_dimensions(x, [0, 2, 1, 3])
         return K.reshape(x, (batch_size // head_num, seq_len, feature_dim * head_num))
 
