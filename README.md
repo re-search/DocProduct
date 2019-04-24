@@ -31,3 +31,11 @@ https://drive.google.com/open?id=1cmlfAO7pnf1kYdoCLe1zH1d0JeFJuknn
 4-24-19
 TF Records from csv files.
 https://drive.google.com/drive/folders/1wRc1jtl5Q0objpfualNFwpg4H575tmks?usp=sharing
+
+TODO:
+
+1. Imbalance label problem
+2. Cross entropy loss not decreasing(Santosh)
+3. Evaluation and prediction, including Faiss
+4. Demo
+5. BERT finetune model(Jay)
