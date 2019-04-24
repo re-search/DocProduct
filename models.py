@@ -41,15 +41,6 @@ class FFN(tf.keras.layers.Layer):
         return ffn_embedding
 
 
-def stack_two_tensor(tensor_a, tensor_b):
-    if tensor_a is not None and tensor_b is not None:
-        return tf.stack([tensor_a, tensor_b], axis=1)
-    elif tensor_a is not None:
-        return tf.expand_dims(tensor_a, axis=1)
-    elif tensor_b is not None:
-        return tf.expand_dims(tensor_b, axis=1)
-
-
 class MedicalQAModel(tf.keras.Model):
     def __init__(self, name=''):
         super(MedicalQAModel, self).__init__(name=name)
@@ -81,8 +72,7 @@ class BioBert(tf.keras.Model):
         max_seq_length = tf.shape(fake_bert_output)[-2]
         hidden_size = tf.shape(fake_bert_output)[-1]
 
-        bert_output = tf.reshape(
-            fake_bert_output, (-1, 2, max_seq_length, hidden_size))
+        bert_output = fake_bert_output
         return bert_output
 
 
@@ -92,15 +82,17 @@ class MedicalQAModelwithBert(tf.keras.Model):
             hidden_size=768,
             dropout=0.1,
             residual=True,
-            activation=tf.keras.layers.ReLU(),
             name=''):
         super(MedicalQAModelwithBert, self).__init__(name=name)
         self.biobert = BioBert()
-        self.qa_ffn_layer = QAFFN(
+        self.q_ffn_layer = FFN(
             hidden_size=hidden_size,
             dropout=dropout,
-            residual=residual,
-            activation=activation)
+            residual=residual)
+        self.a_ffn_layer = FFN(
+            hidden_size=hidden_size,
+            dropout=dropout,
+            residual=residual)
 
     def _avg_across_token(self, tensor):
         if tensor is not None:
@@ -109,13 +101,16 @@ class MedicalQAModelwithBert(tf.keras.Model):
 
     def call(self, inputs):
 
-        q_bert_embedding, a_bert_embedding = self.biobert(inputs)
+        q_bert_embedding = self.biobert(
+            (inputs['q_input_ids'], inputs['q_input_masks'], inputs['q_segment_ids']))
+        a_bert_embedding = self.biobert(
+            (inputs['a_input_ids'], inputs['a_input_masks'], inputs['a_segment_ids']))
 
         # according to USE, the DAN network average embedding across tokens
         q_bert_embedding = self._avg_across_token(q_bert_embedding)
         a_bert_embedding = self._avg_across_token(a_bert_embedding)
 
-        q_embedding, a_embedding = self.qa_ffn_layer(
-            (q_bert_embedding, a_bert_embedding))
+        q_embedding = self.q_ffn_layer(q_bert_embedding)
+        a_embedding = self.a_ffn_layer(a_bert_embedding)
 
-        return stack_two_tensor(q_embedding, a_embedding)
+        return tf.stack([q_embedding, a_embedding], axis=1)

@@ -14,6 +14,11 @@ def _float_list_feature(value):
     return tf.train.Feature(float_list=tf.train.FloatList(value=value))
 
 
+def _int64_list_feature(value):
+    """Returns an int64_list from a bool / enum / int / uint."""
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=value))
+
+
 def _int64_feature(value):
     """Returns an int64_list from a bool / enum / int / uint."""
     return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
@@ -29,24 +34,24 @@ def create_generator_for_ffn(
         # full_file_path = os.path.join(data_dir, file_name)
         if not os.path.exists(full_file_path):
             raise FileNotFoundError("File %s not found" % full_file_path)
-        for df in pd.read_csv(full_file_path, chunksize=10**5):
+        df = pd.read_csv(full_file_path, encoding='utf8')
 
-            # so train test split
-            if mode == 'train':
-                df, _ = train_test_split(df, test_size=0.2, random_state=SEED)
+        # so train test split
+        if mode == 'train':
+            df, _ = train_test_split(df, test_size=0.2, random_state=SEED)
+        else:
+            _, df = train_test_split(df, test_size=0.2, random_state=SEED)
+
+        for _, row in df.iterrows():
+            q_vectors = np.fromstring(row.question_bert.replace(
+                '[[', '').replace(']]', ''), sep=' ')
+            a_vectors = np.fromstring(row.answer_bert.replace(
+                '[[', '').replace(']]', ''), sep=' ')
+            vectors = np.stack([q_vectors, a_vectors], axis=0)
+            if mode in ['train', 'eval']:
+                yield vectors, 1
             else:
-                _, df = train_test_split(df, test_size=0.2, random_state=SEED)
-
-            for _, row in df.iterrows():
-                q_vectors = np.fromstring(row.question_bert.replace(
-                    '[[', '').replace(']]', ''), sep=' ')
-                a_vectors = np.fromstring(row.answer_bert.replace(
-                    '[[', '').replace(']]', ''), sep=' ')
-                vectors = np.stack([q_vectors, a_vectors], axis=0)
-                if mode in ['train', 'eval']:
-                    yield vectors, 1
-                else:
-                    yield vectors
+                yield vectors
 
 
 def ffn_serialize_fn(features):
@@ -57,20 +62,33 @@ def ffn_serialize_fn(features):
     return example_proto.SerializeToString()
 
 
-def make_tfrecord(data_dir, generator_fn, serialize_fn):
+def make_tfrecord(data_dir, generator_fn, serialize_fn, suffix='', **kwargs):
+    """Function to make TF Records from csv files
+    This function will take all csv files in data_dir, convert them
+    to tf example and write to *_{suffix}_train/eval.tfrecord to data_dir.
+
+    Arguments:
+        data_dir {str} -- dir that has csv files and store tf record
+        generator_fn {fn} -- A function that takes a list of filepath and yield the
+        parsed recored from file.
+        serialize_fn {fn} -- A function that takes output of generator fn and convert to tf example
+
+    Keyword Arguments:
+        suffix {str} -- suffix to add to tf record files (default: {''})
+    """
     file_list = glob(os.path.join(data_dir, '*.csv'))
     train_tf_record_file_list = [
-        f.replace('.csv', '_train.tfrecord') for f in file_list]
+        f.replace('.csv', '_{0}_train.tfrecord'.format(suffix)) for f in file_list]
     test_tf_record_file_list = [
-        f.replace('.csv', '_test.tfrecord') for f in file_list]
+        f.replace('.csv', '_{0}_eval.tfrecord'.format(suffix)) for f in file_list]
     for full_file_path, train_tf_record_file_path, test_tf_record_file_path in zip(file_list, train_tf_record_file_list, test_tf_record_file_list):
         print('Converting file {0} to TF Record'.format(full_file_path))
         with tf.io.TFRecordWriter(train_tf_record_file_path) as writer:
-            for features in generator_fn([full_file_path], mode='train'):
+            for features in generator_fn([full_file_path], mode='train', **kwargs):
                 example = serialize_fn(features)
                 writer.write(example)
         with tf.io.TFRecordWriter(test_tf_record_file_path) as writer:
-            for features in generator_fn([full_file_path], mode='eval'):
+            for features in generator_fn([full_file_path], mode='eval', **kwargs):
                 example = serialize_fn(features)
                 writer.write(example)
 
@@ -84,10 +102,12 @@ def create_dataset_for_ffn(
         batch_size=32):
 
     tfrecord_file_list = glob(os.path.join(
-        data_dir, '*_{0}.tfrecord'.format((mode))))
+        data_dir, '*_FFN_{0}.tfrecord'.format((mode))))
     if not tfrecord_file_list:
         print('TF Record not found')
-        make_tfrecord(data_dir, create_generator_for_ffn, ffn_serialize_fn)
+        make_tfrecord(
+            data_dir, create_generator_for_ffn,
+            ffn_serialize_fn, 'FFN')
 
     dataset = tf.data.TFRecordDataset(tfrecord_file_list)
 
@@ -214,12 +234,12 @@ def convert_text_to_feature(text, tokenizer, max_seq_length, dynamic_padding=Fal
 
 
 def create_generator_for_bert(
-        data_dir,
+        file_list,
         tokenizer,
         mode='train',
         max_seq_length=256,
         dynamic_padding=False):
-    file_list = glob(os.path.join(data_dir, '*.csv'))
+    # file_list = glob(os.path.join(data_dir, '*.csv'))
     for full_file_path in file_list:
         # full_file_path = os.path.join(data_dir, file_name)
         if not os.path.exists(full_file_path):
@@ -233,26 +253,52 @@ def create_generator_for_bert(
                 _, df = train_test_split(df, test_size=0.2, random_state=SEED)
 
             for _, row in df.iterrows():
-                q_features = convert_text_to_feature(
-                    row.question, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
-                a_features = convert_text_to_feature(
-                    row.answer, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
-                if mode in ['train', 'eval']:
-                    yield {
-                        "input_ids": np.stack([q_features[0], a_features[0]], axis=0),
-                        "input_masks": np.stack([q_features[1], a_features[1]], axis=0),
-                        "segment_ids": np.stack([q_features[2], a_features[2]], axis=0),
-                    }, 1
-                else:
-                    yield {
-                        "input_ids": np.stack([q_features[0], a_features[0]], axis=0),
-                        "input_masks": np.stack([q_features[1], a_features[1]], axis=0),
-                        "segment_ids": np.stack([q_features[2], a_features[2]], axis=0),
-                    }
+                try:
+                    q_features = convert_text_to_feature(
+                        row.question, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
+                except ValueError:
+                    continue
+                # no labels
+                q_features = q_features[:3]
+                try:
+                    a_features = convert_text_to_feature(
+                        row.answer, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
+                except ValueError:
+                    continue
+                a_features = a_features[:3]
+                yield (q_features+a_features, 1)
 
 
-def _qa_ele_to_length(yield_dict):
-    return tf.shape(yield_dict['input_ids'])[1]
+def _qa_ele_to_length(features, labels):
+    return tf.shape(features['q_input_ids'])[0] + tf.shape(features['a_input_ids'])[0]
+
+
+def bert_serialize_fn(features):
+    feature, labels = features
+    # feature = [_int64_feature(f.flatten()) for f in feature]
+    # labels = _int64_feature(labels)
+    # features_tuple = (feature, labels)
+    features_tuple = {
+        'q_input_ids': _int64_list_feature(
+            feature[0].flatten()),
+        'q_input_masks': _int64_list_feature(
+            feature[1].flatten()),
+        'q_segment_ids': _int64_list_feature(
+            feature[2].flatten()),
+        'q_input_shape': _int64_list_feature(
+            feature[0].shape),
+        'a_input_ids': _int64_list_feature(
+            feature[3].flatten()),
+        'a_input_masks': _int64_list_feature(
+            feature[4].flatten()),
+        'a_segment_ids': _int64_list_feature(
+            feature[5].flatten()),
+        'a_input_shape': _int64_list_feature(
+            feature[3].shape),
+        'labels': _int64_feature(labels)}
+    example_proto = tf.train.Example(
+        features=tf.train.Features(feature=features_tuple))
+    return example_proto.SerializeToString()
 
 
 def create_dataset_for_bert(
@@ -268,26 +314,36 @@ def create_dataset_for_bert(
         bucket_boundaries=[100, 300],
         element_length_func=_qa_ele_to_length):
 
-    def gen(): return create_generator_for_bert(
-        data_dir=data_dir,
-        tokenizer=tokenizer,
-        mode=mode,
-        max_seq_length=max_seq_length,
-        dynamic_padding=dynamic_padding)
+    tfrecord_file_list = glob(os.path.join(
+        data_dir, '*_BertFFN_{0}.tfrecord'.format((mode))))
+    if not tfrecord_file_list:
+        print('TF Record not found')
+        make_tfrecord(
+            data_dir, create_generator_for_bert,
+            bert_serialize_fn, 'BertFFN', tokenizer=tokenizer, dynamic_padding=True)
+        tfrecord_file_list = glob(os.path.join(
+            data_dir, '*_BertFFN_{0}.tfrecord'.format((mode))))
 
-    output_types = [tf.int32, tf.int32, tf.int32]
+    dataset = tf.data.TFRecordDataset(tfrecord_file_list)
 
-    output_shapes = [[2, None],  [2, None],  [2, None]]
+    def _parse_bert_example(example_proto):
+        feature_description = {
+            'q_input_ids': tf.io.VarLenFeature(tf.int64),
+            'q_input_masks': tf.io.VarLenFeature(tf.int64),
+            'q_segment_ids': tf.io.VarLenFeature(tf.int64),
+            'a_input_ids': tf.io.VarLenFeature(tf.int64),
+            'a_input_masks': tf.io.VarLenFeature(tf.int64),
+            'a_segment_ids': tf.io.VarLenFeature(tf.int64),
+            'labels': tf.io.FixedLenFeature([], tf.int64, default_value=0),
+        }
+        feature_dict = tf.io.parse_single_example(
+            example_proto, feature_description)
+        dense_feature_dict = {k: tf.sparse.to_dense(
+            v) for k, v in feature_dict.items() if k != 'labels'}
+        dense_feature_dict['labels'] = feature_dict['labels']
+        return dense_feature_dict, feature_dict['labels']
+    dataset = dataset.map(_parse_bert_example)
 
-    if mode in ['train', 'eval']:
-        output_types = (output_types, tf.int32)
-        output_shapes = (output_shapes, [])
-
-    dataset = tf.data.Dataset.from_generator(
-        generator=gen,
-        output_types=output_types,
-        output_shapes=output_shapes
-    )
     if mode == 'train':
         dataset = dataset.shuffle(shuffle_buffer)
     if dynamic_padding:
