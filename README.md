@@ -27,3 +27,7 @@ https://drive.google.com/open?id=1t5tWWv5xkkU-YerJZabu-QMBajaqAnDB
 4-22-19
 Ryan's updated webmed data with BERT embeddings added for questions and answers. Ryan collected all the data from webmd, not just where the old dataset left off from May 2017, so this should replace the old webmd data. 
 https://drive.google.com/open?id=1cmlfAO7pnf1kYdoCLe1zH1d0JeFJuknn
+
+4-24-19
+TF Records from csv files.
+https://drive.google.com/drive/folders/1wRc1jtl5Q0objpfualNFwpg4H575tmks?usp=sharing
