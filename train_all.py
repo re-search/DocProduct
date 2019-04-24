@@ -11,12 +11,18 @@ from tokenization import FullTokenizer
 
 
 def train_all(args):
-    tokenizer = FullTokenizer(os.path.join(args.vocab_path, 'vocab.txt'))
+    K.set_floatx('float32')
+    tokenizer = FullTokenizer(os.path.join(args.pretrained_path, 'vocab.txt'))
     d = create_dataset_for_bert(
-        args.data_path, tokenizer=tokenizer, batch_size=args.batch_size, shuffle_buffer=100000)
+        args.data_path, tokenizer=tokenizer, batch_size=args.batch_size,
+        shuffle_buffer=1000, dynamic_padding=True, max_seq_length=args.max_seq_len)
     eval_d = create_dataset_for_bert(
-        args.data_path, tokenizer=tokenizer, batch_size=args.batch_size, mode='eval')
-    medical_qa_model = MedicalQAModelwithBert()
+        args.data_path, tokenizer=tokenizer, batch_size=args.batch_size,
+        mode='eval', dynamic_padding=True, max_seq_length=args.max_seq_len)
+    medical_qa_model = MedicalQAModelwithBert(
+        config_file=os.path.join(
+            args.pretrained_path, 'bert_config.json'),
+        checkpoint_file=os.path.join(args.pretrained_path, 'biobert_model.ckpt'))
     optimizer = tf.keras.optimizers.Adam()
     medical_qa_model.compile(
         optimizer=optimizer, loss=qa_pair_loss)
@@ -24,7 +30,7 @@ def train_all(args):
     epochs = args.num_epochs
     loss_metric = tf.keras.metrics.Mean()
 
-    medical_qa_model.fit(d, epochs=epochs, validation_data=eval_d)
+    medical_qa_model.fit(d, epochs=epochs)
     medical_qa_model.summary()
     K.set_learning_phase(0)
     q_embedding, a_embedding = tf.unstack(
@@ -48,10 +54,11 @@ if __name__ == "__main__":
                         default='models/', help='path for saving trained models')
     parser.add_argument('--data_path', type=str,
                         default='/content/gdrive/', help='path for saving trained models')
-    parser.add_argument('--vocab_path', type=str,
-                        default='/content/gdrive/', help='path for saving trained models')
+    parser.add_argument('--pretrained_path', type=str,
+                        default='/content/gdrive/', help='pretrained model path')
     parser.add_argument('--num_epochs', type=int, default=1)
     parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--max_seq_len', type=int, default=256)
     parser.add_argument('--learning_rate', type=float, default=0.001)
     parser.add_argument('--validation_split', type=float, default=0.2)
 

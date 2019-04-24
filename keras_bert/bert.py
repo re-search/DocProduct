@@ -96,7 +96,7 @@ def get_model(token_num,
             trainable=trainable,
         )
     if not training:
-        return inputs[:2], transformed
+        return inputs, transformed
     mlm_dense_layer = keras.layers.Dense(
         units=embed_dim,
         activation=feed_forward_activation,

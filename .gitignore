@@ -125,3 +125,4 @@ dmypy.json
 .vscode
 data/
 **/.DS_Store
+pubmed_pmc_470k/

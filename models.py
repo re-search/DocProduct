@@ -8,6 +8,8 @@ import numpy as np
 import tensorflow as tf
 import tensorflow.keras.backend as K
 
+from keras_bert.loader import load_trained_model_from_checkpoint
+
 
 class FFN(tf.keras.layers.Layer):
     def __init__(
@@ -54,37 +56,21 @@ class MedicalQAModel(tf.keras.Model):
         return tf.stack([q_embedding, a_embedding], axis=1)
 
 
-class BioBert(tf.keras.Model):
-    def __init__(self, name=''):
-        super(BioBert, self).__init__(name=name)
-
-    def call(self, inputs):
-
-        # inputs is dict with input features
-        input_ids, input_masks, segment_ids = inputs
-        # pass to bert
-        # with shape of (batch_size/2*batch_size, max_seq_len, hidden_size)
-        # TODO(Alex): Add true bert model
-        # Input: input_ids, input_masks, segment_ids all with shape (None, max_seq_len)
-        # Output: a tensor with shape (None, max_seq_len, hidden_size)
-        fake_bert_output = tf.expand_dims(tf.ones_like(
-            input_ids, dtype=tf.float32), axis=-1)*tf.ones([1, 1, 768], dtype=tf.float32)
-        max_seq_length = tf.shape(fake_bert_output)[-2]
-        hidden_size = tf.shape(fake_bert_output)[-1]
-
-        bert_output = fake_bert_output
-        return bert_output
-
-
 class MedicalQAModelwithBert(tf.keras.Model):
     def __init__(
             self,
             hidden_size=768,
             dropout=0.1,
             residual=True,
+            config_file=None,
+            checkpoint_file=None,
             name=''):
         super(MedicalQAModelwithBert, self).__init__(name=name)
-        self.biobert = BioBert()
+        self.biobert = load_trained_model_from_checkpoint(
+            config_file=config_file,
+            checkpoint_file=checkpoint_file,
+            training=False,
+            trainable=True)
         self.q_ffn_layer = FFN(
             hidden_size=hidden_size,
             dropout=dropout,
@@ -102,9 +88,9 @@ class MedicalQAModelwithBert(tf.keras.Model):
     def call(self, inputs):
 
         q_bert_embedding = self.biobert(
-            (inputs['q_input_ids'], inputs['q_input_masks'], inputs['q_segment_ids']))
+            (inputs['q_input_ids'], inputs['q_segment_ids'], inputs['q_input_masks']))
         a_bert_embedding = self.biobert(
-            (inputs['a_input_ids'], inputs['a_input_masks'], inputs['a_segment_ids']))
+            (inputs['a_input_ids'], inputs['a_segment_ids'], inputs['a_input_masks']))
 
         # according to USE, the DAN network average embedding across tokens
         q_bert_embedding = self._avg_across_token(q_bert_embedding)

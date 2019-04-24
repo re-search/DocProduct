@@ -34,7 +34,8 @@ def build_model_from_config(config_file,
     with open(config_file, 'r') as reader:
         config = json.loads(reader.read())
     if seq_len is not None:
-        config['max_position_embeddings'] = min(seq_len, config['max_position_embeddings'])
+        config['max_position_embeddings'] = min(
+            seq_len, config['max_position_embeddings'])
     if trainable is None:
         trainable = training
     model = get_model(
@@ -51,10 +52,6 @@ def build_model_from_config(config_file,
     if not training:
         inputs, outputs = model
         model = keras.models.Model(inputs=inputs, outputs=outputs)
-        model.compile(
-            optimizer=keras.optimizers.Adam(),
-            loss=keras.losses.sparse_categorical_crossentropy,
-        )
     return model, config
 
 
@@ -76,7 +73,8 @@ def load_model_weights_from_checkpoint(model,
         loader('bert/embeddings/word_embeddings'),
     ])
     model.get_layer(name='Embedding-Position').set_weights([
-        loader('bert/embeddings/position_embeddings')[:config['max_position_embeddings'], :],
+        loader(
+            'bert/embeddings/position_embeddings')[:config['max_position_embeddings'], :],
     ])
     model.get_layer(name='Embedding-Segment').set_weights([
         loader('bert/embeddings/token_type_embeddings'),
@@ -152,6 +150,8 @@ def load_trained_model_from_checkpoint(config_file,
                     position embeddings will be sliced to fit the new length.
     :return: model
     """
-    model, config = build_model_from_config(config_file, training=training, trainable=trainable, seq_len=seq_len)
-    load_model_weights_from_checkpoint(model, config, checkpoint_file, training=training)
+    model, config = build_model_from_config(
+        config_file, training=training, trainable=trainable, seq_len=seq_len)
+    load_model_weights_from_checkpoint(
+        model, config, checkpoint_file, training=training)
     return model

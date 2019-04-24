@@ -310,8 +310,8 @@ def create_dataset_for_bert(
         prefetch=10000,
         batch_size=32,
         dynamic_padding=False,
-        bucket_batch_sizes=[64, 32, 16],
-        bucket_boundaries=[100, 300],
+        bucket_batch_sizes=[32, 16, 8],
+        bucket_boundaries=[64, 128],
         element_length_func=_qa_ele_to_length):
 
     tfrecord_file_list = glob(os.path.join(
@@ -320,7 +320,7 @@ def create_dataset_for_bert(
         print('TF Record not found')
         make_tfrecord(
             data_dir, create_generator_for_bert,
-            bert_serialize_fn, 'BertFFN', tokenizer=tokenizer, dynamic_padding=True)
+            bert_serialize_fn, 'BertFFN', tokenizer=tokenizer, dynamic_padding=True, max_seq_length=max_seq_length)
         tfrecord_file_list = glob(os.path.join(
             data_dir, '*_BertFFN_{0}.tfrecord'.format((mode))))
 
@@ -351,7 +351,7 @@ def create_dataset_for_bert(
             tf.data.experimental.bucket_by_sequence_length(
                 element_length_func=element_length_func,
                 bucket_batch_sizes=bucket_batch_sizes,
-                bucket_boundaries=bucket_boundaries,
+                bucket_boundaries=bucket_boundaries
             ))
     else:
         dataset = dataset.batch(batch_size)
