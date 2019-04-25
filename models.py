@@ -7,6 +7,7 @@ import numpy as np
 
 import tensorflow as tf
 import tensorflow.keras.backend as K
+from tensorflow import keras
 
 from keras_bert.loader import load_trained_model_from_checkpoint
 
@@ -80,23 +81,35 @@ class MedicalQAModelwithBert(tf.keras.Model):
             dropout=dropout,
             residual=residual)
 
-    def _avg_across_token(self, tensor):
-        if tensor is not None:
-            tensor = tf.reduce_mean(tensor, axis=1)
-        return tensor
-
     def call(self, inputs):
 
-        q_bert_embedding = self.biobert(
-            (inputs['q_input_ids'], inputs['q_segment_ids'], inputs['q_input_masks']))
-        a_bert_embedding = self.biobert(
-            (inputs['a_input_ids'], inputs['a_segment_ids'], inputs['a_input_masks']))
+        if 'q_input_ids' in inputs:
+            with_question = True
+        else:
+            with_question = False
 
+        if 'a_input_ids' in inputs:
+            with_answer = True
+        else:
+            with_answer = False
         # according to USE, the DAN network average embedding across tokens
-        q_bert_embedding = self._avg_across_token(q_bert_embedding)
-        a_bert_embedding = self._avg_across_token(a_bert_embedding)
+        if with_question:
+            q_bert_embedding = self.biobert(
+                (inputs['q_input_ids'], inputs['q_segment_ids'], inputs['q_input_masks']))
+            q_bert_embedding = tf.reduce_mean(q_bert_embedding, axis=1)
+        if with_answer:
+            a_bert_embedding = self.biobert(
+                (inputs['a_input_ids'], inputs['a_segment_ids'], inputs['a_input_masks']))
+            a_bert_embedding = tf.reduce_mean(a_bert_embedding, axis=1)
 
-        q_embedding = self.q_ffn_layer(q_bert_embedding)
-        a_embedding = self.a_ffn_layer(a_bert_embedding)
+        if with_question:
+            q_embedding = self.q_ffn_layer(q_bert_embedding)
+            output = q_embedding
+        if with_answer:
+            a_embedding = self.a_ffn_layer(a_bert_embedding)
+            output = a_embedding
 
-        return tf.stack([q_embedding, a_embedding], axis=1)
+        if with_question and with_answer:
+            output = tf.stack([q_embedding, a_embedding], axis=1)
+
+        return output
