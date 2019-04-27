@@ -32,6 +32,11 @@ https://drive.google.com/open?id=1cmlfAO7pnf1kYdoCLe1zH1d0JeFJuknn
 TF Records from csv files.
 https://drive.google.com/drive/folders/1wRc1jtl5Q0objpfualNFwpg4H575tmks?usp=sharing
 
+4-27-19
+FFNN test embeddings. 
+https://drive.google.com/open?id=1ee6I9OHrCiN-wv5BtZX75nyOiWuWTnfs
+Trained on about 300 epochs. Won't be the final embeddings, but can be used to get an idea of how well the architecture is performing. 
+
 TODO:
 
 1. Imbalance label problem
