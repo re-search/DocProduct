@@ -2,7 +2,7 @@ import json
 from tensorflow import keras
 import numpy as np
 import tensorflow as tf
-from .bert import get_model
+from .bert import get_model, Bert
 
 
 __all__ = [
@@ -38,7 +38,8 @@ def build_model_from_config(config_file,
             seq_len, config['max_position_embeddings'])
     if trainable is None:
         trainable = training
-    model = get_model(
+
+    model = Bert(
         token_num=config['vocab_size'],
         pos_num=config['max_position_embeddings'],
         seq_len=config['max_position_embeddings'],
@@ -49,9 +50,7 @@ def build_model_from_config(config_file,
         training=training,
         trainable=trainable,
     )
-    if not training:
-        inputs, outputs = model
-        model = keras.models.Model(inputs=inputs, outputs=outputs)
+    model.build(input_shape=[(None, None), (None, None), (None, None)])
     return model, config
 
 
