@@ -37,6 +37,10 @@ FFNN test embeddings.
 https://drive.google.com/open?id=1ee6I9OHrCiN-wv5BtZX75nyOiWuWTnfs
 Trained on about 300 epochs. Won't be the final embeddings, but can be used to get an idea of how well the architecture is performing. 
 
+4-28-19
+Current FFNN checkpoint
+https://drive.google.com/open?id=1TxR8UBzoBtlewO3lt5efLQgGP_3BRPZm
+
 TODO:
 
 1. Imbalance label problem
