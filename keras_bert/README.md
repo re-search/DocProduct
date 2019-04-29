@@ -8,7 +8,7 @@ For extracting latent embeddings from medical question/answer data
 
 # Acknowledgement
 
-Based on [CyberZHG's Keras BERT implementation](https://github.com/CyberZHG/keras-bert).
+Based on [CyberZHG's Keras BERT implementation](https://github.com/CyberZHG/keras-bert)
 
 # Usage
 
