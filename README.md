@@ -41,6 +41,10 @@ Trained on about 300 epochs. Won't be the final embeddings, but can be used to g
 Current FFNN checkpoint
 https://drive.google.com/open?id=1TxR8UBzoBtlewO3lt5efLQgGP_3BRPZm
 
+4-28-19
+BERT+FFNN MSE checkpoint
+https://drive.google.com/open?id=1U3FRlbSDa0oNz5Mx9PvJad4QagvQh4TI
+
 TODO:
 
 1. Imbalance label problem
