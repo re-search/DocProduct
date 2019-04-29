@@ -6,13 +6,17 @@ import tensorflow.keras.backend as K
 
 from dataset import create_dataset_for_bert
 from models import MedicalQAModelwithBert
-from loss import qa_pair_loss
+from loss import qa_pair_loss, qa_pair_cross_entropy_loss
 from tokenization import FullTokenizer
 
 tf.compat.v1.disable_eager_execution()
 
 
 def train_all(args):
+    if args.loss == 'categorical_crossentropy':
+        loss_fn = qa_pair_cross_entropy_loss
+    else:
+        loss_fn = qa_pair_loss
     K.set_floatx('float32')
     tokenizer = FullTokenizer(os.path.join(args.pretrained_path, 'vocab.txt'))
     d = create_dataset_for_bert(
@@ -59,11 +63,13 @@ if __name__ == "__main__":
                         default='data/', help='path for tfrecords data')
     parser.add_argument('--pretrained_path', type=str,
                         default='models/pubmed_pmc_470k/', help='pretrained model path')
-    parser.add_argument('--num_epochs', type=int, default=15)
+    parser.add_argument('--num_epochs', type=int, default=10)
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--max_seq_len', type=int, default=256)
     parser.add_argument('--learning_rate', type=float, default=2e-5)
     parser.add_argument('--validation_split', type=float, default=0.2)
+    parser.add_argument('--loss', type=str,
+                        default='categorical_crossentropy')
 
     args = parser.parse_args()
     train_all(args)

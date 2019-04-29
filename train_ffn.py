@@ -96,10 +96,10 @@ if __name__ == "__main__":
                         default='models/FFN', help='path for saving trained models')
     parser.add_argument('--data_path', type=str,
                         default='/content/gdrive/', help='path for saving trained models')
-    parser.add_argument('--num_epochs', type=int, default=15)
+    parser.add_argument('--num_epochs', type=int, default=100)
     parser.add_argument('--num_gpu', type=int, default=1)
-    parser.add_argument('--batch_size', type=int, default=128)
-    parser.add_argument('--learning_rate', type=float, default=0.001)
+    parser.add_argument('--batch_size', type=int, default=64)
+    parser.add_argument('--learning_rate', type=float, default=0.0001)
     parser.add_argument('--validation_split', type=float, default=0.2)
     parser.add_argument('--loss', type=str,
                         default='categorical_crossentropy')
