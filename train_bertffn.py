@@ -31,7 +31,7 @@ def train_all(args):
         checkpoint_file=os.path.join(args.pretrained_path, 'biobert_model.ckpt'))
     optimizer = tf.keras.optimizers.Adam()
     medical_qa_model.compile(
-        optimizer=optimizer, loss=qa_pair_loss)
+        optimizer=optimizer, loss=loss_fn)
 
     epochs = args.num_epochs
     loss_metric = tf.keras.metrics.Mean()
