@@ -16,7 +16,7 @@ class FFN(tf.keras.layers.Layer):
     def __init__(
             self,
             hidden_size=768,
-            dropout=0.1,
+            dropout=0.2,
             residual=True,
             name='FFN',
             **kwargs):
@@ -61,7 +61,7 @@ class MedicalQAModelwithBert(tf.keras.Model):
     def __init__(
             self,
             hidden_size=768,
-            dropout=0.1,
+            dropout=0.2,
             residual=True,
             config_file=None,
             checkpoint_file=None,

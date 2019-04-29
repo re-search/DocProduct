@@ -35,20 +35,20 @@ def train_all(args):
     medical_qa_model.fit(d, epochs=epochs)
     medical_qa_model.summary()
     medical_qa_model.save_weights(args.model_path)
-    K.set_learning_phase(0)
-    q_embedding, a_embedding = tf.unstack(
-        medical_qa_model(next(iter(eval_d))[0]), axis=1)
+    # K.set_learning_phase(0)
+    # q_embedding, a_embedding = tf.unstack(
+    #     medical_qa_model(next(iter(eval_d))[0]), axis=1)
 
-    q_embedding = q_embedding / tf.norm(q_embedding, axis=-1, keepdims=True)
-    a_embedding = a_embedding / tf.norm(a_embedding, axis=-1, keepdims=True)
+    # q_embedding = q_embedding / tf.norm(q_embedding, axis=-1, keepdims=True)
+    # a_embedding = a_embedding / tf.norm(a_embedding, axis=-1, keepdims=True)
 
-    batch_score = tf.reduce_sum(q_embedding*a_embedding, axis=-1)
-    baseline_score = tf.reduce_mean(
-        tf.matmul(q_embedding, tf.transpose(a_embedding)))
+    # batch_score = tf.reduce_sum(q_embedding*a_embedding, axis=-1)
+    # baseline_score = tf.reduce_mean(
+    #     tf.matmul(q_embedding, tf.transpose(a_embedding)))
 
-    print('Eval Batch Cos similarity')
-    print(tf.reduce_mean(batch_score))
-    print('Baseline: {0}'.format(baseline_score))
+    # print('Eval Batch Cos similarity')
+    # print(tf.reduce_mean(batch_score))
+    # print('Baseline: {0}'.format(baseline_score))
 
 
 if __name__ == "__main__":
