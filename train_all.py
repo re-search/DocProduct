@@ -56,9 +56,9 @@ if __name__ == "__main__":
     parser.add_argument('--model_path', type=str,
                         default='models/BertFFN', help='path for saving trained models')
     parser.add_argument('--data_path', type=str,
-                        default='/content/gdrive/', help='path for saving trained models')
+                        default='data/', help='path for tfrecords data')
     parser.add_argument('--pretrained_path', type=str,
-                        default='/content/gdrive/', help='pretrained model path')
+                        default='models/pubmed_pmc_470k/', help='pretrained model path')
     parser.add_argument('--num_epochs', type=int, default=15)
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--max_seq_len', type=int, default=256)
