@@ -71,7 +71,7 @@ def train_ffn(args):
         args.data_path, batch_size=args.batch_size, mode='eval')
 
     medical_qa_model.summary()
-    medical_qa_model.save_weights(args.model_path)
+    medical_qa_model.save_weights(args.model_path, overwrite=True)
     # K.set_learning_phase(0)
     # q_embedding, a_embedding = tf.unstack(
     #     medical_qa_model(next(iter(eval_d))[0]), axis=1)
@@ -93,7 +93,7 @@ def train_ffn(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str,
-                        default='models/', help='path for saving trained models')
+                        default='models/FFN', help='path for saving trained models')
     parser.add_argument('--data_path', type=str,
                         default='/content/gdrive/', help='path for saving trained models')
     parser.add_argument('--num_epochs', type=int, default=15)

@@ -8,6 +8,21 @@ from time import time
 from dataset import convert_text_to_feature
 from models import MedicalQAModelwithBert
 from tokenization import FullTokenizer
+from keras_bert.loader import checkpoint_loader
+
+
+def load_weight(model, bert_ffn_weight_file=None, ffn_weight_file=None):
+    if bert_ffn_weight_file:
+        model.load_weights(bert_ffn_weight_file)
+    elif ffn_weight_file:
+        loader = checkpoint_loader(ffn_weight_file)
+        model.get_layer('q_ffn').set_weights(
+            [loader('q_ffn/ffn_layer/kernel/.ATTRIBUTES/VARIABLE_VALUE'),
+             loader('q_ffn/ffn_layer/bias/.ATTRIBUTES/VARIABLE_VALUE')])
+        model.get_layer('a_ffn').set_weights(
+            [loader('a_ffn/ffn_layer/kernel/.ATTRIBUTES/VARIABLE_VALUE'),
+             loader('a_ffn/ffn_layer/bias/.ATTRIBUTES/VARIABLE_VALUE')]
+        )
 
 
 class QAEmbed(object):
@@ -18,7 +33,9 @@ class QAEmbed(object):
             residual=True,
             pretrained_path=None,
             batch_size=128,
-            max_seq_length=256):
+            max_seq_length=256,
+            ffn_weight_file=None,
+            bert_ffn_weight_file=None):
         super(QAEmbed, self).__init__()
         config_file = os.path.join(pretrained_path, 'bert_config.json')
         checkpoint_file = os.path.join(pretrained_path, 'biobert_model.ckpt')
@@ -32,6 +49,10 @@ class QAEmbed(object):
         self.tokenizer = FullTokenizer(
             os.path.join(pretrained_path, 'vocab.txt'))
         self.max_seq_length = max_seq_length
+
+        # build mode in order to load
+        self.predict(questions='fake', answers='fake')
+        load_weight(self.model, bert_ffn_weight_file, ffn_weight_file)
 
     def _type_check(self, inputs):
         if inputs is not None:
