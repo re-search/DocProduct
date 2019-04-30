@@ -42,7 +42,7 @@ def single_gpu_train(args, loss=qa_pair_loss):
     global_batch_size = args.batch_size*args.num_gpu
     learning_rate = args.learning_rate
     d = create_dataset_for_ffn(
-        args.data_path, batch_size=global_batch_size, shuffle_buffer=50000)
+        args.data_path, batch_size=global_batch_size, shuffle_buffer=500000)
     eval_d = create_dataset_for_ffn(
         args.data_path, batch_size=args.batch_size, mode='eval')
 

@@ -65,13 +65,14 @@ class MedicalQAModelwithBert(tf.keras.Model):
             residual=True,
             config_file=None,
             checkpoint_file=None,
+            bert_trainable=True,
             name=''):
         super(MedicalQAModelwithBert, self).__init__(name=name)
         self.biobert = load_trained_model_from_checkpoint(
             config_file=config_file,
             checkpoint_file=checkpoint_file,
             training=False,
-            trainable=True)
+            trainable=bert_trainable)
         self.q_ffn_layer = FFN(
             hidden_size=hidden_size,
             dropout=dropout,

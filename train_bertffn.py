@@ -22,15 +22,16 @@ def train_all(args):
     tokenizer = FullTokenizer(os.path.join(args.pretrained_path, 'vocab.txt'))
     d = create_dataset_for_bert(
         args.data_path, tokenizer=tokenizer, batch_size=args.batch_size,
-        shuffle_buffer=100000, dynamic_padding=True, max_seq_length=args.max_seq_len)
+        shuffle_buffer=500000, dynamic_padding=True, max_seq_length=args.max_seq_len)
     eval_d = create_dataset_for_bert(
         args.data_path, tokenizer=tokenizer, batch_size=args.batch_size,
         mode='eval', dynamic_padding=True, max_seq_length=args.max_seq_len)
+
     medical_qa_model = MedicalQAModelwithBert(
         config_file=os.path.join(
             args.pretrained_path, 'bert_config.json'),
         checkpoint_file=os.path.join(args.pretrained_path, 'biobert_model.ckpt'))
-    optimizer = tf.keras.optimizers.Adam()
+    optimizer = tf.keras.optimizers.Adam(lr=args.learning_rate)
     medical_qa_model.compile(
         optimizer=optimizer, loss=loss_fn, metrics=[qa_pair_batch_accuracy])
 
