@@ -71,3 +71,4 @@ TODO:
 4. Demo(Ryan)
 5. ~~BERT finetune model(Jay)~~
 6. GPT2(Alex)
+7. Migrate TF 1.0 components to 2.0
