@@ -1,7 +1,6 @@
 # AskDoc
 
-
-Initial Tasks:
+## Initial Tasks:
 
 -Develop a dataset from /r/askdocs. 
 --Figure out best format for data. ie first column post text, 2nd column text from most upvoted commnt, 3rd column text for second most upvoted comment, etc.
@@ -13,6 +12,25 @@ Initial Tasks:
 --I believe that one of the members has unlimited TPU instances. Will confirm. But even if we don't, colab offers free TPU, so maybe code it for TPU use either way. 
 --Useful Colab notebook, end-to-end fine tuning + prediction using BERT on TPU https://colab.research.google.com/github/tensorflow/tpu/blob/master/tools/colab/bert_finetuning_with_cloud_tpus.ipynb
 --May or may not want to fine tune BERT (not fine tune BERT for now?0
+
+## Scripts
+
+- [x] `train_ffn.py`: Train FFN model.
+- [x] `train_bertffn.py`: Train BertFFN model.
+- [x] `gpt2_main.py`(Alex): Train generation model.
+- [x] `train_data_to_embedding.py`: Convert data to trained FFN model/BertFFN model embeddings for faiss training.
+- [ ] `train_faiss_topk_to_gpt2.py`: Convert faiss top k results to gpt2 training data.
+- [ ] `eval_topk.py`: Evaluation of top k results.
+- [ ] `inference_question_to_topk.py`: Given question, return top k answers.
+- [ ] `inference_question_to_generated_answer.py`: Given question, return generated answer.
+
+### Training pipeline
+
+train_ffn&train_bertffn -> train_data_to_embedding -> train_faiss -> train_faiss_topk_to_gpt2 -> train_gpt2
+
+
+
+## Useful link
 
 TFRecords data download:
 https://drive.google.com/drive/folders/1Q6Em4Y5PMSOMl_E-HwEMeE9v76XzhBQv?usp=sharing
@@ -47,8 +65,9 @@ https://drive.google.com/open?id=1U3FRlbSDa0oNz5Mx9PvJad4QagvQh4TI
 
 TODO:
 
-1. Imbalance label problem
-2. Cross entropy loss not decreasing(Santosh)
-3. Evaluation and prediction, including Faiss
-4. Demo
-5. BERT finetune model(Jay)
+1. ~~Imbalance label problem~~
+2. ~~Cross entropy loss not decreasing(Santosh)~~
+3. Evaluation and prediction, including Faiss(Jay/Santosh)
+4. Demo(Ryan)
+5. ~~BERT finetune model(Jay)~~
+6. GPT2(Alex)

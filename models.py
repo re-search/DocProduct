@@ -16,7 +16,7 @@ class FFN(tf.keras.layers.Layer):
     def __init__(
             self,
             hidden_size=768,
-            dropout=0.1,
+            dropout=0.2,
             residual=True,
             name='FFN',
             **kwargs):
@@ -47,8 +47,8 @@ class FFN(tf.keras.layers.Layer):
 class MedicalQAModel(tf.keras.Model):
     def __init__(self, name=''):
         super(MedicalQAModel, self).__init__(name=name)
-        self.q_ffn = FFN(name='QFFN', input_shape=(768,))
-        self.a_ffn = FFN(name='AFFN', input_shape=(768,))
+        self.q_ffn = FFN(name='q_ffn', input_shape=(768,))
+        self.a_ffn = FFN(name='a_ffn', input_shape=(768,))
 
     def call(self, inputs):
         q_bert_embedding, a_bert_embedding = tf.unstack(inputs, axis=1)
@@ -61,7 +61,7 @@ class MedicalQAModelwithBert(tf.keras.Model):
     def __init__(
             self,
             hidden_size=768,
-            dropout=0.1,
+            dropout=0.2,
             residual=True,
             config_file=None,
             checkpoint_file=None,
@@ -75,11 +75,13 @@ class MedicalQAModelwithBert(tf.keras.Model):
         self.q_ffn_layer = FFN(
             hidden_size=hidden_size,
             dropout=dropout,
-            residual=residual)
+            residual=residual,
+            name='q_ffn')
         self.a_ffn_layer = FFN(
             hidden_size=hidden_size,
             dropout=dropout,
-            residual=residual)
+            residual=residual,
+            name='a_ffn')
 
     def call(self, inputs):
 
