@@ -66,3 +66,4 @@ if __name__ == "__main__":
                         default='models/pubmed_pmc_470k/', help='pretrained model path')
 
     args = parser.parse_args()
+    main(args)
