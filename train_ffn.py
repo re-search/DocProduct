@@ -93,9 +93,9 @@ def train_ffn(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str,
-                        default='models/FFN', help='path for saving trained models')
+                        default='models/ffn_crossentropy/ffn', help='path for saving trained models')
     parser.add_argument('--data_path', type=str,
-                        default='/content/gdrive/', help='path for saving trained models')
+                        default='data/mqa_csv', help='path for saving trained models')
     parser.add_argument('--num_epochs', type=int, default=100)
     parser.add_argument('--num_gpu', type=int, default=1)
     parser.add_argument('--batch_size', type=int, default=64)

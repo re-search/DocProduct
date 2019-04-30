@@ -58,11 +58,11 @@ def train_all(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str,
-                        default='models/BertFFN', help='path for saving trained models')
+                        default='models/bertffn_crossentropy/bertffn', help='path for saving trained models')
     parser.add_argument('--data_path', type=str,
-                        default='data/', help='path for tfrecords data')
+                        default='data/mqa_csv', help='path for tfrecords data')
     parser.add_argument('--pretrained_path', type=str,
-                        default='models/pubmed_pmc_470k/', help='pretrained model path')
+                        default='pubmed_pmc_470k/', help='pretrained model path')
     parser.add_argument('--num_epochs', type=int, default=10)
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--max_seq_len', type=int, default=256)

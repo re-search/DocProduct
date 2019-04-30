@@ -76,8 +76,6 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_path', type=str,
-                        default='models/ffn_mse/ffn', help='path for trained models')
     parser.add_argument('--data_path', type=str,
                         default='qa_embeddings/ffn_crossentropy.csv', help='path of input csv files')
     parser.add_argument('--output_path', type=str,
