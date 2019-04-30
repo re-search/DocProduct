@@ -8,6 +8,7 @@ from dataset import create_dataset_for_bert
 from models import MedicalQAModelwithBert
 from loss import qa_pair_loss, qa_pair_cross_entropy_loss
 from tokenization import FullTokenizer
+from metrics import qa_pair_batch_accuracy
 
 tf.compat.v1.disable_eager_execution()
 
@@ -31,7 +32,7 @@ def train_all(args):
         checkpoint_file=os.path.join(args.pretrained_path, 'biobert_model.ckpt'))
     optimizer = tf.keras.optimizers.Adam()
     medical_qa_model.compile(
-        optimizer=optimizer, loss=loss_fn)
+        optimizer=optimizer, loss=loss_fn, metrics=[qa_pair_batch_accuracy])
 
     epochs = args.num_epochs
     loss_metric = tf.keras.metrics.Mean()

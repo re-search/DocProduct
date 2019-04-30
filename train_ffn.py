@@ -6,6 +6,7 @@ import tensorflow.keras.backend as K
 from dataset import create_dataset_for_ffn
 from models import MedicalQAModel
 from loss import qa_pair_loss, qa_pair_cross_entropy_loss
+from metrics import qa_pair_batch_accuracy
 
 DEVICE = ["/gpu:0", "/gpu:1"]
 
@@ -31,7 +32,8 @@ def multi_gpu_train(args, loss=qa_pair_loss):
     epochs = args.num_epochs
     loss_metric = tf.keras.metrics.Mean()
 
-    medical_qa_model.fit(d_iter, epochs=epochs)
+    medical_qa_model.fit(d_iter, epochs=epochs, metrics=[
+                         qa_pair_batch_accuracy])
     medical_qa_model.save_weights(args.model_path)
     return medical_qa_model
 
@@ -41,16 +43,18 @@ def single_gpu_train(args, loss=qa_pair_loss):
     learning_rate = args.learning_rate
     d = create_dataset_for_ffn(
         args.data_path, batch_size=global_batch_size, shuffle_buffer=50000)
+    eval_d = create_dataset_for_ffn(
+        args.data_path, batch_size=args.batch_size, mode='eval')
 
     medical_qa_model = MedicalQAModel()
     optimizer = tf.keras.optimizers.Adam(lr=learning_rate)
     medical_qa_model.compile(
-        optimizer=optimizer, loss=loss)
+        optimizer=optimizer, loss=loss, metrics=[
+            qa_pair_batch_accuracy])
 
     epochs = args.num_epochs
-    loss_metric = tf.keras.metrics.Mean()
 
-    medical_qa_model.fit(d, epochs=epochs)
+    medical_qa_model.fit(d, epochs=epochs, validation_data=eval_d)
     medical_qa_model.save_weights(args.model_path)
     return medical_qa_model
 
@@ -61,14 +65,13 @@ def train_ffn(args):
         loss_fn = qa_pair_cross_entropy_loss
     else:
         loss_fn = qa_pair_loss
+    eval_d = create_dataset_for_ffn(
+        args.data_path, batch_size=args.batch_size, mode='eval')
 
     if args.num_gpu > 1:
         medical_qa_model = multi_gpu_train(args, loss_fn)
     else:
         medical_qa_model = single_gpu_train(args, loss_fn)
-
-    eval_d = create_dataset_for_ffn(
-        args.data_path, batch_size=args.batch_size, mode='eval')
 
     medical_qa_model.summary()
     medical_qa_model.save_weights(args.model_path, overwrite=True)
@@ -96,7 +99,7 @@ if __name__ == "__main__":
                         default='models/ffn_crossentropy/ffn', help='path for saving trained models')
     parser.add_argument('--data_path', type=str,
                         default='data/mqa_csv', help='path for saving trained models')
-    parser.add_argument('--num_epochs', type=int, default=100)
+    parser.add_argument('--num_epochs', type=int, default=300)
     parser.add_argument('--num_gpu', type=int, default=1)
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--learning_rate', type=float, default=0.0001)
