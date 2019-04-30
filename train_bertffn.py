@@ -25,7 +25,7 @@ def train_all(args):
         shuffle_buffer=500000, dynamic_padding=True, max_seq_length=args.max_seq_len)
     eval_d = create_dataset_for_bert(
         args.data_path, tokenizer=tokenizer, batch_size=args.batch_size,
-        mode='eval', dynamic_padding=True, max_seq_length=args.max_seq_len)
+        mode='eval', dynamic_padding=False, max_seq_length=args.max_seq_len)
 
     medical_qa_model = MedicalQAModelwithBert(
         config_file=os.path.join(
@@ -39,6 +39,7 @@ def train_all(args):
     loss_metric = tf.keras.metrics.Mean()
 
     medical_qa_model.fit(d, epochs=epochs)
+    medical_qa_model.evaluate(eval_d)
     medical_qa_model.summary()
     medical_qa_model.save_weights(args.model_path)
     # K.set_learning_phase(0)
@@ -66,7 +67,7 @@ if __name__ == "__main__":
     parser.add_argument('--pretrained_path', type=str,
                         default='pubmed_pmc_470k/', help='pretrained model path')
     parser.add_argument('--num_epochs', type=int, default=10)
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--max_seq_len', type=int, default=256)
     parser.add_argument('--learning_rate', type=float, default=2e-5)
     parser.add_argument('--validation_split', type=float, default=0.2)
