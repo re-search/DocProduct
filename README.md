@@ -19,8 +19,8 @@
 - [x] `train_bertffn.py`: Train BertFFN model.
 - [x] `gpt2_main.py`(Alex): Train generation model.
 - [x] `train_data_to_embedding.py`: Convert data to trained FFN model/BertFFN model embeddings for faiss training.
-- [ ] `train_faiss_topk_to_gpt2.py`: Convert faiss top k results to gpt2 training data.
-- [ ] `eval_topk.py`: Evaluation of top k results.
+- [x] `train_faiss_topk_to_gpt2.py`(Santosh): Convert faiss top k results to gpt2 training data.
+- [ ] `eval_topk.py`(Jay): Evaluation of top k results.
 - [ ] `inference_question_to_topk.py`: Given question, return top k answers.
 - [ ] `inference_question_to_generated_answer.py`: Given question, return generated answer.
 
