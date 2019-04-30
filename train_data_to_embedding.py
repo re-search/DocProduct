@@ -43,7 +43,6 @@ def main(args):
         questions=qa_df.question.tolist(),
         answers=qa_df.answer.tolist())
 
-    args.output_path = 'qa_embeddings/ffn_mse.csv'
     q_embedding, a_embedding = np.split(qa_vectors, 2, axis=1)
     qa_df['Q_FFNN_embeds'] = np.squeeze(q_embedding).tolist()
     qa_df['A_FFNN_embeds'] = np.squeeze(a_embedding).tolist()
