@@ -4,6 +4,10 @@ from collections import defaultdict
 import tensorflow as tf
 import numpy as np
 from time import time
+from tqdm import tqdm
+import pandas as pd
+from multiprocessing import Pool, cpu_count
+import faiss
 
 from dataset import convert_text_to_feature
 from models import MedicalQAModelwithBert
@@ -114,7 +118,58 @@ class QAEmbed(object):
 
         model_inputs = self._make_inputs(questions, answers)
         model_outputs = []
-        for batch in iter(model_inputs):
+        for batch in tqdm(iter(model_inputs), total=int(len(questions) / self.batch_size)):
             model_outputs.append(self.model(batch))
         model_outputs = np.concatenate(model_outputs, axis=0)
         return model_outputs
+
+
+class FaissTopK(object):
+    def __init__(self, embedding_file):
+        super(FaissTopK, self).__init__()
+        self.embedding_file = embedding_file
+        self.df = pd.read_csv(self.embedding_file)
+        self._get_faiss_index()
+        self.df.drop(columns=["Q_FFNN_embeds", "A_FFNN_embeds"], inplace=True)
+
+    def _get_faiss_index(self):
+        with Pool(cpu_count()) as p:
+            question_bert = p.map(eval, self.df["Q_FFNN_embeds"].tolist())
+            answer_bert = p.map(eval, self.df["A_FFNN_embeds"].tolist())
+        question_bert = np.array(question_bert)
+        answer_bert = np.array(answer_bert)
+
+        question_bert = question_bert.astype('float32')
+        answer_bert = answer_bert.astype('float32')
+
+        self.answer_index = faiss.IndexFlatIP(answer_bert.shape[-1])
+
+        self.question_index = faiss.IndexFlatIP(question_bert.shape[-1])
+
+        self.answer_index.add(answer_bert)
+        self.question_index.add(question_bert)
+
+    def predict(self, q_embedding, search_by='answer', topk=5, answer_only=True):
+        if search_by == 'answer':
+            _, index = self.answer_index.search(
+                q_embedding.astype('float32'), topk)
+        else:
+            _, index = self.question_index.search(
+                q_embedding.astype('float32'), topk)
+
+        output_df = self.df.loc[index[0], :]
+        if answer_only:
+            return output_df.answer.tolist()
+        else:
+            return (output_df.question.tolist(), output_df.answer.tolist())
+
+
+class RetreiveQADoc(object):
+    def __init__(self, qa_embed: QAEmbed, faiss_topk: FaissTopK):
+        super(RetreiveQADoc, self).__init__()
+        self.qa_embed = qa_embed
+        self.faiss_topk = faiss_topk
+
+    def predict(self, questions, search_by='answer', topk=5, answer_only=True):
+        embedding = self.qa_embed.predict(questions=questions)
+        return self.faiss_topk.predict(embedding, search_by, topk, answer_only)
