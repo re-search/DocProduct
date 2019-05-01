@@ -171,6 +171,7 @@ class Bert(keras.Model):
             return normal_layer
 
         last_layer = embedding_output
+        output_tensor_list = [last_layer]
         # self attention
         for i in range(self.transformer_num):
             base_name = 'Encoder-%d' % (i + 1)
@@ -190,8 +191,9 @@ class Bert(keras.Model):
                 norm_layer=self.encoder_ffn_norm[i],
                 dropout_rate=self.dropout_rate,
                 trainable=self.trainable)
+            output_tensor_list.append(last_layer)
 
-        return last_layer
+        return output_tensor_list
 
 
 def get_model(token_num,

@@ -66,6 +66,7 @@ class MedicalQAModelwithBert(tf.keras.Model):
             config_file=None,
             checkpoint_file=None,
             bert_trainable=True,
+            layer_ind=-1,
             name=''):
         super(MedicalQAModelwithBert, self).__init__(name=name)
         self.biobert = load_trained_model_from_checkpoint(
@@ -83,6 +84,7 @@ class MedicalQAModelwithBert(tf.keras.Model):
             dropout=dropout,
             residual=residual,
             name='a_ffn')
+        self.layer_ind = layer_ind
 
     def call(self, inputs):
 
@@ -98,11 +100,11 @@ class MedicalQAModelwithBert(tf.keras.Model):
         # according to USE, the DAN network average embedding across tokens
         if with_question:
             q_bert_embedding = self.biobert(
-                (inputs['q_input_ids'], inputs['q_segment_ids'], inputs['q_input_masks']))
+                (inputs['q_input_ids'], inputs['q_segment_ids'], inputs['q_input_masks']))[self.layer_ind]
             q_bert_embedding = tf.reduce_mean(q_bert_embedding, axis=1)
         if with_answer:
             a_bert_embedding = self.biobert(
-                (inputs['a_input_ids'], inputs['a_segment_ids'], inputs['a_input_masks']))
+                (inputs['a_input_ids'], inputs['a_segment_ids'], inputs['a_input_masks']))[self.layer_ind]
             a_bert_embedding = tf.reduce_mean(a_bert_embedding, axis=1)
 
         if with_question:
