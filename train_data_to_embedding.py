@@ -13,7 +13,12 @@ def read_all(data_path):
     df_list = []
     for f in glob(glob_pattern):
         print('Reading {0}'.format(f))
-        df = pd.read_csv(f, encoding='utf8', engine='python')
+        if os.path.basename(f) == 'healthtap_data_cleaned.csv':
+            df = pd.read_csv(f, lineterminator='\n')
+            df.columns = ['index', 'question', 'answer']
+            df.drop(columns=['index'], inplace=True)
+        else:
+            df = pd.read_csv(f, encoding='utf8', engine='python')
         try:
             df.drop(columns=['question_bert', 'answer_bert'], inplace=True)
         except:
