@@ -67,6 +67,10 @@ https://drive.google.com/open?id=1U3FRlbSDa0oNz5Mx9PvJad4QagvQh4TI
 BERT+FFNN Crossentropy checkpoint
 https://drive.google.com/drive/folders/1zMC1Nm8wChJoVY4PDMnjzl7LSsQmhy_h?usp=sharing
 
+5-1-19
+Ryan's updated HealthTap data
+https://drive.google.com/open?id=1f1f9Caf-xZ4d-FCOD70zUmY7r-1qPp4G
+
 TODO:
 
 1. ~~Imbalance label problem~~
