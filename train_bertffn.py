@@ -25,7 +25,8 @@ def train_all(args):
         shuffle_buffer=500000, dynamic_padding=True, max_seq_length=args.max_seq_len)
     eval_d = create_dataset_for_bert(
         args.data_path, tokenizer=tokenizer, batch_size=args.batch_size,
-        mode='eval', dynamic_padding=False, max_seq_length=args.max_seq_len)
+        mode='eval', dynamic_padding=True, max_seq_length=args.max_seq_len,
+        bucket_batch_sizes=[64, 64, 64])
 
     medical_qa_model = MedicalQAModelwithBert(
         config_file=os.path.join(
@@ -39,9 +40,10 @@ def train_all(args):
     loss_metric = tf.keras.metrics.Mean()
 
     medical_qa_model.fit(d, epochs=epochs)
-    medical_qa_model.evaluate(eval_d)
     medical_qa_model.summary()
     medical_qa_model.save_weights(args.model_path)
+    medical_qa_model.evaluate(eval_d)
+
     # K.set_learning_phase(0)
     # q_embedding, a_embedding = tf.unstack(
     #     medical_qa_model(next(iter(eval_d))[0]), axis=1)

@@ -244,29 +244,35 @@ def create_generator_for_bert(
         # full_file_path = os.path.join(data_dir, file_name)
         if not os.path.exists(full_file_path):
             raise FileNotFoundError("File %s not found" % full_file_path)
-        for df in pd.read_csv(full_file_path, chunksize=10**5):
 
-            # so train test split
-            if mode == 'train':
-                df, _ = train_test_split(df, test_size=0.2, random_state=SEED)
-            else:
-                _, df = train_test_split(df, test_size=0.2, random_state=SEED)
+        if os.path.basename(full_file_path) == 'healthtap_data_cleaned.csv':
+            df = pd.read_csv(full_file_path, lineterminator='\n')
+            df.columns = ['index', 'question', 'answer']
+            df.drop(columns=['index'], inplace=True)
+        else:
+            df = pd.read_csv(full_file_path)
 
-            for _, row in df.iterrows():
-                try:
-                    q_features = convert_text_to_feature(
-                        row.question, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
-                except ValueError:
-                    continue
-                # no labels
-                q_features = q_features[:3]
-                try:
-                    a_features = convert_text_to_feature(
-                        row.answer, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
-                except ValueError:
-                    continue
-                a_features = a_features[:3]
-                yield (q_features+a_features, 1)
+        # so train test split
+        if mode == 'train':
+            df, _ = train_test_split(df, test_size=0.2, random_state=SEED)
+        else:
+            _, df = train_test_split(df, test_size=0.2, random_state=SEED)
+
+        for _, row in df.iterrows():
+            try:
+                q_features = convert_text_to_feature(
+                    row.question, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
+            except ValueError:
+                continue
+            # no labels
+            q_features = q_features[:3]
+            try:
+                a_features = convert_text_to_feature(
+                    row.answer, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
+            except ValueError:
+                continue
+            a_features = a_features[:3]
+            yield (q_features+a_features, 1)
 
 
 def _qa_ele_to_length(features, labels):
