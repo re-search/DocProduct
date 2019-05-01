@@ -19,7 +19,7 @@ except:
     pass
 
 from gpt2.src import model, sample, encoder
-from gpt2.src.load_dataset import load_dataset, Sampler
+from gpt2.src.mqa_load_dataset import load_dataset, Sampler
 from gpt2.src.accumulate import AccumulatingOptimizer
 
 
@@ -213,7 +213,14 @@ def finetune(sess,
             fp.write('\n'.join(all_text))
 
     def sample_batch():
-        return [data_sampler.sample(1024) for _ in range(batch_size)]
+        sampled_batch = [data_sampler.sample(1024) for _ in range(batch_size)]
+        if batch_size > 1:
+            pad_to = max([len(v) for v in sampled_batch])
+            sampled_batch = [
+                np.pad(v, [0,pad_to-len(v)], 'constant', constant_values=63) 
+                for v in sampled_batch
+            ]
+        return sampled_batch
 
     avg_loss = (0.0, 0.0)
     start_time = time.time()
