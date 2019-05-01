@@ -27,6 +27,9 @@ def main(args):
 
     question_index = faiss.IndexFlatIP(question_bert.shape[-1])
 
+    faiss.normalize_L2(question_bert)
+    faiss.normalize_L2(answer_bert)
+
     answer_index.add(answer_bert)
     question_index.add(question_bert)
 
