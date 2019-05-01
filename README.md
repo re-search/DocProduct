@@ -72,6 +72,12 @@ Ryan's updated HealthTap data
 
 https://drive.google.com/open?id=1f1f9Caf-xZ4d-FCOD70zUmY7r-1qPp4G
 
+5-2-19
+
+here's the updated healthtap data with the BERT embeds
+https://drive.google.com/open?id=1JDp99yeYYRD-Xjk_NhJY_womBQZmOX0z
+it's a 5 gb csv file
+
 TODO:
 
 1. ~~Imbalance label problem~~
