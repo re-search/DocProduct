@@ -47,7 +47,7 @@ def main(args):
     qa_df['Q_FFNN_embeds'] = np.squeeze(q_embedding).tolist()
     qa_df['A_FFNN_embeds'] = np.squeeze(a_embedding).tolist()
     os.makedirs(os.path.dirname(args.output_path), exist_ok=True)
-    qa_df.to_csv(args.output_path, index=False)
+    qa_df.to_hdf(args.output_path, key='qa_embedding', mode='w')
 
     # test = pd.read_csv(args.output_path, index_col=0)
     # print(test.head())
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     parser.add_argument('--data_path', type=str,
                         default='data/mqa_csv', help='path of input csv files')
     parser.add_argument('--output_path', type=str,
-                        default='qa_embeddings/ffn_crossentropy.csv')
+                        default='qa_embeddings/ffn_crossentropy.h5')
     parser.add_argument('--pretrained_path', type=str,
                         default='models/pubmed_pmc_470k/', help='pretrained model path')
 

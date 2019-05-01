@@ -11,7 +11,7 @@ from math import ceil
 
 
 def main(args):
-    qa = pd.read_csv(args.data_path)
+    qa = pd.read_hdf(args.data_path, key='qa_embedding')
 
     with Pool(cpu_count()) as p:
         question_bert = p.map(eval, qa["Q_FFNN_embeds"].tolist())
@@ -77,7 +77,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_path', type=str,
-                        default='qa_embeddings/ffn_crossentropy.csv', help='path of input csv files')
+                        default='qa_embeddings/ffn_crossentropy.h5', help='path of input csv files')
     parser.add_argument('--output_path', type=str,
                         default='gpt2_train_data/')
     parser.add_argument('--number_samples', type=int,
