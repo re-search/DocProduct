@@ -43,12 +43,20 @@ class QAEmbed(object):
         super(QAEmbed, self).__init__()
         config_file = os.path.join(pretrained_path, 'bert_config.json')
         checkpoint_file = os.path.join(pretrained_path, 'biobert_model.ckpt')
+
+        # the ffn model takes 2nd to last layer
+        if bert_ffn_weight_file is None:
+            layer_ind = -2
+        else:
+            layer_ind = -1
+
         self.model = MedicalQAModelwithBert(
             hidden_size=768,
             dropout=0.2,
             residual=True,
             config_file=config_file,
-            checkpoint_file=checkpoint_file)
+            checkpoint_file=checkpoint_file,
+            layer_ind=layer_ind)
         self.batch_size = batch_size
         self.tokenizer = FullTokenizer(
             os.path.join(pretrained_path, 'vocab.txt'))
