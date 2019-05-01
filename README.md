@@ -69,6 +69,7 @@ https://drive.google.com/drive/folders/1zMC1Nm8wChJoVY4PDMnjzl7LSsQmhy_h?usp=sha
 
 5-1-19
 Ryan's updated HealthTap data
+
 https://drive.google.com/open?id=1f1f9Caf-xZ4d-FCOD70zUmY7r-1qPp4G
 
 TODO:
