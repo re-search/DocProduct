@@ -11,7 +11,8 @@ from math import ceil
 
 
 def main(args):
-    qa = pd.read_hdf(args.data_path, key='qa_embedding')
+    # qa = pd.read_hdf(args.data_path, key='qa_embedding')
+    qa = pd.read_csv(args.data_path)
 
     with Pool(cpu_count()) as p:
         question_bert = p.map(eval, qa["Q_FFNN_embeds"].tolist())

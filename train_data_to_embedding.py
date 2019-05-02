@@ -52,8 +52,8 @@ def main(args):
     qa_df['Q_FFNN_embeds'] = np.squeeze(q_embedding).tolist()
     qa_df['A_FFNN_embeds'] = np.squeeze(a_embedding).tolist()
     os.makedirs(os.path.dirname(args.output_path), exist_ok=True)
-    qa_df.to_hdf(args.output_path, key='qa_embedding', mode='w')
-
+    # qa_df.to_hdf(args.output_path, key='qa_embedding', mode='w')
+    qa_df.to_csv(args.output_path)
     # test = pd.read_csv(args.output_path, index_col=0)
     # print(test.head())
 
