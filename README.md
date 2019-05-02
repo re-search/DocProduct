@@ -73,10 +73,13 @@ Ryan's updated HealthTap data
 https://drive.google.com/open?id=1f1f9Caf-xZ4d-FCOD70zUmY7r-1qPp4G
 
 5-2-19
-
 here's the updated healthtap data with the BERT embeds
 https://drive.google.com/open?id=1JDp99yeYYRD-Xjk_NhJY_womBQZmOX0z
 it's a 5 gb csv file
+
+5-2-19
+FAISS top-K text data for GPT-2 training, processed from 4-27-19 FFNN embeds
+https://drive.google.com/open?id=13IxjpUohvfscSWUEKZwSY7Lbl6-pqun2
 
 TODO:
 
