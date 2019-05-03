@@ -226,6 +226,14 @@ def finetune(sess,
 
     def sample_batch():
         sampled_batch = [data_sampler.sample(1024) for _ in range(batch_size)]
+        batch_len = min(1024, max([len(v) for v in sampled_batch]))
+        batch_masks = np.zeros([batch_size, batch_len])
+        for i, v in enumerate(sampled_batch):
+            if len(v) > batch_len:
+                sampled_batch[i] = v[-batch_len:]
+            mask_start = len(v) - list(v[::-1]).index(63) + 1
+            #batch_masks[i,mask_start:len(v)] += 1 # without padding after endoftext
+            batch_masks[i,mask_start:] += 1 # with padding after endoftext
         if batch_size > 1:
             pad_to = max([len(v) for v in sampled_batch])
             sampled_batch = [
