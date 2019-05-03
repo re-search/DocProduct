@@ -19,9 +19,11 @@ setup(
     author='MedicalQATeam',
     author_email='SanGupta.ML@gmail.com',
     description='BERT in TF2.0 for Medical QA info retrieval + GPT2 for answer generation',
-    long_description=long_description,
+    long_description='None so far',
     long_description_content_type='text/markdown',
-    install_requires=install_requires,
+    python_requires = '>=3.6.0'
+    packages=['MedicalQA'],   #Not sure if this is right
+    install_requires=['numpy', 'matplotlib', 'tensorflow', 'Keras', 'keras-pos-embd==0.9.0', 'keras-transformer==0.21.0'] #Need help with this too
     classifiers=(
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.6",
@@ -29,3 +31,7 @@ setup(
         "Operating System :: OS Independent",
     ),
 )
+
+
+
+
