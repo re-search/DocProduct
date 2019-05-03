@@ -111,10 +111,22 @@ def finetune(sess,
             "Can't get samples longer than window size: %s" % hparams.n_ctx)
 
     context = tf.placeholder(tf.int32, [batch_size, None])
+    loss_mask = tf.placeholder(tf.int8, [batch_size, None])
     output = model.model(hparams=hparams, X=context)
+    loss_mask_float = tf.cast(loss_mask, tf.float32)
+    
+    # with loss mask
+    loss = tf.reduce_sum(
+        loss_mask_float[:, :-1] * tf.nn.sparse_softmax_cross_entropy_with_logits(
+            labels=context[:, 1:], logits=output['logits'][:, :-1])) / tf.reduce_sum(
+                loss_mask_float[:, :-1]
+            )
+    '''
+    # without loss mask
     loss = tf.reduce_mean(
         tf.nn.sparse_softmax_cross_entropy_with_logits(
             labels=context[:, 1:], logits=output['logits'][:, :-1]))
+    '''
 
     tf_sample = sample.sample_sequence(
         hparams=hparams,
