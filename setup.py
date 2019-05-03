@@ -21,9 +21,9 @@ setup(
     description='BERT in TF2.0 for Medical QA info retrieval + GPT2 for answer generation',
     long_description='None so far',
     long_description_content_type='text/markdown',
-    python_requires = '>=3.6.0'
+    python_requires = '>=3.6.0',
     packages=setuptools.find_packages(),   
-    install_requires=['numpy', 'matplotlib', 'tensorflow', 'Keras', 'keras-pos-embd==0.9.0', 'keras-transformer==0.21.0', 'tqdm', 'csv', 'faiss', 'sklearn', 'urllib', 're', 'pycurl', 'hashlib', 'os', 'collections', 'time', 'multiprocessing', 'unicodedata', 'six', 'argparse', 'glob', 'math'] 
+    install_requires=['numpy', 'matplotlib', 'tensorflow', 'Keras', 'keras-pos-embd==0.9.0', 'keras-transformer==0.21.0', 'tqdm', 'csv', 'faiss', 'sklearn', 'urllib', 're', 'pycurl', 'hashlib', 'os', 'collections', 'time', 'multiprocessing', 'unicodedata', 'six', 'argparse', 'glob', 'math'], 
     classifiers=(
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.6",
