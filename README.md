@@ -81,6 +81,10 @@ it's a 5 gb csv file
 FAISS top-K text data for GPT-2 training, processed from 4-27-19 FFNN embeds
 https://drive.google.com/open?id=13IxjpUohvfscSWUEKZwSY7Lbl6-pqun2
 
+5-2-19
+Updated consolodated data, just the pure text, in CSV format
+https://drive.google.com/folderview?id=1PymmjbrgfOIs-HJ7oBmjZKH8j4rYsGZj
+
 TODO:
 
 1. ~~Imbalance label problem~~
