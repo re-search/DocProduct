@@ -235,12 +235,15 @@ def finetune(sess,
             #batch_masks[i,mask_start:len(v)] += 1 # without padding after endoftext
             batch_masks[i,mask_start:] += 1 # with padding after endoftext
         if batch_size > 1:
-            pad_to = max([len(v) for v in sampled_batch])
-            sampled_batch = [
-                np.pad(v, [0,pad_to-len(v)], 'constant', constant_values=63) 
+            sampled_batch = np.asarray([
+                np.pad(v, [0,batch_len-len(v)], 'constant', constant_values=63) 
                 for v in sampled_batch
-            ]
-        return sampled_batch
+            ], dtype=np.int32)
+        '''
+        if batch_len > 1024:
+            sampled_batch = sampled_batch[:,-1024:]
+        '''
+        return sampled_batch, batch_masks
 
     avg_loss = (0.0, 0.0)
     start_time = time.time()
@@ -258,10 +261,12 @@ def finetune(sess,
             if accumulate_gradients > 1:
                 sess.run(opt_reset)
                 for _ in range(accumulate_gradients):
+                    context_t, loss_mask_t = sample_batch()
                     sess.run(
-                        opt_compute, feed_dict={context: sample_batch()})
+                        opt_compute, feed_dict={context: context_t, loss_mask: loss_mask_t})
                 (v_loss, v_summary) = sess.run((opt_apply, summary_loss))
             else:
+                raise NotImplementedError()
                 (_, v_loss, v_summary) = sess.run(
                     (opt_apply, loss, summary_loss),
                     feed_dict={context: sample_batch()})
