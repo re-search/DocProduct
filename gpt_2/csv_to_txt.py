@@ -9,7 +9,7 @@ import csv
 path = 'data/GPT2_data_FFNN.csv'
 out_path = 'data/GPT2_data_FFNN.txt'
 
-op = open(out_path, 'w')
+op = open(out_path, 'w', encoding='utf8')
 
 paths = []
 if os.path.isfile(path):
@@ -48,11 +48,13 @@ for path in paths:
     '''
     with open(path, 'r', encoding='utf8', errors='ignore') as fp:
         csv_reader = csv.reader(fp)
-        for j, sample in enumerate(tqdm.tqdm(list(csv_reader))):
+        for j, sample in enumerate(tqdm.tqdm(list(csv_reader)[1:])):
             line = '`QUESTION: %s `ANSWER: %s' % (sample[0], sample[1])
             for i in range(len(sample), 2, -2):
                 line = '`QUESTION: %s `ANSWER: %s ' % (sample[i-2], sample[i-1]) + line
-            output.write(line + '\n')
+            line = line.replace('\n', '')
+            #if j == 1: print(line)
+            op.write(line + '\n')
     '''
     if raw_text:
         tokens = np.stack(enc.encode(raw_text))
