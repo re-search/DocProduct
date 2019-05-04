@@ -11,7 +11,7 @@ if not os.path.exists('models/117M'):
     gpt2.download_gpt2()
 
 sess = gpt2.start_tf_sess()
-gpt2.finetune(sess, csv_path, steps=10, batch_size=1)
+gpt2.finetune(sess, csv_path, steps=100000, batch_size=1)
 
 #gpt2.load_gpt2(sess)
 gpt2.generate(sess, prefix="`QUESTION: What is the best treatment for the flu? `ANSWER:")
