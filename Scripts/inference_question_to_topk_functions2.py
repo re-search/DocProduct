@@ -25,7 +25,7 @@ class createEmbeds:
         faiss_topk = FaissTopK(self.embedding_file)
         return faiss_topk
 
-    doc = RetreiveQADoc(get_qa_embed(), get_faiss_topk())
+    doc = RetreiveQADoc(get_qa_embed(self), get_faiss_topk(self))
 
 #     print(doc.predict('i have a headache.',
 #                       search_by='answer', topk=5, answer_only=True))
