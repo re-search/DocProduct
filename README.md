@@ -85,6 +85,9 @@ https://drive.google.com/open?id=13IxjpUohvfscSWUEKZwSY7Lbl6-pqun2
 Updated consolodated data, just the pure text, in CSV format
 https://drive.google.com/folderview?id=1PymmjbrgfOIs-HJ7oBmjZKH8j4rYsGZj
 
+5-2-19
+Final FFNN checkpoint https://drive.google.com/open?id=10K6TiolxsFNZWfSyelzcJ7jm-TG5B0Nl
+
 TODO:
 
 1. ~~Imbalance label problem~~
