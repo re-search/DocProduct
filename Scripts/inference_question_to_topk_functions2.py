@@ -14,12 +14,12 @@ class createEmbeds:
             self.embedding_file = embedding_file
 
     qa_embed = QAEmbed(
-        pretrained_path=pretrained_path,
-        ffn_weight_file=ffn_weight_file,
-        bert_ffn_weight_file=bert_ffn_weight_file
+        pretrained_path=self.pretrained_path,
+        ffn_weight_file=self.ffn_weight_file,
+        bert_ffn_weight_file=self.bert_ffn_weight_file
     )
 
-    faiss_topk = FaissTopK(embedding_file)
+    faiss_topk = FaissTopK(self.embedding_file)
 
     doc = RetreiveQADoc(qa_embed, faiss_topk)
 
