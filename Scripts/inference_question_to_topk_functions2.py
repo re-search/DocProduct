@@ -6,12 +6,12 @@ from Scripts.predictor_functions import QAEmbed, FaissTopK, RetreiveQADoc
 #embedding_file = 'qa_embeddings/bertffn_crossentropy.csv'
 
 class createEmbeds:
-    def __init__(self, pretrained_path = 'pubmed_pmc_470k/', ffn_weight_file = None, \
+    def __init__(self, pretrained_path = None, ffn_weight_file = None, \
         bert_ffn_weight_file = 'models/bertffn_crossentropy/bertffn',  embedding_file = 'qa_embeddings/bertffn_crossentropy.csv'):
-            pretrained_path = pretrained_path
-            ffn_weight_file = ffn_weight_file
-            bert_ffn_weight_file = bert_ffn_weight_file
-            embedding_file = embedding_file
+            self.pretrained_path = pretrained_path
+            self.ffn_weight_file = ffn_weight_file
+            self.bert_ffn_weight_file = bert_ffn_weight_file
+            self.embedding_file = embedding_file
 
     qa_embed = QAEmbed(
         pretrained_path=pretrained_path,
