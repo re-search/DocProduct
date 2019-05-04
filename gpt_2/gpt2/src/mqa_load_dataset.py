@@ -4,6 +4,7 @@ import os
 import random
 import tensorflow.compat.v1 as tf
 import tqdm
+import csv
 
 
 def load_dataset(enc, path, combine):
@@ -24,7 +25,7 @@ def load_dataset(enc, path, combine):
 
     token_chunks = []
     raw_text = ''
-    for path in tqdm.tqdm(paths):
+    for path in paths:
         '''
         if path.endswith('.npz'):
             # Pre-encoded
@@ -43,8 +44,11 @@ def load_dataset(enc, path, combine):
                 raw_text += '<|endoftext|>'
         '''
         with open(path, 'r', encoding='utf8', errors='ignore') as fp:
-            for line in fp.readlines():
-                line = line.rstrip() + '<|endoftext|>'
+            csv_reader = csv.reader(fp)
+            for j, sample in enumerate(tqdm.tqdm(csv_reader)):
+                line = '`QUESTION: %s `ANSWER: %s' % (sample[0], sample[1])
+                for i in range(len(sample), 2, -2):
+                    line = '`QUESTION: %s `ANSWER: %s ' % (sample[i-2], sample[i-1]) + line
                 tokens = np.stack(enc.encode(line))
                 token_chunks.append(tokens)
     '''
