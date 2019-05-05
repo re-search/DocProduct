@@ -13,6 +13,7 @@ from Scripts.dataset import convert_text_to_feature
 from Scripts.models import MedicalQAModelwithBert
 from Scripts.tokenization import FullTokenizer
 from keras_bert.loader import checkpoint_loader
+from gpt_2 import gpt2
 
 
 def load_weight(model, bert_ffn_weight_file=None, ffn_weight_file=None):
@@ -40,7 +41,9 @@ class QAEmbed(object):
             max_seq_length=256,
             ffn_weight_file=None,
             bert_ffn_weight_file=None,
-            config_file=None):
+            config_file=None,
+            with_question=True,
+            with_answer=True):
         super(QAEmbed, self).__init__()
         if pretrained_path is not None:
             config_file = os.path.join(pretrained_path, 'bert_config.json')
@@ -71,7 +74,9 @@ class QAEmbed(object):
         self.max_seq_length = max_seq_length
 
         # build mode in order to load
-        self.predict(questions='fake', answers='fake')
+        question = 'fake' if with_question else None
+        answer = 'fake' if with_answer else None
+        self.predict(questions=question, answers=answer)
         load_weight(self.model, bert_ffn_weight_file, ffn_weight_file)
 
     def _type_check(self, inputs):
@@ -144,7 +149,7 @@ class FaissTopK(object):
     def __init__(self, embedding_file):
         super(FaissTopK, self).__init__()
         self.embedding_file = embedding_file
-        self.df = pd.read_csv(self.embedding_file)
+        self.df = pd.read_pickle(self.embedding_file)
         self._get_faiss_index()
         self.df.drop(columns=["Q_FFNN_embeds", "A_FFNN_embeds"], inplace=True)
 
@@ -181,11 +186,57 @@ class FaissTopK(object):
 
 
 class RetreiveQADoc(object):
-    def __init__(self, qa_embed: QAEmbed, faiss_topk: FaissTopK):
+    def __init__(self,
+                 pretrained_path=None,
+                 ffn_weight_file=None,
+                 bert_ffn_weight_file='models/bertffn_crossentropy/bertffn',
+                 embedding_file='qa_embeddings/bertffn_crossentropy.pkl',
+                 config_file='pubmed_pmc_470k/bert_config.json'
+                 ):
         super(RetreiveQADoc, self).__init__()
-        self.qa_embed = qa_embed
-        self.faiss_topk = faiss_topk
+        self.qa_embed = QAEmbed(
+            pretrained_path=pretrained_path,
+            ffn_weight_file=ffn_weight_file,
+            bert_ffn_weight_file=bert_ffn_weight_file
+        )
+        self.faiss_topk = FaissTopK(embedding_file)
 
     def predict(self, questions, search_by='answer', topk=5, answer_only=True):
         embedding = self.qa_embed.predict(questions=questions)
         return self.faiss_topk.predict(embedding, search_by, topk, answer_only)
+
+
+class GenerateQADoc(object):
+    def __init__(self,
+                 pretrained_path=None,
+                 ffn_weight_file=None,
+                 bert_ffn_weight_file='models/bertffn_crossentropy/bertffn',
+                 embedding_file='qa_embeddings/bertffn_crossentropy.pkl',
+                 config_file='pubmed_pmc_470k/bert_config.json'
+                 ):
+        super(GenerateQADoc, self).__init__()
+        tf.compat.v1.disable_v2_behavior()
+        self.qa_embed = QAEmbed(
+            pretrained_path=pretrained_path,
+            ffn_weight_file=ffn_weight_file,
+            bert_ffn_weight_file=bert_ffn_weight_file,
+            with_answer=False
+        )
+        self.faiss_topk = FaissTopK(embedding_file)
+        self.sess = gpt2.start_tf_sess()
+        self.gpt2 = gpt2.load_gpt2(self.sess)
+
+    def _get_gpt2_inputs(self, question, answers):
+        return "`QUESTION: What is the best treatment for the flu? `ANSWER:"
+
+    def predict(self, questions, search_by='answer', topk=5, answer_only=True):
+        embedding = self.qa_embed.predict(questions=questions)
+        if answer_only:
+            topk_answer = self.faiss_topk.predict(
+                embedding, search_by, topk, answer_only)
+        else:
+            topk_question, topk_answer = self.faiss_topk.predict(
+                embedding, search_by, topk, answer_only)
+
+        gpt2_input = self._get_gpt2_inputs(questions, topk_answer)
+        return self.gpt2.generate(self.sess, prefix=gpt2_input)
