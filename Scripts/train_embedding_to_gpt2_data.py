@@ -12,17 +12,18 @@ from math import ceil
 
 def train_embedding_to_gpt2_data(
     data_path='qa_embeddings/bertffn_crossentropy.pkl',
-    output_path='gpt2_train_data/',
+    output_path='gpt2_train_data/bertffn_crossentropy.csv',
     number_samples=10,
     batch_size=512
 ):
     # qa = pd.read_hdf(args.data_path, key='qa_embedding')
     qa = pd.read_pickle(data_path)
 
-    with Pool(cpu_count()) as p:
-        question_bert = p.map(eval, qa["Q_FFNN_embeds"].tolist())
-        answer_bert = p.map(eval, qa["A_FFNN_embeds"].tolist())
-
+    # with Pool(cpu_count()) as p:
+    #     question_bert = p.map(eval, qa["Q_FFNN_embeds"].tolist())
+    #     answer_bert = p.map(eval, qa["A_FFNN_embeds"].tolist())
+    question_bert = qa["Q_FFNN_embeds"].tolist()
+    answer_bert = qa["A_FFNN_embeds"].tolist()
     question_bert = np.array(question_bert)
     answer_bert = np.array(answer_bert)
 
@@ -39,9 +40,7 @@ def train_embedding_to_gpt2_data(
     answer_index.add(answer_bert)
     question_index.add(question_bert)
 
-    os.makedirs(output_path, exist_ok=True)
-    output_path = os.path.join(
-        output_path, os.path.basename(data_path))
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     output = open(output_path, "w")
     writer = csv.writer(output)
