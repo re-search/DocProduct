@@ -127,3 +127,4 @@ data/
 **/.DS_Store
 pubmed_pmc_470k/
 gpt_2/output.txt
+models/
