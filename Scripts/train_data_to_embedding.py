@@ -56,7 +56,7 @@ def train_data_to_embedding(model_path='models/bertffn_crossentropy/bertffn',
     qa_df['A_FFNN_embeds'] = np.squeeze(a_embedding).tolist()
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     # qa_df.to_hdf(output_path, key='qa_embedding', mode='w')
-    qa_df.to_csv(output_path)
+    qa_df.to_pickle(output_path)
     # test = pd.read_csv(output_path, index_col=0)
     # print(test.head())
 
