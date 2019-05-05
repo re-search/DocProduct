@@ -39,14 +39,17 @@ class QAEmbed(object):
             batch_size=128,
             max_seq_length=256,
             ffn_weight_file=None,
-            bert_ffn_weight_file=None):
+            bert_ffn_weight_file=None,
+            config_file=None):
         super(QAEmbed, self).__init__()
         if pretrained_path is not None:
             config_file = os.path.join(pretrained_path, 'bert_config.json')
             checkpoint_file = os.path.join(
                 pretrained_path, 'biobert_model.ckpt')
+        elif config_file is None:
+            raise ValueError(
+                'You must provide either a pretrained checkpoint path or config file path')
         else:
-            config_file = None
             checkpoint_file = None
 
         # the ffn model takes 2nd to last layer

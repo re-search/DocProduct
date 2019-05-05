@@ -71,10 +71,10 @@ def train_embedding_to_gpt2_data(
             start_ind, end_ind, int(number_samples/2))
         for a_index, q_index in zip(a_batch_index, q_batch_index):
             rowfill = []
-            rowfill.append(qa["question"][k])
-            rowfill.append(qa["answer"][k])
-            aaa = qa.loc[list(a_index), :]
-            qqq = qa.loc[list(q_index), :]
+            rowfill.append(qa["question"].iloc[k])
+            rowfill.append(qa["answer"].iloc[k])
+            aaa = qa.iloc[list(a_index), :]
+            qqq = qa.iloc[list(q_index), :]
             aaaa = [*sum(zip(list(aaa['question']), list(aaa['answer'])), ())]
             qqqq = [*sum(zip(list(qqq['question']), list(qqq['answer'])), ())]
             finalfill = aaaa+qqqq

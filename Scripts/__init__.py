@@ -2,6 +2,7 @@ from Scripts.train_data_to_embedding import train_data_to_embedding
 from Scripts.train_embedding_to_gpt2_data import train_embedding_to_gpt2_data
 from Scripts.train_ffn import train_ffn
 from Scripts.train_bertffn import train_bertffn
+from Scripts.train_gpt2 import train_gpt2
 from Scripts import tokenization
 from Scripts import loss
 from Scripts import metrics
