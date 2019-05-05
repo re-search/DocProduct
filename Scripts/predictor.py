@@ -41,8 +41,13 @@ class QAEmbed(object):
             ffn_weight_file=None,
             bert_ffn_weight_file=None):
         super(QAEmbed, self).__init__()
-        config_file = os.path.join(pretrained_path, 'bert_config.json')
-        checkpoint_file = os.path.join(pretrained_path, 'biobert_model.ckpt')
+        if pretrained_path is not None:
+            config_file = os.path.join(pretrained_path, 'bert_config.json')
+            checkpoint_file = os.path.join(
+                pretrained_path, 'biobert_model.ckpt')
+        else:
+            config_file = None
+            checkpoint_file = None
 
         # the ffn model takes 2nd to last layer
         if bert_ffn_weight_file is None:

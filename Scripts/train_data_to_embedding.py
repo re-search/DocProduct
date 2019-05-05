@@ -27,22 +27,25 @@ def read_all(data_path):
     return pd.concat(df_list, axis=0)
 
 
-def main(args):
-    if os.path.basename(args.model_path) == 'ffn':
-        ffn_weight_file = args.model_path
+def train_data_to_embedding(model_path='models/bertffn_crossentropy/bertffn',
+                            data_path='data/mqa_csv',
+                            output_path='qa_embeddings/bertffn_crossentropy.pkl',
+                            pretrained_path='pubmed_pmc_470k/'):
+    if os.path.basename(model_path) == 'ffn':
+        ffn_weight_file = model_path
     else:
         ffn_weight_file = None
 
-    if os.path.basename(args.model_path) == 'bertffn':
-        bert_ffn_weight_file = args.model_path
+    if os.path.basename(model_path) == 'bertffn':
+        bert_ffn_weight_file = model_path
     else:
         bert_ffn_weight_file = None
     embeder = QAEmbed(
-        pretrained_path=args.pretrained_path,
+        pretrained_path=pretrained_path,
         ffn_weight_file=ffn_weight_file,
         bert_ffn_weight_file=bert_ffn_weight_file
     )
-    qa_df = read_all(args.data_path)
+    qa_df = read_all(data_path)
     qa_df.dropna(inplace=True)
     qa_vectors = embeder.predict(
         questions=qa_df.question.tolist(),
@@ -51,23 +54,13 @@ def main(args):
     q_embedding, a_embedding = np.split(qa_vectors, 2, axis=1)
     qa_df['Q_FFNN_embeds'] = np.squeeze(q_embedding).tolist()
     qa_df['A_FFNN_embeds'] = np.squeeze(a_embedding).tolist()
-    os.makedirs(os.path.dirname(args.output_path), exist_ok=True)
-    # qa_df.to_hdf(args.output_path, key='qa_embedding', mode='w')
-    qa_df.to_csv(args.output_path)
-    # test = pd.read_csv(args.output_path, index_col=0)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    # qa_df.to_hdf(output_path, key='qa_embedding', mode='w')
+    qa_df.to_csv(output_path)
+    # test = pd.read_csv(output_path, index_col=0)
     # print(test.head())
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--model_path', type=str,
-                        default='models/ffn_crossentropy/ffn', help='path for trained models')
-    parser.add_argument('--data_path', type=str,
-                        default='data/mqa_csv', help='path of input csv files')
-    parser.add_argument('--output_path', type=str,
-                        default='qa_embeddings/ffn_crossentropy.h5')
-    parser.add_argument('--pretrained_path', type=str,
-                        default='models/pubmed_pmc_470k/', help='pretrained model path')
 
-    args = parser.parse_args()
-    main(args)
+    train_data_to_embedding()

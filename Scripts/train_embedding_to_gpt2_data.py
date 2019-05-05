@@ -10,9 +10,14 @@ from multiprocessing import Pool, cpu_count
 from math import ceil
 
 
-def main(args):
+def train_embedding_to_gpt2_data(
+    data_path='qa_embeddings/bertffn_crossentropy.pkl',
+    output_path='gpt2_train_data/',
+    number_samples=10,
+    batch_size=512
+):
     # qa = pd.read_hdf(args.data_path, key='qa_embedding')
-    qa = pd.read_csv(args.data_path)
+    qa = pd.read_pickle(data_path)
 
     with Pool(cpu_count()) as p:
         question_bert = p.map(eval, qa["Q_FFNN_embeds"].tolist())
@@ -34,15 +39,15 @@ def main(args):
     answer_index.add(answer_bert)
     question_index.add(question_bert)
 
-    os.makedirs(args.output_path, exist_ok=True)
+    os.makedirs(output_path, exist_ok=True)
     output_path = os.path.join(
-        args.output_path, os.path.basename(args.data_path))
+        output_path, os.path.basename(data_path))
 
     output = open(output_path, "w")
     writer = csv.writer(output)
 
     firstrow = ['question', 'answer']
-    for ii in range(0, args.number_samples):
+    for ii in range(0, number_samples):
         firstrow.append('question'+str(ii))
         firstrow.append('answer'+str(ii))
 
@@ -55,15 +60,15 @@ def main(args):
             question_bert[start_ind:end_ind].astype('float32'), topk)
         return I1, I2
 
-    steps = ceil(qa.shape[0] / args.batch_size)
+    steps = ceil(qa.shape[0] / batch_size)
 
     # for k in tqdm(range(1000), mininterval=30, maxinterval=60):
-    for k in tqdm(range(0, qa.shape[0], args.batch_size), total=steps):
+    for k in tqdm(range(0, qa.shape[0], batch_size), total=steps):
         start_ind = k
-        end_ind = k+args.batch_size
+        end_ind = k+batch_size
 
         a_batch_index, q_batch_index = topKforGPT2(
-            start_ind, end_ind, int(args.number_samples/2))
+            start_ind, end_ind, int(number_samples/2))
         for a_index, q_index in zip(a_batch_index, q_batch_index):
             rowfill = []
             rowfill.append(qa["question"][k])
@@ -79,15 +84,5 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--data_path', type=str,
-                        default='qa_embeddings/ffn_crossentropy.h5', help='path of input csv files')
-    parser.add_argument('--output_path', type=str,
-                        default='gpt2_train_data/')
-    parser.add_argument('--number_samples', type=int,
-                        default=10)
-    parser.add_argument('--batch_size', type=int,
-                        default=512)
 
-    args = parser.parse_args()
-    main(args)
+    train_embedding_to_gpt2_data()
