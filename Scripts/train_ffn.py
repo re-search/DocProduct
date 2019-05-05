@@ -3,10 +3,10 @@ import argparse
 import tensorflow as tf
 import tensorflow.keras.backend as K
 
-from dataset import create_dataset_for_ffn
-from models import MedicalQAModel
-from loss import qa_pair_loss, qa_pair_cross_entropy_loss
-from metrics import qa_pair_batch_accuracy
+from src.dataset import create_dataset_for_ffn
+from src.models import MedicalQAModel
+from src.loss import qa_pair_loss, qa_pair_cross_entropy_loss
+from src.metrics import qa_pair_batch_accuracy
 
 DEVICE = ["/gpu:0", "/gpu:1"]
 

@@ -1,4 +1,4 @@
-from Scripts.predictor_functions import QAEmbed, FaissTopK, RetreiveQADoc
+from src.predictor import QAEmbed, FaissTopK, RetreiveQADoc
 
 pretrained_path = 'pubmed_pmc_470k/'
 ffn_weight_file = None

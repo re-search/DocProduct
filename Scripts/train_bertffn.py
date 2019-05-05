@@ -4,11 +4,11 @@ import os
 import tensorflow as tf
 import tensorflow.keras.backend as K
 
-from dataset import create_dataset_for_bert
-from models import MedicalQAModelwithBert
-from loss import qa_pair_loss, qa_pair_cross_entropy_loss
-from tokenization import FullTokenizer
-from metrics import qa_pair_batch_accuracy
+from src.dataset import create_dataset_for_bert
+from src.models import MedicalQAModelwithBert
+from src.loss import qa_pair_loss, qa_pair_cross_entropy_loss
+from src.tokenization import FullTokenizer
+from src.metrics import qa_pair_batch_accuracy
 
 tf.compat.v1.disable_eager_execution()
 
