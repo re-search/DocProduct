@@ -89,6 +89,9 @@ https://drive.google.com/folderview?id=1PymmjbrgfOIs-HJ7oBmjZKH8j4rYsGZj
 Final FFNN checkpoint https://drive.google.com/open?id=10K6TiolxsFNZWfSyelzcJ7jm-TG5B0Nl
 
 5-5-19
-Finetune model embedding:
+Finetune model embedding
 https://1drv.ms/u/s!An_n1-LB8-2dgfpRUPHMtWcK9qJrIQ
 
+5-5-19
+GPT2 training data
+https://1drv.ms/u/s!An_n1-LB8-2dgfpS66JqPuBXCRqQHQ
