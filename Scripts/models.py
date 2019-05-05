@@ -9,7 +9,9 @@ import tensorflow as tf
 import tensorflow.keras.backend as K
 from tensorflow import keras
 
-from keras_bert.loader import load_trained_model_from_checkpoint
+from Scripts.bert import build_model_from_config
+
+from keras_bert.loader import load_model_weights_from_checkpoint
 
 
 class FFN(tf.keras.layers.Layer):
@@ -69,11 +71,13 @@ class MedicalQAModelwithBert(tf.keras.Model):
             layer_ind=-1,
             name=''):
         super(MedicalQAModelwithBert, self).__init__(name=name)
-        self.biobert = load_trained_model_from_checkpoint(
+        self.biobert, config = build_model_from_config(
             config_file=config_file,
-            checkpoint_file=checkpoint_file,
             training=False,
             trainable=bert_trainable)
+        if checkpoint_file is not None:
+            load_model_weights_from_checkpoint(
+                model=self.biobert, config=config, checkpoint_file=checkpoint_file, training=False)
         self.q_ffn_layer = FFN(
             hidden_size=hidden_size,
             dropout=dropout,

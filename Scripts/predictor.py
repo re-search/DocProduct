@@ -9,9 +9,9 @@ import pandas as pd
 from multiprocessing import Pool, cpu_count
 import faiss
 
-from src.dataset import convert_text_to_feature
-from src.models import MedicalQAModelwithBert
-from src.tokenization import FullTokenizer
+from Scripts.dataset import convert_text_to_feature
+from Scripts.models import MedicalQAModelwithBert
+from Scripts.tokenization import FullTokenizer
 from keras_bert.loader import checkpoint_loader
 
 

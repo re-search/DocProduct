@@ -4,16 +4,15 @@ import os
 import tensorflow as tf
 import tensorflow.keras.backend as K
 
-from src.dataset import create_dataset_for_bert
-from src.models import MedicalQAModelwithBert
-from src.loss import qa_pair_loss, qa_pair_cross_entropy_loss
-from src.tokenization import FullTokenizer
-from src.metrics import qa_pair_batch_accuracy
-
-tf.compat.v1.disable_eager_execution()
+from Scripts.dataset import create_dataset_for_bert
+from Scripts.models import MedicalQAModelwithBert
+from Scripts.loss import qa_pair_loss, qa_pair_cross_entropy_loss
+from Scripts.tokenization import FullTokenizer
+from Scripts.metrics import qa_pair_batch_accuracy
 
 
-def train_all(args):
+def train_bertffn(args):
+    tf.compat.v1.disable_eager_execution()
     if args.loss == 'categorical_crossentropy':
         loss_fn = qa_pair_cross_entropy_loss
     else:
@@ -77,4 +76,4 @@ if __name__ == "__main__":
                         default='categorical_crossentropy')
 
     args = parser.parse_args()
-    train_all(args)
+    train_bertffn(args)
