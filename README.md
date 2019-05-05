@@ -88,12 +88,7 @@ https://drive.google.com/folderview?id=1PymmjbrgfOIs-HJ7oBmjZKH8j4rYsGZj
 5-2-19
 Final FFNN checkpoint https://drive.google.com/open?id=10K6TiolxsFNZWfSyelzcJ7jm-TG5B0Nl
 
-TODO:
+5-5-19
+Finetune model embedding:
+https://1drv.ms/u/s!An_n1-LB8-2dgfpRUPHMtWcK9qJrIQ
 
-1. ~~Imbalance label problem~~
-2. ~~Cross entropy loss not decreasing(Santosh)~~
-3. Evaluation and prediction, including Faiss(Jay/Santosh)
-4. Demo(Ryan)
-5. ~~BERT finetune model(Jay)~~
-6. GPT2(Alex)
-7. Migrate TF 1.0 components to 2.0
