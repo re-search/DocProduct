@@ -18,9 +18,9 @@ try:
 except:
     pass
 
-from gpt2.src import model, sample, encoder
-from gpt2.src.mqa_load_dataset import load_dataset, Sampler
-from gpt2.src.accumulate import AccumulatingOptimizer
+from gpt_2.gpt2.src import model, sample, encoder
+from gpt_2.gpt2.src.mqa_load_dataset import load_dataset, Sampler
+from gpt_2.gpt2.src.accumulate import AccumulatingOptimizer
 
 
 def download_gpt2(model_name='117M'):
@@ -238,11 +238,12 @@ def finetune(sess,
             if len(v) > batch_len:
                 sampled_batch[i] = v[-batch_len:]
             mask_start = len(v) - list(v[::-1]).index(63) + 1
-            #batch_masks[i,mask_start:len(v)] += 1 # without padding after endoftext
-            batch_masks[i,mask_start:] += 1 # with padding after endoftext
+            # batch_masks[i,mask_start:len(v)] += 1 # without padding after endoftext
+            batch_masks[i, mask_start:] += 1  # with padding after endoftext
         if batch_size > 1:
             sampled_batch = np.asarray([
-                np.pad(v, [0,batch_len-len(v)], 'constant', constant_values=63) 
+                np.pad(v, [0, batch_len-len(v)],
+                       'constant', constant_values=63)
                 for v in sampled_batch
             ], dtype=np.int32)
         '''
@@ -368,8 +369,8 @@ def generate(sess,
             out = sess.run(output)
         else:
             out = sess.run(output, feed_dict={
-                    context: batch_size * [context_tokens]
-                })
+                context: batch_size * [context_tokens]
+            })
         for i in range(batch_size):
             generated += 1
             gen_text = enc.decode(out[i])
@@ -447,21 +448,24 @@ def mount_gdrive():
 
 def is_mounted():
     """Checks if the Google Drive is mounted."""
-    assert os.path.isdir('/content/drive'), "You must mount first using mount_gdrive()"
+    assert os.path.isdir(
+        '/content/drive'), "You must mount first using mount_gdrive()"
 
 
 def copy_checkpoint_to_gdrive(checkpoint_folder=os.path.join('checkpoint', 'run1')):
     """Copies the checkpoint folder to a mounted Google Drive."""
     is_mounted()
 
-    shutil.copytree(checkpoint_folder, "/content/drive/My Drive/" + checkpoint_folder)
+    shutil.copytree(checkpoint_folder,
+                    "/content/drive/My Drive/" + checkpoint_folder)
 
 
 def copy_checkpoint_from_gdrive(checkpoint_folder=os.path.join('checkpoint', 'run1')):
     """Copies the checkpoint folder from a mounted Google Drive."""
     is_mounted()
 
-    shutil.copytree("/content/drive/My Drive/" + checkpoint_folder, checkpoint_folder)
+    shutil.copytree("/content/drive/My Drive/" +
+                    checkpoint_folder, checkpoint_folder)
 
 
 def copy_file_to_gdrive(file_path):
@@ -513,7 +517,7 @@ def cmd():
     )
 
     # Explicit arguments
-    
+
     parser.add_argument(
         '--mode', help='Mode for using the CLI (either "finetune" or "generate") [Required]', nargs='?')
     parser.add_argument(
@@ -574,7 +578,8 @@ def cmd():
     parser.add_argument('dataset', nargs='?')
 
     args = parser.parse_args()
-    assert args.mode in ['finetune', 'generate'], "Mode must be 'finetune' or 'generate'"
+    assert args.mode in ['finetune',
+                         'generate'], "Mode must be 'finetune' or 'generate'"
 
     if args.mode == 'finetune':
         assert args.dataset is not None, "You need to provide a dataset."
@@ -627,7 +632,7 @@ def cmd_generate(nfiles, nsamples, folder,
 
     for _ in trange(nfiles):
         gen_file = os.path.join(folder,
-                    'gpt2_gentext_{:%Y%m%d_%H%M%S}.txt'.format(datetime.utcnow()))
+                                'gpt2_gentext_{:%Y%m%d_%H%M%S}.txt'.format(datetime.utcnow()))
 
         generate_to_file(sess,
                          destination_path=gen_file,
@@ -639,4 +644,4 @@ def cmd_generate(nfiles, nsamples, folder,
                          truncate=truncate,
                          include_prefix=include_prefix,
                          sample_delim=sample_delim
-                        )
+                         )
