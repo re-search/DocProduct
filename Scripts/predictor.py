@@ -182,7 +182,7 @@ class FaissTopK(object):
             _, index = self.question_index.search(
                 q_embedding.astype('float32'), topk)
 
-        output_df = self.df.loc[index[0], :]
+        output_df = self.df.iloc[index[0], :]
         if answer_only:
             return output_df.answer.tolist()
         else:
@@ -207,7 +207,7 @@ class RetreiveQADoc(object):
     def predict(self, questions, search_by='answer', topk=5, answer_only=True):
         embedding = self.qa_embed.predict(questions=questions)
         return self.faiss_topk.predict(embedding, search_by, topk, answer_only)
-    
+
     def getEmbedding(self, questions, search_by='answer', topk=5, answer_only=True):
         embedding = self.qa_embed.predict(questions=questions)
         return embedding
@@ -253,4 +253,6 @@ class GenerateQADoc(object):
                 embedding, search_by, topk, answer_only)
 
         gpt2_input = self._get_gpt2_inputs(questions, topk_answer)
-        return self.gpt2.generate(self.sess, prefix=gpt2_input)
+        raw_output = self.gpt2.generate(self.sess, prefix=gpt2_input)
+        clipped_output = raw_output.split('`QUESTION')[1].split('`ANSWER:')[1]
+        return clipped_output

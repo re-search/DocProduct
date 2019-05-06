@@ -1,19 +1,16 @@
-from Scripts.predictor import QAEmbed, FaissTopK, RetreiveQADoc
+from Scripts.predictor import RetreiveQADoc
 
 pretrained_path = 'pubmed_pmc_470k/'
 ffn_weight_file = None
 bert_ffn_weight_file = 'models/bertffn_crossentropy/bertffn'
-embedding_file = 'qa_embeddings/bertffn_crossentropy.csv'
+embedding_file = 'qa_embeddings/bertffn_crossentropy.pkl'
 
-qa_embed = QAEmbed(
-    pretrained_path=pretrained_path,
-    ffn_weight_file=ffn_weight_file,
-    bert_ffn_weight_file=bert_ffn_weight_file
-)
+doc = RetreiveQADoc(pretrained_path=pretrained_path,
+                    ffn_weight_file=None,
+                    bert_ffn_weight_file=bert_ffn_weight_file,
+                    embedding_file=embedding_file)
 
-faiss_topk = FaissTopK(embedding_file)
-
-doc = RetreiveQADoc(qa_embed, faiss_topk)
-
-print(doc.predict('i have a headache.',
+print(doc.predict('my eyes hurts and i have a headache.',
                   search_by='answer', topk=5, answer_only=True))
+print(doc.predict('my eyes hurts and i have a headache.',
+                  search_by='question', topk=5, answer_only=True))
