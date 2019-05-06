@@ -3,3 +3,7 @@
 *.index
 *.ckpt
 checkpoint
+
+# Big models
+117M
+pubmed_pmc_470k
