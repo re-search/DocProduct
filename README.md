@@ -1,6 +1,8 @@
 # Doc Product: Medical Q&A with Deep Language Models
 
-<div style="text-align:center"><img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/806/964/datas/gallery.jpg" /></div>
+<p align="center">
+  <img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/806/964/datas/gallery.jpg">
+</p>
 
 ## Quality medical information is valuable to everyone, but it's not always readily available.
 
