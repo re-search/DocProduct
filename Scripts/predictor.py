@@ -156,9 +156,9 @@ class FaissTopK(object):
         self.df.drop(columns=["Q_FFNN_embeds", "A_FFNN_embeds"], inplace=True)
 
     def _get_faiss_index(self):
-        # with Pool(cpu_count()) as p:
-        #     question_bert = p.map(eval, self.df["Q_FFNN_embeds"].tolist())
-        #     answer_bert = p.map(eval, self.df["A_FFNN_embeds"].tolist())
+        with Pool(cpu_count()) as p:
+            question_bert = p.map(eval, self.df["Q_FFNN_embeds"].tolist())
+            answer_bert = p.map(eval, self.df["A_FFNN_embeds"].tolist())
         question_bert = self.df["Q_FFNN_embeds"].tolist()
         answer_bert = self.df["A_FFNN_embeds"].tolist()
         question_bert = np.array(question_bert)
