@@ -22,7 +22,7 @@ setup(
     long_description='None so far',
     long_description_content_taype='text/markdown',
     python_requires = '>=3.6.0',
-    install_requires=['numpy', 'matplotlib', 'tensorflow-gpu==2.0.0-alpha0', 'Keras', 'keras-pos-embd==0.9.0', 'keras-transformer==0.21.0', 'tqdm', 'faiss', 'sklearn', 'pycurl', 'six', 'argparse'], 
+    install_requires=['numpy', 'matplotlib', 'tensorflow==2.0.0-alpha0', 'tensorflow-gpu==2.0.0-alpha0', 'Keras', 'keras-pos-embd==0.9.0', 'keras-transformer==0.21.0', 'tqdm', 'faiss', 'sklearn', 'pycurl', 'six', 'argparse'], 
     classifiers=(
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.6",
