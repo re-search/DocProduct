@@ -159,6 +159,8 @@ class FaissTopK(object):
         # with Pool(cpu_count()) as p:
         #     question_bert = p.map(eval, self.df["Q_FFNN_embeds"].tolist())
         #     answer_bert = p.map(eval, self.df["A_FFNN_embeds"].tolist())
+        question_bert = self.df["Q_FFNN_embeds"].tolist()
+        answer_bert = self.df["A_FFNN_embeds"].tolist()
         question_bert = np.array(question_bert)
         answer_bert = np.array(answer_bert)
 
