@@ -126,7 +126,7 @@ class QAEmbed(object):
 
         return model_inputs
 
-    def predict(self, questions=None, answers=None):
+    def predict(self, questions=None, answers=None, dataset=True):
 
         # type check
         questions = self._type_check(questions)
@@ -135,12 +135,15 @@ class QAEmbed(object):
         if questions is not None and answers is not None:
             assert len(questions) == len(answers)
 
-        model_inputs = self._make_inputs(questions, answers)
+        model_inputs = self._make_inputs(questions, answers, dataset)
         model_outputs = []
-        model_outputs = self.model(model_inputs)
-        # for batch in tqdm(iter(model_inputs), total=int(len(questions) / self.batch_size)):
-        #     model_outputs.append(self.model(batch))
-        # model_outputs = np.concatenate(model_outputs, axis=0)
+
+        if dataset:
+            for batch in tqdm(iter(model_inputs), total=int(len(questions) / self.batch_size)):
+                model_outputs.append(self.model(batch))
+            model_outputs = np.concatenate(model_outputs, axis=0)
+        else:
+            model_outputs = self.model(model_inputs)
         return model_outputs
 
 
