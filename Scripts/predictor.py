@@ -207,6 +207,10 @@ class RetreiveQADoc(object):
     def predict(self, questions, search_by='answer', topk=5, answer_only=True):
         embedding = self.qa_embed.predict(questions=questions)
         return self.faiss_topk.predict(embedding, search_by, topk, answer_only)
+    
+    def getEmbedding(self, questions, search_by='answer', topk=5, answer_only=True):
+        embedding = self.qa_embed.predict(questions=questions)
+        return embedding
 
 
 class GenerateQADoc(object):
