@@ -46,8 +46,8 @@ def load_dataset(enc, path, combine, pretokenize=True):
 
                     for j, sample in enumerate(tqdm.tqdm(csv_iter[1:])):
                         line = '`QUESTION: %s `ANSWER: %s' % (sample[0], sample[1])
-                        for i in range(len(sample), 2, -2):
-                            line = '`QUESTION: %s `ANSWER: %s ' % (sample[i-2], sample[i-1]) + line
+                        for i in range(2, len(sample), 2):
+                            line = '`QUESTION: %s `ANSWER: %s ' % (sample[i], sample[i+1]) + line
                         line = line.replace('\n', '')
                         tokens = list(np.stack(enc.encode(line)))
                         csv_writer.writerow(sample + [tokens])
