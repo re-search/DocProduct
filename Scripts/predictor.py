@@ -156,9 +156,9 @@ class FaissTopK(object):
         self.df.drop(columns=["Q_FFNN_embeds", "A_FFNN_embeds"], inplace=True)
 
     def _get_faiss_index(self):
-        with Pool(cpu_count()) as p:
-            question_bert = p.map(eval, self.df["Q_FFNN_embeds"].tolist())
-            answer_bert = p.map(eval, self.df["A_FFNN_embeds"].tolist())
+        # with Pool(cpu_count()) as p:
+        #     question_bert = p.map(eval, self.df["Q_FFNN_embeds"].tolist())
+        #     answer_bert = p.map(eval, self.df["A_FFNN_embeds"].tolist())
         question_bert = np.array(question_bert)
         answer_bert = np.array(answer_bert)
 
@@ -233,7 +233,8 @@ class GenerateQADoc(object):
         return "`QUESTION: What is the best treatment for the flu? `ANSWER:"
 
     def predict(self, questions, search_by='answer', topk=5, answer_only=True):
-        embedding = self.qa_embed.predict(questions=questions)
+        embedding = self.qa_embed.predict(
+            questions=questions, dataset=False).eval(session=self.sess)
         if answer_only:
             topk_answer = self.faiss_topk.predict(
                 embedding, search_by, topk, answer_only)
