@@ -1,5 +1,6 @@
 gpt2_train_data
 checkpoint
+samples
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
