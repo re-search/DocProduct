@@ -254,9 +254,17 @@ class GenerateQADoc(object):
                 embedding, search_by, topk, answer_only)
 
         gpt2_input = self._get_gpt2_inputs(
-            questions, topk_answer[0], topk_question, topk_answer)
+            questions, topk_question, topk_answer)
         raw_output = gpt2.generate(
-            self.sess, prefix=gpt2_input, return_as_list=True)
-        clipped_output = raw_output[0].split(
-            '`QUESTION')[1].split('`ANSWER:')[1]
-        return clipped_output
+            self.sess, prefix=gpt2_input, return_as_list=True, include_prefix=False)
+        original_line = '`QUESTION: %s `ANSWER: ' % questions
+        output_list = []
+        for output_ind, output_chunk in enumerate(raw_output[0].split(original_line)):
+            if output_ind == 0:
+                pass
+            else:
+                output_list.append(output_chunk.split('`QUESTION')[0])
+
+        # clipped_output = raw_output[0].split(
+        #     '`QUESTION')[1].split('`ANSWER:')[1]
+        return output_list
