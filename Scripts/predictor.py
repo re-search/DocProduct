@@ -151,7 +151,7 @@ class FaissTopK(object):
     def __init__(self, embedding_file):
         super(FaissTopK, self).__init__()
         self.embedding_file = embedding_file
-        self.df = pd.read_pickle(self.embedding_file)
+        self.df = pd.read_csv(self.embedding_file)
         self._get_faiss_index()
         self.df.drop(columns=["Q_FFNN_embeds", "A_FFNN_embeds"], inplace=True)
 
