@@ -182,7 +182,8 @@ class Bert(keras.Model):
 def build_model_from_config(config_file,
                             training=False,
                             trainable=None,
-                            seq_len=None):
+                            seq_len=None,
+                            build=True):
     """Build the model from config file.
     :param config_file: The path to the JSON configuration file.
     :param training: If training, the whole model will be returned.
@@ -209,5 +210,6 @@ def build_model_from_config(config_file,
         training=training,
         trainable=trainable,
     )
-    model.build(input_shape=[(None, None), (None, None), (None, None)])
+    if build:
+        model.build(input_shape=[(None, None), (None, None), (None, None)])
     return model, config

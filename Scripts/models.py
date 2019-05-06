@@ -71,10 +71,12 @@ class MedicalQAModelwithBert(tf.keras.Model):
             layer_ind=-1,
             name=''):
         super(MedicalQAModelwithBert, self).__init__(name=name)
+        build = checkpoint_file != None
         self.biobert, config = build_model_from_config(
             config_file=config_file,
             training=False,
-            trainable=bert_trainable)
+            trainable=bert_trainable,
+            build=build)
         if checkpoint_file is not None:
             load_model_weights_from_checkpoint(
                 model=self.biobert, config=config, checkpoint_file=checkpoint_file, training=False)

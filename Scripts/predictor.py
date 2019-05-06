@@ -41,17 +41,15 @@ class QAEmbed(object):
             max_seq_length=256,
             ffn_weight_file=None,
             bert_ffn_weight_file=None,
-            config_file=None,
+            load_pretrain=True,
             with_question=True,
             with_answer=True):
         super(QAEmbed, self).__init__()
-        if pretrained_path is not None:
-            config_file = os.path.join(pretrained_path, 'bert_config.json')
+
+        config_file = os.path.join(pretrained_path, 'bert_config.json')
+        if load_pretrain:
             checkpoint_file = os.path.join(
                 pretrained_path, 'biobert_model.ckpt')
-        elif config_file is None:
-            raise ValueError(
-                'You must provide either a pretrained checkpoint path or config file path')
         else:
             checkpoint_file = None
 
@@ -90,7 +88,7 @@ class QAEmbed(object):
                     'inputs are supposed to be str of list of str, got {0} instead.'.format(type(inputs)))
             return inputs
 
-    def _make_inputs(self, questions=None, answers=None):
+    def _make_inputs(self, questions=None, answers=None, dataset=True):
 
         if questions:
             data_size = len(questions)
@@ -122,9 +120,9 @@ class QAEmbed(object):
 
         model_inputs = {k: tf.convert_to_tensor(
             np.stack(v, axis=0)) for k, v in model_inputs.items()}
-
-        model_inputs = tf.data.Dataset.from_tensor_slices(model_inputs)
-        model_inputs = model_inputs.batch(self.batch_size)
+        if dataset:
+            model_inputs = tf.data.Dataset.from_tensor_slices(model_inputs)
+            model_inputs = model_inputs.batch(self.batch_size)
 
         return model_inputs
 
@@ -139,9 +137,10 @@ class QAEmbed(object):
 
         model_inputs = self._make_inputs(questions, answers)
         model_outputs = []
-        for batch in tqdm(iter(model_inputs), total=int(len(questions) / self.batch_size)):
-            model_outputs.append(self.model(batch))
-        model_outputs = np.concatenate(model_outputs, axis=0)
+        model_outputs = self.model(model_inputs)
+        # for batch in tqdm(iter(model_inputs), total=int(len(questions) / self.batch_size)):
+        #     model_outputs.append(self.model(batch))
+        # model_outputs = np.concatenate(model_outputs, axis=0)
         return model_outputs
 
 
@@ -190,8 +189,7 @@ class RetreiveQADoc(object):
                  pretrained_path=None,
                  ffn_weight_file=None,
                  bert_ffn_weight_file='models/bertffn_crossentropy/bertffn',
-                 embedding_file='qa_embeddings/bertffn_crossentropy.pkl',
-                 config_file='pubmed_pmc_470k/bert_config.json'
+                 embedding_file='qa_embeddings/bertffn_crossentropy.pkl'
                  ):
         super(RetreiveQADoc, self).__init__()
         self.qa_embed = QAEmbed(
@@ -208,22 +206,24 @@ class RetreiveQADoc(object):
 
 class GenerateQADoc(object):
     def __init__(self,
-                 pretrained_path=None,
+                 pretrained_path='pubmed_pmc_470k/',
                  ffn_weight_file=None,
                  bert_ffn_weight_file='models/bertffn_crossentropy/bertffn',
-                 embedding_file='qa_embeddings/bertffn_crossentropy.pkl',
-                 config_file='pubmed_pmc_470k/bert_config.json'
+                 embedding_file='qa_embeddings/bertffn_crossentropy.pkl'
                  ):
         super(GenerateQADoc, self).__init__()
-        tf.compat.v1.disable_v2_behavior()
-        self.qa_embed = QAEmbed(
-            pretrained_path=pretrained_path,
-            ffn_weight_file=ffn_weight_file,
-            bert_ffn_weight_file=bert_ffn_weight_file,
-            with_answer=False
-        )
-        self.faiss_topk = FaissTopK(embedding_file)
+        tf.compat.v1.disable_eager_execution()
         self.sess = gpt2.start_tf_sess()
+        with self.sess.as_default():
+            self.qa_embed = QAEmbed(
+                pretrained_path=pretrained_path,
+                ffn_weight_file=ffn_weight_file,
+                bert_ffn_weight_file=bert_ffn_weight_file,
+                with_answer=False,
+                load_pretrain=False
+            )
+        self.faiss_topk = FaissTopK(embedding_file)
+
         self.gpt2 = gpt2.load_gpt2(self.sess)
 
     def _get_gpt2_inputs(self, question, answers):
