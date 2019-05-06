@@ -236,9 +236,9 @@ class GenerateQADoc(object):
 
         self.faiss_topk = FaissTopK(embedding_file)
 
-    def _get_gpt2_inputs(self, question, answer, questions, answers):
+    def _get_gpt2_inputs(self, question, questions, answers):
         assert len(questions) == len(answers)
-        line = '`QUESTION: %s `ANSWER: %s' % (question, answer)
+        line = '`QUESTION: %s `ANSWER: ' % question
         for q, a in zip(questions, answers):
             line = '`QUESTION: %s `ANSWER: %s ' % (q, a) + line
         return line
