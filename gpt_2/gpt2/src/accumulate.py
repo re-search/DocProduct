@@ -16,7 +16,7 @@ class AccumulatingOptimizer(object):
         self.count_loss = tf.Variable(tf.zeros(shape=[], dtype=tf.float32))
 
     def reset(self):
-        updates = [tv.assign(tf.zeros_like(tv)) for tv in self.accum_vars.values()]
+        updates = [tv.assign(tf.zeros_like(tv)) for tv in self.accum_vars]
         updates.append(self.total_loss.assign(tf.zeros(shape=[], dtype=tf.float32)))
         updates.append(self.count_loss.assign(tf.zeros(shape=[], dtype=tf.float32)))
         with tf.control_dependencies(updates):
