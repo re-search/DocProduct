@@ -109,6 +109,9 @@ The purpose of this project is to explore the capabilities of deep learning lang
 
 ![DoctorBert](https://i.ytimg.com/vi/nPemP-Q0Xn8/hqdefault.jpg)
 
+#Thanks
+
+Special thanks to Llion Jones whose insights and guidance had a significant impact in the direction and progress of our project
 
 ## Scripts
 
