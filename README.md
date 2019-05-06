@@ -98,4 +98,4 @@ https://1drv.ms/u/s!An_n1-LB8-2dgfpS66JqPuBXCRqQHQ
 
 5-5-19
 Most comprehensive similarity embeddings file (current not able to load in Colab, even in TPU mode)
-https://drive.google.com/open?id=1A-gv4aaCMKwjzVXJHWV1U7xSnLoQMVOT
+https://1drv.ms/u/s!An_n1-LB8-2dgfpRUPHMtWcK9qJrIQ
