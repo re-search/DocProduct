@@ -63,8 +63,6 @@ def load_dataset(enc, path, combine, pretokenize=True):
             pt_iter = list(pt_reader)
 
             for j, sample in enumerate(tqdm.tqdm(pt_iter[1:])):
-                #print(sample[-1])
-                #print('HOLY FUCKING SHIT')
                 tokens = np.asarray(sample[-1].strip('[]').replace(',', '').split(), dtype=np.int32)
                 token_chunks.append(tokens)
 

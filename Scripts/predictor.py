@@ -235,8 +235,12 @@ class GenerateQADoc(object):
 
         self.gpt2 = gpt2.load_gpt2(self.sess)
 
-    def _get_gpt2_inputs(self, question, answers):
-        return "`QUESTION: What is the best treatment for the flu? `ANSWER:"
+    def _get_gpt2_inputs(self, question, answer, questions, answers):
+        assert len(questions) == len(answers)
+        line = '`QUESTION: %s `ANSWER: %s' % (question, answer)
+        for q, a in zip(questions, answers):
+            line = '`QUESTION: %s `ANSWER: %s ' % (q, a) + line
+        return line
 
     def predict(self, questions, search_by='answer', topk=5, answer_only=True):
         embedding = self.qa_embed.predict(
