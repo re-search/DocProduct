@@ -74,7 +74,7 @@ class QAEmbed(object):
         # build mode in order to load
         question = 'fake' if with_question else None
         answer = 'fake' if with_answer else None
-        self.predict(questions=question, answers=answer)
+        self.predict(questions=question, answers=answer, dataset=False)
         load_weight(self.model, bert_ffn_weight_file, ffn_weight_file)
 
     def _type_check(self, inputs):
@@ -159,8 +159,8 @@ class FaissTopK(object):
         with Pool(cpu_count()) as p:
             question_bert = p.map(eval, self.df["Q_FFNN_embeds"].tolist())
             answer_bert = p.map(eval, self.df["A_FFNN_embeds"].tolist())
-        #question_bert = self.df["Q_FFNN_embeds"].tolist()
-        #answer_bert = self.df["A_FFNN_embeds"].tolist()
+        # question_bert = self.df["Q_FFNN_embeds"].tolist()
+        # answer_bert = self.df["A_FFNN_embeds"].tolist()
         question_bert = np.array(question_bert)
         answer_bert = np.array(answer_bert)
 
@@ -223,7 +223,9 @@ class GenerateQADoc(object):
         super(GenerateQADoc, self).__init__()
         tf.compat.v1.disable_eager_execution()
         self.sess = gpt2.start_tf_sess()
-        with self.sess.as_default():
+        gpt2.load_gpt2(self.sess)
+        self.embed_sess = gpt2.start_tf_sess()
+        with self.embed_sess.as_default():
             self.qa_embed = QAEmbed(
                 pretrained_path=pretrained_path,
                 ffn_weight_file=ffn_weight_file,
@@ -231,9 +233,8 @@ class GenerateQADoc(object):
                 with_answer=False,
                 load_pretrain=False
             )
-        self.faiss_topk = FaissTopK(embedding_file)
 
-        self.gpt2 = gpt2.load_gpt2(self.sess)
+        self.faiss_topk = FaissTopK(embedding_file)
 
     def _get_gpt2_inputs(self, question, answer, questions, answers):
         assert len(questions) == len(answers)
@@ -242,9 +243,9 @@ class GenerateQADoc(object):
             line = '`QUESTION: %s `ANSWER: %s ' % (q, a) + line
         return line
 
-    def predict(self, questions, search_by='answer', topk=5, answer_only=True):
+    def predict(self, questions, search_by='answer', topk=5, answer_only=False):
         embedding = self.qa_embed.predict(
-            questions=questions, dataset=False).eval(session=self.sess)
+            questions=questions, dataset=False).eval(session=self.embed_sess)
         if answer_only:
             topk_answer = self.faiss_topk.predict(
                 embedding, search_by, topk, answer_only)
@@ -252,7 +253,10 @@ class GenerateQADoc(object):
             topk_question, topk_answer = self.faiss_topk.predict(
                 embedding, search_by, topk, answer_only)
 
-        gpt2_input = self._get_gpt2_inputs(questions, topk_answer)
-        raw_output = self.gpt2.generate(self.sess, prefix=gpt2_input)
-        clipped_output = raw_output.split('`QUESTION')[1].split('`ANSWER:')[1]
+        gpt2_input = self._get_gpt2_inputs(
+            questions, topk_answer[0], topk_question, topk_answer)
+        raw_output = gpt2.generate(
+            self.sess, prefix=gpt2_input, return_as_list=True)
+        clipped_output = raw_output[0].split(
+            '`QUESTION')[1].split('`ANSWER:')[1]
         return clipped_output
