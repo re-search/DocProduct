@@ -374,9 +374,10 @@ def generate(sess,
         for i in range(batch_size):
             generated += 1
             gen_text = enc.decode(out[i])
-            if prefix:
+            if prefix and include_prefix:
                 gen_text = prefix[0] + gen_text
             if truncate:
+                raise NotImplementedError
                 truncate_esc = re.escape(truncate)
                 if prefix and not include_prefix:
                     prefix_esc = re.escape(prefix)
