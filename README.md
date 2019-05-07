@@ -16,7 +16,7 @@ As a group of friends with diverse backgrounds ranging from broke undergrads to 
 
 <div style="text-align:center"><img src="https://i.imgur.com/wzWt039.png" /></div>
 
-- 700,000 questions and answers scraped from Reddit, HealthTap, WebMD, eHealthForum, iCliniq, and other sources
+- 700,000 medical questions and answers scraped from Reddit, HealthTap, WebMD, and several other sites
 - Fine-tuned TF 2.0 [Bidirectional Transformer](https://arxiv.org/abs/1810.04805) with [pre-trained BioBERT weights](https://arxiv.org/abs/1901.08746) for extracting representations from text
 - Fine-tuned TF 2.0 [Generative Pre-training Transformer V2](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) with OpenAI's GPT2-117M parameters for generating answers to new questions.
 - Network heads for mapping question and answer embeddings to metric space, made with a Keras.Model feedforward network
