@@ -122,16 +122,3 @@ The purpose of this project is to explore the capabilities of deep learning lang
 #Thanks
 
 Special thanks to Llion Jones whose insights and guidance had a significant impact in the direction and progress of our project
-
-## Scripts
-
-- [x] `train_ffn.py`: Train FFN model.
-- [x] `train_bertffn.py`: Train BertFFN model.
-- [x] `gpt2_main.py`(Alex): Train generation model.
-- [x] `train_data_to_embedding.py`: Convert data to trained FFN model/BertFFN model embeddings for faiss training.
-- [x] `train_faiss_topk_to_gpt2.py`(Santosh): Convert faiss top k results to gpt2 training data.
-- [ ] `eval_topk.py`(Jay): Evaluation of top k results.
-- [x] `inference_question_to_topk.py`: Given question, return top k answers.
-- [ ] `inference_question_to_generated_answer.py`: Given question, return generated answer.
-
-
