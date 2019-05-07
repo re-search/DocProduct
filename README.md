@@ -26,8 +26,6 @@ As a group of friends with diverse backgrounds ranging from broke undergrads to 
 
 Our project was wrought with too many challenges to count, from having too much data to store on drive, to re-implementing the entirety of BERT in TensorFlow 2.0, to coordinating with teammates from across the planet, to waiting out astronomically long preprocessing and training times. However, what's important is that we faced those challenges as a team, and with each other's support and late-night pep talks over Google Hangouts, we rose to those challenges and overcame them together.
 
-## What we learned
-
 ## What it does
 
 Our BERT has been trained to encode medical questions and medical information. A user can type in a medical question, and our model will retrieve the most relevant medical information to that question.
