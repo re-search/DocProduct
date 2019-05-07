@@ -30,11 +30,11 @@ Our project was wrought with too many challenges to count, from having too much 
 
 Our BERT has been trained to encode medical questions and medical information. A user can type in a medical question, and our model will retrieve the most relevant medical information to that question.
 
-###Data
+### Data
 
 We created datasets from several medical question and answering forums. The forums are WebMD, HealthTap, eHealthForums, iClinic, Question Doctors, and Reddit.com/r/AskDocs
 
-###Architecture 
+### Architecture 
 
 The architecture consists of a fine-tuned bioBert (same for both questions and answers) to convert text input to an embedding representation. The embedding is then input into a FCNN (a different one for the questions and answers) to develop an embedding which is used for similarity lookup. The top similar questions and answers are then used by GPT-2 to generate an answer. The full architecture is shown below. 
 
