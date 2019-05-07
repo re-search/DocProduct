@@ -26,6 +26,18 @@ As a group of friends with diverse backgrounds ranging from broke undergrads to 
 
 If you're interested in the whole story of how we built *Doc Product* and the details of our architecture, [take a look at our GitHub README](https://github.com/Santosh-Gupta/DocProduct)!
 
+## Colab Demos
+
+We have a demostration (abet slightly limited to fit the computational resources of Colab).
+
+Google Drive link
+
+https://drive.google.com/open?id=1XekvGrO6s7nueK7mCuRPbxZyq3LoiW-d
+
+Direct colab link
+
+https://colab.research.google.com/drive/1XekvGrO6s7nueK7mCuRPbxZyq3LoiW-d
+
 ## Challenges
 
 Our project was wrought with too many challenges to count, from compressing astronomically large datasets, to re-implementing the entirety of BERT in TensorFlow 2.0, to running GPT-2 with 117 million parameters in Colaboratory, to rushing to get the last parts of our project ready with a few hours left until the submission deadline. Oddly enough, the biggest challenges were often when we had disagreements about the direction that the project should be headed. However, although we'd disagree about what the best course of action was, in the end we all had the same end goal of building something meaningful and potentially valuable for a lot of people. That being said, we would always eventually be able to sit down and come to an agreement and, with each other's support and late-night pep talks over Google Hangouts, rise to the challenges and overcome them together.
