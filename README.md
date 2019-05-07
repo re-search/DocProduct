@@ -12,6 +12,8 @@ We wanted to explore how well state-of-the-art natural language processing model
 
 ## How we built it
 
+Download trained models and embedding file [here](https://1drv.ms/f/s!An_n1-LB8-2dgfpUi3Yxq80FNWWP0g).
+
 As a group of friends with diverse backgrounds ranging from broke undergrads to data scientists to top-tier NLP researchers, we drew inspiration for our design from various different areas of machine learning. By combining the power of [attention transformer architectures](https://arxiv.org/abs/1706.03762), [latent vector search](https://github.com/facebookresearch/faiss), and [generative pre-training](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf), we were able to come up with a novel solution to a difficult problem that at first seemed like a herculean task.
 
 <div style="text-align:center"><img src="https://i.imgur.com/wzWt039.png" /></div>
