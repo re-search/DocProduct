@@ -4,7 +4,7 @@
   <img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/806/964/datas/gallery.jpg">
 </p>
 
-## Quality medical information is valuable to everyone, but it's not always readily available. Doc Product aims to fix that.
+## Quality medical information is valuable to everyone, but it's not always readily available. We aim to fix that with Doc Product.
 
 We wanted to explore how well state-of-the-art natural language processing models like [BERT](https://arxiv.org/abs/1810.04805) and [GPT-2](https://openai.com/blog/better-language-models/) could respond to medical questions by retrieving and conditioning on relevant medical data.
 
