@@ -4,15 +4,15 @@
   <img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/806/964/datas/gallery.jpg">
 </p>
 
-## Quality medical information is valuable to everyone, but it's not always readily available. We aim to fix that with Doc Product.
+## Quality medical information is valuable to everyone, but it's not always readily available. Doc Product aims to fix that.
 
-We wanted to explore how well state-of-the-art natural language processing models like [BERT](https://arxiv.org/abs/1810.04805) and [GPT-2](https://openai.com/blog/better-language-models/) could respond to medical questions by retrieving and conditioning on relevant medical data.
+Whether you've hit your head and are unsure if you need to see a doctor, caught a bad bug halfway up the Himalayas with no idea how to treat it, or made a pact with the ancient spaghetti gods to never accept healthcare from human doctors, *Doc Product* has you covered with up-to-date information and unique AI-generated advice to address your medical concerns.
 
-Whether you've stubbed your toe and are unsure if you need to see a doctor, caught a bad bug halfway up the Himalayas with no idea how to treat it, or made a pact with the ancient spaghetti gods to never accept healthcare from human doctors, *Doc Product* has you covered with up-to-date information and unique AI-generated advice to address your medical concerns.
+We wanted to explore how well state-of-the-art natural language processing models like [BERT](https://arxiv.org/abs/1810.04805) and [GPT-2](https://openai.com/blog/better-language-models/) could respond to medical questions by retrieving and conditioning on relevant medical data, and this is the result.
 
 ## How we built it
 
-As a group of friends with diverse backgrounds ranging from broke undergrads to top-tier NLP researchers, we drew inspiration for our design from various different areas of machine learning. By combining the power of [attention transformer architectures](https://arxiv.org/abs/1706.03762), [latent vector search](https://github.com/facebookresearch/faiss), and [generative pre-training](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf), we were able to come up with a novel solution to a difficult problem that at first seemed like a herculean task.
+As a group of friends with diverse backgrounds ranging from broke undergrads to data scientists to top-tier NLP researchers, we drew inspiration for our design from various different areas of machine learning. By combining the power of [attention transformer architectures](https://arxiv.org/abs/1706.03762), [latent vector search](https://github.com/facebookresearch/faiss), and [generative pre-training](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf), we were able to come up with a novel solution to a difficult problem that at first seemed like a herculean task.
 
 <div style="text-align:center"><img src="https://i.imgur.com/wzWt039.png" /></div>
 
@@ -24,7 +24,7 @@ As a group of friends with diverse backgrounds ranging from broke undergrads to 
 
 ## The challenges we faced
 
-Our project was wrought with too many challenges to count, from scraping too much data to store on drive, to re-implementing the entirety of BERT in TensorFlow 2.0, to coordinating with teammates from across the planet, to waiting out astronomically long preprocessing and training times. However, what's important is that we faced those challenges as a team, and with each other's support and late-night pep talks over Google Hangouts, we rose to those challenges and overcame them together.
+Our project was wrought with too many challenges to count, from having too much data to store on drive, to re-implementing the entirety of BERT in TensorFlow 2.0, to coordinating with teammates from across the planet, to waiting out astronomically long preprocessing and training times. However, what's important is that we faced those challenges as a team, and with each other's support and late-night pep talks over Google Hangouts, we rose to those challenges and overcame them together.
 
 ## What we learned
 
