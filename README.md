@@ -22,11 +22,11 @@ As a group of friends with diverse backgrounds ranging from broke undergrads to 
 - Network heads for mapping question and answer embeddings to metric space, made with a Keras.Model feedforward network
 - Over a terabyte of TFRECORDS, CSV, and CKPT data
 
-# The challenges we faced
+## The challenges we faced
 
-Our project was wrought with too many challenges to count, from scraping too much data to store on drive, to re-implementing the entirety of BERT in TensorFlow 2.0, to coordinating with teammates from across the planet, to optimizing astronomically long preprocessing and training times. However, what's important is that we faced those challenges as a team, and with each other's support and late-night pep talks over Google Hangouts, we rose to those challenges and overcame them together.
+Our project was wrought with too many challenges to count, from scraping too much data to store on drive, to re-implementing the entirety of BERT in TensorFlow 2.0, to coordinating with teammates from across the planet, to waiting out astronomically long preprocessing and training times. However, what's important is that we faced those challenges as a team, and with each other's support and late-night pep talks over Google Hangouts, we rose to those challenges and overcame them together.
 
-# What we learned
+## What we learned
 
 ## What it does
 
