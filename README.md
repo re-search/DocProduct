@@ -1,5 +1,7 @@
 # Doc Product: Medical Q&A with Deep Language Models
 
+Download trained models and embedding file [here](https://1drv.ms/f/s!An_n1-LB8-2dgfpUi3Yxq80FNWWP0g).
+
 <p align="center">
   <img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/806/964/datas/gallery.jpg">
 </p>
@@ -12,21 +14,27 @@ We wanted to explore how well state-of-the-art natural language processing model
 
 ## How we built it
 
-Download trained models and embedding file [here](https://1drv.ms/f/s!An_n1-LB8-2dgfpUi3Yxq80FNWWP0g).
-
-As a group of friends with diverse backgrounds ranging from broke undergrads to data scientists to top-tier NLP researchers, we drew inspiration for our design from various different areas of machine learning. By combining the power of [attention transformer architectures](https://arxiv.org/abs/1706.03762), [latent vector search](https://github.com/facebookresearch/faiss), and [generative pre-training](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf), we were able to come up with a novel solution to a difficult problem that at first seemed like a herculean task.
+As a group of friends with diverse backgrounds ranging from broke undergrads to data scientists to top-tier NLP researchers, we drew inspiration for our design from various different areas of machine learning. By combining the power of [transformer architectures](https://arxiv.org/abs/1706.03762), [latent vector search](https://github.com/facebookresearch/faiss), [negative sampling](https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf), and [generative pre-training](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf), we were able to come up with a novel solution to a difficult problem that at first seemed like a herculean task.
 
 <div style="text-align:center"><img src="https://i.imgur.com/wzWt039.png" /></div>
 
 - 700,000 medical questions and answers scraped from Reddit, HealthTap, WebMD, and several other sites
-- Fine-tuned TF 2.0 [Bidirectional Transformer](https://arxiv.org/abs/1810.04805) with [pre-trained BioBERT weights](https://arxiv.org/abs/1901.08746) for extracting representations from text
-- Fine-tuned TF 2.0 [Generative Pre-training Transformer V2](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) with OpenAI's GPT2-117M parameters for generating answers to new questions.
+- Fine-tuned TF 2.0 [BERT](https://arxiv.org/abs/1810.04805) with [pre-trained BioBERT weights](https://arxiv.org/abs/1901.08746) for extracting representations from text
+- Fine-tuned TF 2.0 [GPT-2](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) with OpenAI's GPT-2-117M parameters for generating answers to new questions.
 - Network heads for mapping question and answer embeddings to metric space, made with a Keras.Model feedforward network
 - Over a terabyte of TFRECORDS, CSV, and CKPT data
 
+If you're interested in the whole story of how we built Doc Product and the details of our retrieval architecture, [take a look at our README](https://github.com/Santosh-Gupta/DocProduct)!
+
 ## The challenges we faced
 
-Our project was wrought with too many challenges to count, from having too much data to store on drive, to re-implementing the entirety of BERT in TensorFlow 2.0, to coordinating with teammates from across the planet, to waiting out astronomically long preprocessing and training times. However, what's important is that we faced those challenges as a team, and with each other's support and late-night pep talks over Google Hangouts, we rose to those challenges and overcame them together.
+Our project was wrought with too many challenges to count, from compressing astronomically large datasets, to re-implementing the entirety of BERT in TensorFlow 2.0, to running GPT-2 with 117 million parameters in Colaboratory, to rushing to get the last parts of our project ready with a few hours left until the submission deadline. Oddly enough, the biggest challenges were often when we had disagreements about the direction that the project should be headed. However, although we'd disagree about what the best course of action was, in the end we all had the same end goal of building something meaningful and potentially valuable for a lot of people. That being said, we would always eventually be able to sit down and come to an agreement and, with each other's support and late-night pep talks over Google Hangouts, rise to the challenges and overcome them together.
+
+## What's next
+
+Although Doc Product isn't ready for widespread commercial use, its surprisingly good performance shows that advancements in general language models like [BERT](https://arxiv.org/abs/1810.04805) with [pre-trained BioBERT weights](https://arxiv.org/abs/1901.08746) and [GPT-2](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) have made previously intractable problems like medical information processing accessible to deep NLP-based approaches. Thus, we hope that our work serves to inspire others to tackle these problems and explore the newly-open NLP frontier themselves.
+
+Nevertheless, we still plan to continue work on Doc Product, specifically expanding it to take advantage of the 345M, 762M, and 1.5B parameter versions of GPT-2 as OpenAI releases them as part of their [staged release program](https://openai.com/blog/better-language-models/#update). We also intend to continue training the model, since we still have quite a bit more data to go through.
 
 ## What it does
 
