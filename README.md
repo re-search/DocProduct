@@ -4,7 +4,7 @@
   <img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/806/964/datas/gallery.jpg">
 </p>
 
-## Quality medical information is valuable to everyone, but it's not always readily available.
+## Quality medical information is valuable to everyone, but it's not always readily available. Doc Product aims to fix that.
 
 We wanted to explore how well state-of-the-art natural language processing models like [BERT](https://arxiv.org/abs/1810.04805) and [GPT-2](https://openai.com/blog/better-language-models/) could respond to medical questions by retrieving and conditioning on relevant medical data.
 
@@ -12,9 +12,13 @@ Whether you've stubbed your toe and are unsure if you need to see a doctor, caug
 
 ## How we built it
 
-As a group of friends with diverse backgrounds ranging from broke undergrads doing Kaggle to top NLP researchers working at Google, we drew inspiration for our design from various different areas of machine learning. By combining the power of [attention transformer architectures](https://arxiv.org/abs/1706.03762), [latent vector search](https://github.com/facebookresearch/faiss), and [generative pre-training](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf), we were able to come up with a novel solution to a difficult problem that at first seemed like a herculean challenge.
+As a group of friends with diverse backgrounds ranging from broke undergrads to top-tier NLP researchers, we drew inspiration for our design from various different areas of machine learning. By combining the power of [attention transformer architectures](https://arxiv.org/abs/1706.03762), [latent vector search](https://github.com/facebookresearch/faiss), and [generative pre-training](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf), we were able to come up with a novel solution to a difficult problem that at first seemed like a herculean task.
 
 <div style="text-align:center"><img src="https://i.imgur.com/wzWt039.png" /></div>
+
+## The challenges we faced
+
+## What we learned
 
 ## What it does
 
