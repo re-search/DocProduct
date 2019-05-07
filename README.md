@@ -17,14 +17,16 @@ As a group of friends with diverse backgrounds ranging from broke undergrads to 
 <div style="text-align:center"><img src="https://i.imgur.com/wzWt039.png" /></div>
 
 - 700,000 questions and answers scraped from Reddit, HealthTap, WebMD, eHealthForum, iCliniq, and other sources
-- TPU fine-tuned TF 2.0 [Bidirectional Transformer](https://arxiv.org/abs/1810.04805) with [pre-trained BioBERT weights](https://arxiv.org/abs/1901.08746) for extracting representations from text
-- TPU fine-tuned TF 2.0 [Generative Pre-training Transformer V2](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) with OpenAI's GPT2-117M parameters for generating answers to new questions.
+- Fine-tuned TF 2.0 [Bidirectional Transformer](https://arxiv.org/abs/1810.04805) with [pre-trained BioBERT weights](https://arxiv.org/abs/1901.08746) for extracting representations from text
+- Fine-tuned TF 2.0 [Generative Pre-training Transformer V2](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) with OpenAI's GPT2-117M parameters for generating answers to new questions.
 - Network heads for mapping question and answer embeddings to metric space, made with a Keras.Model feedforward network
 - Over a terabyte of TFRECORDS, CSV, and CKPT data
 
-## The challenges we faced
+# The challenges we faced
 
-## What we learned
+Our project was wrought with too many challenges to count, from scraping too much data to store on drive, to re-implementing the entirety of BERT in TensorFlow 2.0, to coordinating with teammates from across the planet, to optimizing astronomically long preprocessing and training times. However, what's important is that we faced those challenges as a team, and with each other's support and late-night pep talks over Google Hangouts, we rose to those challenges and overcame them together.
+
+# What we learned
 
 ## What it does
 
