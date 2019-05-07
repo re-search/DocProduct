@@ -66,6 +66,8 @@ Finally, the loss used is cross entropy loss. The softmaxed matrix is compared t
 
 ### Data Gathering and Wrangling
 
+The data gathering was tricky because the formatting of all of the different medical sites was significantly different. Custom work needed to be done for each site in order to pull questions and answers from the correct portion of the HTML tags. Some of the sites also had the possibility of multiple doctors responding to a single question so we needed a method of gathering multiple responses to individual questions. In order to deal with this, we created multiple rows for every question-answer pair. From here we needed to run the model through BERT and store the outputs from one of the end layers in order to make BioBERT embeddings we could pass through the dense layers of our feed-forward neural network(FFNN). 768 dimension vectors were stored for both the question and answers and concatenated with the corresponding text in a CSV file. We tried various different formats for more compact and faster loading and sharing, but CSV ended up being the easiest and most flexible method. After the BioBERT embeddings were created and stored the similarity training process was done and then FFNN embeddings were created that would capture the similarity of questions to answers. These were also stored along with the BioBERT embeddings and source text for later visualization and querying.
+
 ### Converting Modules to be TF2.0 compatible
 
 ### Combining Models Built in TF 1.X and TF 2.0
