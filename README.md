@@ -53,11 +53,13 @@ import tensorflow as tf
 !pip install https://github.com/Santosh-Gupta/DocProduct/archive/master.zip
 ```
 
-Please see the Google Colaboratory Demos section for further code samples on importing and executing our models. 
+Please see the Google Colaboratory Demos section for further code samples on loading weights, loading data, and importing/executing our models. 
 
 ## Colaboratory demos
 
 [Take a look at our Colab demos!](https://drive.google.com/open?id=1hSwWL_WqmcVJytMbsWSbhYxxK4KT7UMI) We plan on adding more demos as we go, allowing users to explore more of the functionalities of *Doc Product*. All new demos will be added to the same Google Drive folder.
+
+The demos show how to install DocProduct via Github pip install, download and load the weights into our models, and execute the models' predictor/generator functions. 
 
 ## What it does
 
