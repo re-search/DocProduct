@@ -40,6 +40,7 @@ Nevertheless, we still plan to continue work on *Doc Product*, specifically expa
 
 You can install and run the models in our github directly from pip. Below is the code which installs TF2.0, Faiss, and our github. 
 
+```
 !wget  https://anaconda.org/pytorch/faiss-cpu/1.2.1/download/linux-64/faiss-cpu-1.2.1-py36_cuda9.0.176_1.tar.bz2
 #To use GPU FAISS use
 # !wget  https://anaconda.org/pytorch/faiss-gpu/1.2.1/download/linux-64/faiss-gpu-1.2.1-py36_cuda9.0.176_1.tar.bz2
@@ -50,6 +51,7 @@ You can install and run the models in our github directly from pip. Below is the
 !pip install tensorflow-gpu==2.0.0-alpha0
 import tensorflow as tf
 !pip install https://github.com/Santosh-Gupta/DocProduct/archive/master.zip
+```
 
 Please see the Google Colaboratory Demos section for further code samples on importing and executing our models. 
 
