@@ -36,6 +36,23 @@ Although *Doc Product* isn't ready for widespread commercial use, its surprising
 
 Nevertheless, we still plan to continue work on *Doc Product*, specifically expanding it to take advantage of the 345M, 762M, and 1.5B parameter versions of GPT-2 as OpenAI releases them as part of their [staged release program](https://openai.com/blog/better-language-models/#update). We also intend to continue training the model, since we still have quite a bit more data to go through.
 
+## Install directly from pip
+
+You can install and run the models in our github directly from pip. Below is the code which installs TF2.0, Faiss, and our github. 
+
+!wget  https://anaconda.org/pytorch/faiss-cpu/1.2.1/download/linux-64/faiss-cpu-1.2.1-py36_cuda9.0.176_1.tar.bz2
+#To use GPU FAISS use
+# !wget  https://anaconda.org/pytorch/faiss-gpu/1.2.1/download/linux-64/faiss-gpu-1.2.1-py36_cuda9.0.176_1.tar.bz2
+!tar xvjf faiss-cpu-1.2.1-py36_cuda9.0.176_1.tar.bz2
+!cp -r lib/python3.6/site-packages/* /usr/local/lib/python3.6/dist-packages/
+!pip install mkl
+
+!pip install tensorflow-gpu==2.0.0-alpha0
+import tensorflow as tf
+!pip install https://github.com/Santosh-Gupta/DocProduct/archive/master.zip
+
+Please see the Google Colaboratory Demos section for further code samples on importing and executing our models. 
+
 ## Colaboratory demos
 
 [Take a look at our Colab demos!](https://drive.google.com/open?id=1hSwWL_WqmcVJytMbsWSbhYxxK4KT7UMI) We plan on adding more demos as we go, allowing users to explore more of the functionalities of *Doc Product*. All new demos will be added to the same Google Drive folder.
