@@ -61,7 +61,12 @@ Please see the Google Colaboratory Demos section for further code samples on loa
 
 The demos show how to install DocProduct via Github pip install, download and load the weights into our models, and execute the models' predictor/generator functions. 
 
-![DoctorBert](https://i.imgur.com/ClQgxOB.png?1)
+![DoctorBert](https://i.imgur.com/0ATJcKD.png?1)
+
+<p align="center">
+  <img src="https://i.imgur.com/0ATJcKD.png?1">
+</p>
+
 
 ## What it does
 
