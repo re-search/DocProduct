@@ -61,6 +61,8 @@ Please see the Google Colaboratory Demos section for further code samples on loa
 
 The demos show how to install DocProduct via Github pip install, download and load the weights into our models, and execute the models' predictor/generator functions. 
 
+![DoctorBert](https://i.imgur.com/ClQgxOB.png?1)
+
 ## What it does
 
 Our BERT has been trained to encode medical questions and medical information. A user can type in a medical question, and our model will retrieve the most relevant medical information to that question.
