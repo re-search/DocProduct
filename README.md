@@ -61,12 +61,9 @@ Please see the Google Colaboratory Demos section for further code samples on loa
 
 The demos show how to install DocProduct via Github pip install, download and load the weights into our models, and execute the models' predictor/generator functions. 
 
-![DoctorBert](https://i.imgur.com/0ATJcKD.png?1)
-
 <p align="center">
   <img src="https://i.imgur.com/0ATJcKD.png?1">
 </p>
-
 
 ## What it does
 
@@ -82,7 +79,9 @@ The architecture consists of a fine-tuned bioBert (same for both questions and a
 
 Lets take a look at the first half of the diagram above above in more detail, the training of the BERT and the FCNNs. A detailed figure of this part is shown below
 
-![DoctorBert](https://i.imgur.com/IRCyKIL.jpg?1)
+<p align="center">
+  <img src="https://i.imgur.com/IRCyKIL.jpg?1">
+</p>
 
 During training, we take a batch of medical questions and their corresponding medical answers, and convert them to bioBert embeddings. The same Bert weights are used for both the questions and answers. 
 
@@ -159,7 +158,9 @@ The recommendations of an open-source AI application is not a substitute for pro
 
 The purpose of this project is to explore the capabilities of deep learning language models. Although the application will help find publicly available medical advice, you are following it AT YOUR OWN RISK.
 
-![DoctorBert](https://i.ytimg.com/vi/nPemP-Q0Xn8/hqdefault.jpg)
+<p align="center">
+  <img src="https://i.ytimg.com/vi/nPemP-Q0Xn8/hqdefault.jpg">
+</p>
 
 ## Thanks
 
