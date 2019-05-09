@@ -162,6 +162,6 @@ The purpose of this project is to explore the capabilities of deep learning lang
   <img src="https://i.ytimg.com/vi/nPemP-Q0Xn8/hqdefault.jpg">
 </p>
 
-## Thanks
+## Thanks!
 
-Special thanks to Llion Jones whose insights and guidance had a significant impact in the direction and progress of our project
+We give our thanks to the TensorFlow team for providing the #PoweredByTF2.0 Challenge as a platform through which we could share our work with others, and a special thanks to Dr. Llion Jones, whose insights and guidance had an important impact on the direction of our project.
