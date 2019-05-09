@@ -36,9 +36,11 @@ Although *Doc Product* isn't ready for widespread commercial use, its surprising
 
 Nevertheless, we still plan to continue work on *Doc Product*, specifically expanding it to take advantage of the 345M, 762M, and 1.5B parameter versions of GPT-2 as OpenAI releases them as part of their [staged release program](https://openai.com/blog/better-language-models/#update). We also intend to continue training the model, since we still have quite a bit more data to go through.
 
-## Install directly from pip
+## Try it out!
 
-You can install and run the models in our github directly from pip. Below is the code which installs TF2.0, Faiss, and our github. 
+### Install from pip
+
+You can install *Doc Product* directly from pip and run it on your local machine. Here's the code to install *Doc Product*, along with TensorFlow 2.0 and FAISS:
 
 ```
 !wget  https://anaconda.org/pytorch/faiss-cpu/1.2.1/download/linux-64/faiss-cpu-1.2.1-py36_cuda9.0.176_1.tar.bz2
@@ -52,14 +54,14 @@ You can install and run the models in our github directly from pip. Below is the
 import tensorflow as tf
 !pip install https://github.com/Santosh-Gupta/DocProduct/archive/master.zip
 ```
+ 
+Please see the *Google Colaboratory demos* section below for code samples to loading data/weights and running our models.
 
-Please see the Google Colaboratory Demos section for further code samples on loading weights, loading data, and importing/executing our models. 
-
-## Colaboratory demos
+### Colaboratory demos
 
 [Take a look at our Colab demos!](https://drive.google.com/open?id=1hSwWL_WqmcVJytMbsWSbhYxxK4KT7UMI) We plan on adding more demos as we go, allowing users to explore more of the functionalities of *Doc Product*. All new demos will be added to the same Google Drive folder.
 
-The demos show how to install DocProduct via Github pip install, download and load the weights into our models, and execute the models' predictor/generator functions. 
+The demos include code for installing *Doc Product* via pip, downloading/loading pre-trained weights, and running *Doc Product*'s retrieval and generation functions.
 
 <p align="center">
   <img src="https://i.imgur.com/Z8DOXuJ.png">
@@ -69,11 +71,11 @@ The demos show how to install DocProduct via Github pip install, download and lo
 
 Our BERT has been trained to encode medical questions and medical information. A user can type in a medical question, and our model will retrieve the most relevant medical information to that question.
 
-### Data
+## Data
 
 We created datasets from several medical question and answering forums. The forums are WebMD, HealthTap, eHealthForums, iClinic, Question Doctors, and Reddit.com/r/AskDocs
 
-### Architecture 
+## Architecture 
 
 The architecture consists of a fine-tuned bioBert (same for both questions and answers) to convert text input to an embedding representation. The embedding is then input into a FCNN (a different one for the questions and answers) to develop an embedding which is used for similarity lookup. The top similar questions and answers are then used by GPT-2 to generate an answer. The full architecture is shown below. 
 
