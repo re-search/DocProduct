@@ -63,8 +63,18 @@ Our repo contains scripts on how to generate tfrecords data, training our archit
 
 The demos include code for installing *Doc Product* via pip, downloading/loading pre-trained weights, and running *Doc Product*'s retrieval functions and fine-tunning on your own Q&A data.
 
+#### Run our model on your inputted medical question
+https://colab.research.google.com/drive/10C0_GD9VvUIPpCscnnpmanzGUy2UllIj?authuser=6
+
 <p align="center">
   <img src="https://i.imgur.com/Z8DOXuJ.png">
+</p>
+
+#### Train your own Question and Answer retrieval model on your own Q&A data
+https://colab.research.google.com/drive/1gv94blZ1dwc9S5or3268NOat_V5gtwTm?authuser=6
+
+<p align="center">
+  <img src="https://snag.gy/WPdV5T.jpg">
 </p>
 
 ## What it does
