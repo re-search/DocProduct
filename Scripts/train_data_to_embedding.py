@@ -5,7 +5,7 @@ from glob import glob
 import pandas as pd
 import numpy as np
 
-from .predictor import QAEmbed
+from Scripts.predictor import QAEmbed
 
 
 def read_all(data_path):
