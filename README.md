@@ -55,13 +55,13 @@ import tensorflow as tf
 !pip install https://github.com/Santosh-Gupta/DocProduct/archive/master.zip
 ```
  
-Please see the *Google Colaboratory demos* section below for code samples to loading data/weights and running our models.
+Our repo contains scripts on how to generate tfrecords data, training our architecture on your own Q&A data, and running our models to get answers to your own medical questions. Please see the *Google Colaboratory demos* section below for code samples to loading data/weights and running our models.
 
 ### Colaboratory demos
 
 [Take a look at our Colab demos!](https://drive.google.com/open?id=1hSwWL_WqmcVJytMbsWSbhYxxK4KT7UMI) We plan on adding more demos as we go, allowing users to explore more of the functionalities of *Doc Product*. All new demos will be added to the same Google Drive folder.
 
-The demos include code for installing *Doc Product* via pip, downloading/loading pre-trained weights, and running *Doc Product*'s retrieval and generation functions.
+The demos include code for installing *Doc Product* via pip, downloading/loading pre-trained weights, and running *Doc Product*'s retrieval functions and fine-tunning on your own Q&A data.
 
 <p align="center">
   <img src="https://i.imgur.com/Z8DOXuJ.png">
