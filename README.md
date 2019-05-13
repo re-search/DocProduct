@@ -77,7 +77,7 @@ https://colab.research.google.com/drive/1gv94blZ1dwc9S5or3268NOat_V5gtwTm?authus
   <img src="https://snag.gy/WPdV5T.jpg">
 </p>
 
-#### [Experimental] Run the complete fine-tuned Bert+FCNN+GPT2 model to get generated answers to your inputted medical questions. [We are currently still fine-tunning GPT2]
+#### [Experimental] Run the complete fine-tuned Bert+FCNN+GPT2 model to get generated answers to your inputted medical questions. [We are currently still finding new days to optimize the answer generator]
 https://colab.research.google.com/drive/1ieinWiSulRpN4YjARl9qo_YhUUijZbJn?authuser=2
 
 <p align="center">
