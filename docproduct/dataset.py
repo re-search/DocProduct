@@ -263,14 +263,14 @@ def create_generator_for_bert(
             try:
                 q_features = convert_text_to_feature(
                     row.question, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
-            except ValueError:
+            except (ValueError, AttributeError):
                 continue
             # no labels
             q_features = q_features[:3]
             try:
                 a_features = convert_text_to_feature(
                     row.answer, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
-            except ValueError:
+            except (ValueError, AttributeError):
                 continue
             a_features = a_features[:3]
             yield (q_features+a_features, 1)
