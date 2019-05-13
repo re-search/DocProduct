@@ -63,7 +63,7 @@ Our repo contains scripts on how to generate tfrecords data, training our archit
 
 The demos include code for installing *Doc Product* via pip, downloading/loading pre-trained weights, and running *Doc Product*'s retrieval functions and fine-tunning on your own Q&A data.
 
-#### Run our model on your inputted medical question
+#### Run our retrieval model on your inputted medical question
 https://colab.research.google.com/drive/10C0_GD9VvUIPpCscnnpmanzGUy2UllIj?authuser=6
 
 <p align="center">
@@ -75,6 +75,13 @@ https://colab.research.google.com/drive/1gv94blZ1dwc9S5or3268NOat_V5gtwTm?authus
 
 <p align="center">
   <img src="https://snag.gy/WPdV5T.jpg">
+</p>
+
+#### Run the complete fine-tuned Bert+FCNN+GPT2 model to get generated answers to your inputted medical questions. 
+https://colab.research.google.com/drive/1ieinWiSulRpN4YjARl9qo_YhUUijZbJn?authuser=2
+
+<p align="center">
+  <img src="https://snag.gy/WU1YPE.jpg">
 </p>
 
 ## What it does
