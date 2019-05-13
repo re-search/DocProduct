@@ -36,6 +36,8 @@ Although *Doc Product* isn't ready for widespread commercial use, its surprising
 
 Nevertheless, we still plan to continue work on *Doc Product*, specifically expanding it to take advantage of the 345M, 762M, and 1.5B parameter versions of GPT-2 as OpenAI releases them as part of their [staged release program](https://openai.com/blog/better-language-models/#update). We also intend to continue training the model, since we still have quite a bit more data to go through.
 
+We are currrently working towards our next projects in scientific/medical NLP, machine learning, and information retrieval. **If you're interested in collaborating, please send an email to Research2Vec@gmail.com .**
+
 ## Try it out!
 
 ### Install from pip
