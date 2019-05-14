@@ -80,7 +80,7 @@ https://colab.research.google.com/drive/1gv94blZ1dwc9S5or3268NOat_V5gtwTm?authus
 </p>
 
 #### [Experimental] Run the full Doc Product pipeline with BERT, FCNN, and GPT-2 to get uniquely generated answers.
-**The GPT-2 generation demo is still experimental, but feel free to try it out!**
+The GPT-2 generation demo is still **experimental**, but feel free to try it out!
 https://colab.research.google.com/drive/1ieinWiSulRpN4YjARl9qo_YhUUijZbJn?authuser=2
 
 <p align="center">
