@@ -29,7 +29,7 @@ def read_all(data_path):
 
 def train_data_to_embedding(model_path='models/bertffn_crossentropy/bertffn',
                             data_path='data/mqa_csv',
-                            output_path='qa_embeddings/bertffn_crossentropy.pkl',
+                            output_path='qa_embeddings/bertffn_crossentropy.zip',
                             pretrained_path='pubmed_pmc_470k/'):
     if os.path.basename(model_path) == 'ffn':
         ffn_weight_file = model_path
@@ -55,10 +55,7 @@ def train_data_to_embedding(model_path='models/bertffn_crossentropy/bertffn',
     qa_df['Q_FFNN_embeds'] = np.squeeze(q_embedding).tolist()
     qa_df['A_FFNN_embeds'] = np.squeeze(a_embedding).tolist()
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    # qa_df.to_hdf(output_path, key='qa_embedding', mode='w')
-    qa_df.to_pickle(output_path)
-    # test = pd.read_csv(output_path, index_col=0)
-    # print(test.head())
+    qa_df.to_parquet(output_path, index=False)
 
 
 if __name__ == "__main__":

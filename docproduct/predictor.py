@@ -151,7 +151,7 @@ class FaissTopK(object):
     def __init__(self, embedding_file):
         super(FaissTopK, self).__init__()
         self.embedding_file = embedding_file
-        self.df = pd.read_pickle(self.embedding_file)
+        self.df = pd.read_parquet(self.embedding_file)
         self._get_faiss_index()
         # self.df.drop(columns=["Q_FFNN_embeds", "A_FFNN_embeds"], inplace=True)
 
@@ -195,7 +195,7 @@ class RetreiveQADoc(object):
                  pretrained_path=None,
                  ffn_weight_file=None,
                  bert_ffn_weight_file='models/bertffn_crossentropy/bertffn',
-                 embedding_file='qa_embeddings/bertffn_crossentropy.pkl'
+                 embedding_file='qa_embeddings/bertffn_crossentropy.zip'
                  ):
         super(RetreiveQADoc, self).__init__()
         self.qa_embed = QAEmbed(
@@ -219,7 +219,7 @@ class GenerateQADoc(object):
                  pretrained_path='pubmed_pmc_470k/',
                  ffn_weight_file=None,
                  bert_ffn_weight_file='models/bertffn_crossentropy/bertffn',
-                 embedding_file='qa_embeddings/bertffn_crossentropy.pkl'
+                 embedding_file='qa_embeddings/bertffn_crossentropy.zip'
                  ):
         super(GenerateQADoc, self).__init__()
         tf.compat.v1.disable_eager_execution()

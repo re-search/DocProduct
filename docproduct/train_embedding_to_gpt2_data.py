@@ -11,13 +11,13 @@ from math import ceil
 
 
 def train_embedding_to_gpt2_data(
-    data_path='qa_embeddings/bertffn_crossentropy.pkl',
+    data_path='qa_embeddings/bertffn_crossentropy.zip',
     output_path='gpt2_train_data/bertffn_crossentropy.csv',
     number_samples=10,
     batch_size=512
 ):
     # qa = pd.read_hdf(args.data_path, key='qa_embedding')
-    qa = pd.read_pickle(data_path)
+    qa = pd.read_parquet(data_path)
 
     # with Pool(cpu_count()) as p:
     #     question_bert = p.map(eval, qa["Q_FFNN_embeds"].tolist())
