@@ -1,6 +1,6 @@
 # Doc Product: Medical Q&A with Deep Language Models
 
-Download trained models and embedding file [here](https://1drv.ms/f/s!An_n1-LB8-2dgfpUi3Yxq80FNWWP0g).
+Download trained models and embedding file [here](https://1drv.ms/u/s!An_n1-LB8-2dgf4PU1LmjtNiMuKbDg).
 
 <p align="center">
   <img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/806/964/datas/gallery.jpg">
@@ -36,6 +36,8 @@ Although *Doc Product* isn't ready for widespread commercial use, its surprising
 
 Nevertheless, we still plan to continue work on *Doc Product*, specifically expanding it to take advantage of the 345M, 762M, and 1.5B parameter versions of GPT-2 as OpenAI releases them as part of their [staged release program](https://openai.com/blog/better-language-models/#update). We also intend to continue training the model, since we still have quite a bit more data to go through.
 
+We are currrently working towards our next projects in scientific/medical NLP, machine learning, and information retrieval. **If you're interested in collaborating, please send an email to Research2Vec@gmail.com .**
+
 ## Try it out!
 
 ### Install from pip
@@ -63,7 +65,7 @@ Our repo contains scripts on how to generate tfrecords data, training our archit
 
 The demos include code for installing *Doc Product* via pip, downloading/loading pre-trained weights, and running *Doc Product*'s retrieval functions and fine-tunning on your own Q&A data.
 
-#### Run our model on your inputted medical question
+#### Run our retrieval model on your inputted medical question
 https://colab.research.google.com/drive/10C0_GD9VvUIPpCscnnpmanzGUy2UllIj?authuser=6
 
 <p align="center">
@@ -75,6 +77,13 @@ https://colab.research.google.com/drive/1gv94blZ1dwc9S5or3268NOat_V5gtwTm?authus
 
 <p align="center">
   <img src="https://snag.gy/WPdV5T.jpg">
+</p>
+
+#### [Experimental] Run the complete fine-tuned Bert+FCNN+GPT2 model to get generated answers to your inputted medical questions. [We are currently still finding new days to optimize the answer generator]
+https://colab.research.google.com/drive/1ieinWiSulRpN4YjARl9qo_YhUUijZbJn?authuser=2
+
+<p align="center">
+  <img src="https://snag.gy/WU1YPE.jpg">
 </p>
 
 ## What it does
