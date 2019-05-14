@@ -1,6 +1,7 @@
 
 import os
 from glob import glob
+from tqdm import tqdm
 
 import numpy as np
 import pandas as pd
@@ -251,7 +252,7 @@ def create_generator_for_bert(
             df.columns = ['index', 'question', 'answer']
             df.drop(columns=['index'], inplace=True)
         else:
-            df = pd.read_csv(full_file_path)
+            df = pd.read_csv(full_file_path, lineterminator='\n')
 
         # so train test split
         if mode == 'train':
@@ -259,7 +260,7 @@ def create_generator_for_bert(
         else:
             _, df = train_test_split(df, test_size=0.2, random_state=SEED)
 
-        for _, row in df.iterrows():
+        for _, row in tqdm(df.iterrows(), total=df.shape[0], desc='Writing to TFRecord'):
             try:
                 q_features = convert_text_to_feature(
                     row.question, tokenizer, max_seq_length, dynamic_padding=dynamic_padding)
