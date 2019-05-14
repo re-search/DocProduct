@@ -79,7 +79,7 @@ https://colab.research.google.com/drive/1gv94blZ1dwc9S5or3268NOat_V5gtwTm?authus
   <img src="https://snag.gy/WPdV5T.jpg">
 </p>
 
-#### [Experimental] Run the full Doc Product pipeline with BERT, FCNN, FAISS, and GPT-2 to get your medical questions answered by AI.
+#### [Experimental] Run the full Doc Product pipeline with BERT, FCNN, FAISS, and GPT-2 to get your medical questions answered by state-of-the-art AI.
 The end-to-end *Doc Product* demo is still **experimental**, but feel free to try it out!
 https://colab.research.google.com/drive/1ieinWiSulRpN4YjARl9qo_YhUUijZbJn?authuser=2
 
