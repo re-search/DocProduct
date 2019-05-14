@@ -72,15 +72,15 @@ https://colab.research.google.com/drive/10C0_GD9VvUIPpCscnnpmanzGUy2UllIj?authus
   <img src="https://i.imgur.com/Z8DOXuJ.png">
 </p>
 
-#### Train your own BERT Q&A retrieval model
+#### Train your own medical Q&A retrieval model
 https://colab.research.google.com/drive/1gv94blZ1dwc9S5or3268NOat_V5gtwTm?authuser=6
 
 <p align="center">
   <img src="https://snag.gy/WPdV5T.jpg">
 </p>
 
-#### [Experimental] Run the full Doc Product pipeline with BERT, FCNN, and GPT-2 to get uniquely generated answers.
-The GPT-2 generation demo is still **experimental**, but feel free to try it out!
+#### [Experimental] Run the full Doc Product pipeline with BERT, FCNN, FAISS, and GPT-2 to get your medical questions answered by AI.
+The end-to-end *Doc Product* demo is still **experimental**, but feel free to try it out!
 https://colab.research.google.com/drive/1ieinWiSulRpN4YjARl9qo_YhUUijZbJn?authuser=2
 
 <p align="center">
