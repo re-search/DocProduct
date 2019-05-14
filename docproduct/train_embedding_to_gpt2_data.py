@@ -12,7 +12,7 @@ from math import ceil
 
 def train_embedding_to_gpt2_data(
     data_path='qa_embeddings/bertffn_crossentropy.zip',
-    output_path='gpt2_train_data/bertffn_crossentropy.csv',
+    output_path='gpt2_train_data/bertffn_crossentropy_gpt2_train_data.zip',
     number_samples=10,
     batch_size=512
 ):
@@ -80,6 +80,10 @@ def train_embedding_to_gpt2_data(
             rowfill = rowfill + finalfill
             writer.writerow(rowfill)
     output.close()
+
+    # ugly fix
+    pd.read_csv(output_path, lineterminator='\n').to_parquet(
+        output_path, index=False)
 
 
 if __name__ == "__main__":

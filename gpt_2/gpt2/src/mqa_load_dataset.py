@@ -5,9 +5,10 @@ import random
 import tensorflow.compat.v1 as tf
 import tqdm
 import csv
+import pandas as pd
 
 
-def load_dataset(enc, path, combine, pretokenize=True):
+def load_dataset(enc, path, combine, pretokenize=True, topk=3):
     paths = []
     if os.path.isfile(path):
         # Simple file
@@ -24,50 +25,49 @@ def load_dataset(enc, path, combine, pretokenize=True):
         raise Exception("No data found")
 
     token_chunks = []
-    raw_text = ''
 
     if pretokenize:
 
-        pt_path = path.split('.')[0] + '_pretokenized.' + path.split('.')[1]
+        pt_path = path.split('.')[0] + '_pretokenized.' + 'npy'
 
         if not os.path.exists(pt_path):
 
             print('Pretokenizing data..')
 
-            op = open(pt_path, 'w', encoding='utf8')
-            csv_writer = csv.writer(op, lineterminator = '\n')
-            
+            token_lize = []
+
             for path in paths:
-                with open(path, 'r', encoding='utf8', errors='ignore') as fp:
 
-                    csv_reader = csv.reader(fp)
-                    csv_iter = list(csv_reader)
-                    csv_writer.writerow(csv_iter[0] + ['tokens'])
+                df = pd.read_parquet(path)
 
-                    for j, sample in enumerate(tqdm.tqdm(csv_iter[1:])):
-                        line = '`QUESTION: %s `ANSWER: %s' % (sample[0], sample[1])
-                        for i in range(2, len(sample), 2):
-                            line = '`QUESTION: %s `ANSWER: %s ' % (sample[i], sample[i+1]) + line
-                        line = line.replace('\n', '')
-                        tokens = list(np.stack(enc.encode(line)))
-                        csv_writer.writerow(sample + [tokens])
-                    
+                for _, sample in enumerate(tqdm.tqdm(df.iterrows(), total=df.shape[0], desc='Pretokenization')):
+                    line = '`QUESTION: %s `ANSWER: %s' % (
+                        sample[0], sample[1])
+                    for i in range(2, len(sample), 2):
+                        if i <= topk*2:
+                            line = '`QUESTION: %s `ANSWER: %s ' % (
+                                sample[i], sample[i+1]) + line
+                    line = line.replace('\n', '')
+                    token_lize.append(np.stack(enc.encode(line)))
+
                 print('Pretokenization successful!')
-
-            op.close()
+        np.save(pt_path, np.array(token_lize))
 
         print('Loading pretokenized data..')
-        
-        with open(pt_path, 'r', encoding='utf8') as pt:
-            pt_reader = csv.reader(pt)
-            pt_iter = list(pt_reader)
+        token_chunks = np.load(pt_path)
 
-            for j, sample in enumerate(tqdm.tqdm(pt_iter[1:])):
-                tokens = np.asarray(sample[-1].strip('[]').replace(',', '').split(), dtype=np.int32)
-                token_chunks.append(tokens)
+        # with open(pt_path, 'r', encoding='utf8') as pt:
+        #     pt_reader = csv.reader(pt)
+        #     pt_iter = list(pt_reader)
+
+        #     for j, sample in enumerate(tqdm.tqdm(pt_iter[1:])):
+        #         tokens = np.asarray(
+        #             sample[-1].strip('[]').replace(',', '').split(), dtype=np.int32)
+        #         token_chunks.append(tokens)
 
     else:
-    
+        raise NotImplementedError
+
         for path in paths:
             '''
             if path.endswith('.npz'):
@@ -89,11 +89,12 @@ def load_dataset(enc, path, combine, pretokenize=True):
             with open(path, 'r', encoding='utf8', errors='ignore') as fp:
                 csv_reader = csv.reader(fp)
 
-
                 for j, sample in enumerate(tqdm.tqdm(csv_reader)):
-                    line = '`QUESTION: %s `ANSWER: %s' % (sample[0], sample[1])
+                    line = '`QUESTION: %s `ANSWER: %s' % (
+                        sample[0], sample[1])
                     for i in range(len(sample), 2, -2):
-                        line = '`QUESTION: %s `ANSWER: %s ' % (sample[i-2], sample[i-1]) + line
+                        line = '`QUESTION: %s `ANSWER: %s ' % (
+                            sample[i-2], sample[i-1]) + line
                     tokens = np.stack(enc.encode(line))
                     token_chunks.append(tokens)
         '''
@@ -123,14 +124,12 @@ class Sampler(object):
     'Fairly' means that the distribution is the same as sampling from one concatenated chunk,
     but without crossing chunk boundaries."""
 
-
     def __init__(self, chunks):
         self.chunks = chunks
         self.total_size = sum(chunk.shape[0] for chunk in chunks)
         self.boundaries = [0]
         for i in range(len(chunks)):
             self.boundaries.append(self.boundaries[-1] + chunks[i].shape[0])
-
 
     def sample(self, length):
         '''
