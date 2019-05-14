@@ -57,7 +57,7 @@ import tensorflow as tf
 !pip install https://github.com/Santosh-Gupta/DocProduct/archive/master.zip
 ```
  
-Our repo contains scripts on how to generate tfrecords data, training our architecture on your own Q&A data, and running our models to get answers to your own medical questions. Please see the *Google Colaboratory demos* section below for code samples to loading data/weights and running our models.
+Our repo contains scripts for generating **.tfrefords** data, training *Doc Product* on your own Q&A data, and running *Doc Product* to get answers for medical questions. Please see the **Google Colaboratory demos** section below for code samples to load data/weights and run our models.
 
 ### Colaboratory demos
 
