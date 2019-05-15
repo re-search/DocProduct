@@ -6,7 +6,7 @@ import tensorflow as tf
 # import tensorflow.compat.v1 as tf
 import tensorflow_estimator as tf_estimator
 
-from docproduct import gpt2_estimator
+from docproduct import gpt2_estimator, ckpt_restore_hook
 
 DEVICE = ["/gpu:0", "/gpu:1"]
 
@@ -20,6 +20,7 @@ def train_gpt2(
         batch_size=2,
         num_gpu=1,
         learning_rate=0.0001):
+    tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.DEBUG)
     # tf.compat.v1.disable_v2_behavior()
     # if not os.path.exists('models/117M'):
     #     gpt2.download_gpt2()
@@ -35,7 +36,8 @@ def train_gpt2(
     config = tf_estimator.estimator.RunConfig(
         session_config=session_config,
         train_distribute=mirrored_strategy,
-        eval_distribute=mirrored_strategy)
+        eval_distribute=mirrored_strategy,
+        log_step_count_steps=5)
 
     gpt2_model_fn = gpt2_estimator.get_gpt2_model_fn(
         accumulate_gradients=5,
@@ -53,8 +55,10 @@ def train_gpt2(
         model_dir=model_dir,
         params=hparams,
         config=config)
+
+    restore_hook = ckpt_restore_hook.RestoreCheckpointHook(pretrained_path)
     estimator.train(
-        lambda: gpt2_estimator.train_input_fn(batch_size=batch_size), max_steps=steps)
+        lambda: gpt2_estimator.train_input_fn(batch_size=batch_size), max_steps=steps, hooks=[restore_hook])
     pred = estimator.predict(
         lambda: gpt2_estimator.predict_input_fn('i am sick', batch_size=2)
     )
