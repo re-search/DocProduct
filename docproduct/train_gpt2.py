@@ -59,16 +59,13 @@ def train_gpt2(
     restore_hook = ckpt_restore_hook.RestoreCheckpointHook(pretrained_path)
     estimator.train(
         lambda: gpt2_estimator.train_input_fn(batch_size=batch_size), max_steps=steps, hooks=[restore_hook])
-    pred = estimator.predict(
-        lambda: gpt2_estimator.predict_input_fn('i am sick', batch_size=2)
-    )
-    # pred = estimator.predict(
-    #     lambda: gpt2_estimator.train_input_fn(batch_size=batch_size)
-    # )
 
-    for p in pred:
-        print(p)
+    # keep as an example
+    # pred = estimator.predict(
+    #     lambda: gpt2_estimator.predict_input_fn(
+    #         'i am sick', batch_size=batch_size)
+    # )
 
 
 if __name__ == "__main__":
-    train_gpt2(steps=100)
+    train_gpt2(steps=5000000)

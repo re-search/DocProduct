@@ -166,3 +166,11 @@ def serving_input_fn():
         'context': tf.compat.v1.placeholder(tf.int32, [None, None]),
     }
     return tf_estimator.estimator.export.ServingInputReceiver(features, features)
+
+
+def predictions_parsing(pred, enc):
+    gen_texts = []
+    for _, single_pred in enumerate(pred):
+        gen_text = enc.decode(single_pred)
+        gen_texts.append(gen_text)
+    return gen_texts
