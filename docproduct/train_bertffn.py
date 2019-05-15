@@ -19,7 +19,7 @@ def train_bertffn(model_path='models/bertffn_crossentropy/bertffn',
                   learning_rate=2e-5,
                   validation_split=0.2,
                   loss='categorical_crossentropy',
-                  pretrained_path='pubmed_pmc_470k/',
+                  pretrained_path='models/pubmed_pmc_470k/',
                   max_seq_len=256):
     tf.compat.v1.disable_eager_execution()
     if loss == 'categorical_crossentropy':
