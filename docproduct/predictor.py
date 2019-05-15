@@ -13,7 +13,7 @@ from docproduct.dataset import convert_text_to_feature
 from docproduct.models import MedicalQAModelwithBert
 from docproduct.tokenization import FullTokenizer
 from keras_bert.loader import checkpoint_loader
-from gpt_2 import gpt2
+# from gpt_2 import gpt2
 
 
 def load_weight(model, bert_ffn_weight_file=None, ffn_weight_file=None):
@@ -214,58 +214,58 @@ class RetreiveQADoc(object):
         return embedding
 
 
-class GenerateQADoc(object):
-    def __init__(self,
-                 pretrained_path='pubmed_pmc_470k/',
-                 ffn_weight_file=None,
-                 bert_ffn_weight_file='models/bertffn_crossentropy/bertffn',
-                 embedding_file='qa_embeddings/bertffn_crossentropy.zip'
-                 ):
-        super(GenerateQADoc, self).__init__()
-        tf.compat.v1.disable_eager_execution()
-        self.sess = gpt2.start_tf_sess()
-        gpt2.load_gpt2(self.sess)
-        self.embed_sess = gpt2.start_tf_sess()
-        with self.embed_sess.as_default():
-            self.qa_embed = QAEmbed(
-                pretrained_path=pretrained_path,
-                ffn_weight_file=ffn_weight_file,
-                bert_ffn_weight_file=bert_ffn_weight_file,
-                with_answer=False,
-                load_pretrain=False
-            )
+# class GenerateQADoc(object):
+#     def __init__(self,
+#                  pretrained_path='pubmed_pmc_470k/',
+#                  ffn_weight_file=None,
+#                  bert_ffn_weight_file='models/bertffn_crossentropy/bertffn',
+#                  embedding_file='qa_embeddings/bertffn_crossentropy.zip'
+#                  ):
+#         super(GenerateQADoc, self).__init__()
+#         tf.compat.v1.disable_eager_execution()
+#         self.sess = gpt2.start_tf_sess()
+#         gpt2.load_gpt2(self.sess)
+#         self.embed_sess = gpt2.start_tf_sess()
+#         with self.embed_sess.as_default():
+#             self.qa_embed = QAEmbed(
+#                 pretrained_path=pretrained_path,
+#                 ffn_weight_file=ffn_weight_file,
+#                 bert_ffn_weight_file=bert_ffn_weight_file,
+#                 with_answer=False,
+#                 load_pretrain=False
+#             )
 
-        self.faiss_topk = FaissTopK(embedding_file)
+#         self.faiss_topk = FaissTopK(embedding_file)
 
-    def _get_gpt2_inputs(self, question, questions, answers):
-        assert len(questions) == len(answers)
-        line = '`QUESTION: %s `ANSWER: ' % question
-        for q, a in zip(questions, answers):
-            line = '`QUESTION: %s `ANSWER: %s ' % (q, a) + line
-        return line
+#     def _get_gpt2_inputs(self, question, questions, answers):
+#         assert len(questions) == len(answers)
+#         line = '`QUESTION: %s `ANSWER: ' % question
+#         for q, a in zip(questions, answers):
+#             line = '`QUESTION: %s `ANSWER: %s ' % (q, a) + line
+#         return line
 
-    def predict(self, questions, search_by='answer', topk=5, answer_only=False):
-        embedding = self.qa_embed.predict(
-            questions=questions, dataset=False).eval(session=self.embed_sess)
-        if answer_only:
-            topk_answer = self.faiss_topk.predict(
-                embedding, search_by, topk, answer_only)
-        else:
-            topk_question, topk_answer = self.faiss_topk.predict(
-                embedding, search_by, topk, answer_only)
+#     def predict(self, questions, search_by='answer', topk=5, answer_only=False):
+#         embedding = self.qa_embed.predict(
+#             questions=questions, dataset=False).eval(session=self.embed_sess)
+#         if answer_only:
+#             topk_answer = self.faiss_topk.predict(
+#                 embedding, search_by, topk, answer_only)
+#         else:
+#             topk_question, topk_answer = self.faiss_topk.predict(
+#                 embedding, search_by, topk, answer_only)
 
-        gpt2_input = self._get_gpt2_inputs(
-            questions, topk_question, topk_answer)
-        raw_output = gpt2.generate(
-            self.sess, prefix=gpt2_input, return_as_list=True, include_prefix=False)
-        original_line = '`QUESTION: %s `ANSWER: ' % questions
-        output_list = []
-        for output_ind, output_chunk in enumerate(raw_output[0].split(original_line)):
-            if output_ind == 0:
-                pass
-            else:
-                output_list.append(output_chunk.split('`QUESTION')[0])
+#         gpt2_input = self._get_gpt2_inputs(
+#             questions, topk_question, topk_answer)
+#         raw_output = gpt2.generate(
+#             self.sess, prefix=gpt2_input, return_as_list=True, include_prefix=False)
+#         original_line = '`QUESTION: %s `ANSWER: ' % questions
+#         output_list = []
+#         for output_ind, output_chunk in enumerate(raw_output[0].split(original_line)):
+#             if output_ind == 0:
+#                 pass
+#             else:
+#                 output_list.append(output_chunk.split('`QUESTION')[0])
 
-        # clipped_output = raw_output[0].split(
-        #     '`QUESTION')[1].split('`ANSWER:')[1]
-        return output_list
+#         # clipped_output = raw_output[0].split(
+#         #     '`QUESTION')[1].split('`ANSWER:')[1]
+#         return output_list
