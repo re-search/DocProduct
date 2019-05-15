@@ -2,11 +2,14 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 #from tensorflow.contrib.training import HParams
 
+
 class HParams:
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
+
     def override_from_dict(self, kwargs):
         self.__dict__.update(kwargs)
+
 
 def default_hparams():
     return HParams(
@@ -17,56 +20,68 @@ def default_hparams():
         n_layer=12,
     )
 
+
 def shape_list(x):
     """Deal with dynamic shape in tensorflow cleanly."""
     static = x.shape.as_list()
     dynamic = tf.shape(x)
     return [dynamic[i] if s is None else s for i, s in enumerate(static)]
 
+
 def softmax(x, axis=-1):
     x = x - tf.reduce_max(x, axis=axis, keepdims=True)
     ex = tf.exp(x)
     return ex / tf.reduce_sum(ex, axis=axis, keepdims=True)
 
+
 def gelu(x):
     return 0.5*x*(1+tf.tanh(np.sqrt(2/np.pi)*(x+0.044715*tf.pow(x, 3))))
+
 
 def norm(x, scope, *, axis=-1, epsilon=1e-5):
     """Normalize to mean = 0, std = 1, then do a diagonal affine transform."""
     with tf.variable_scope(scope):
         n_state = x.shape[-1]
-        g = tf.get_variable('g', [n_state], initializer=tf.constant_initializer(1))
-        b = tf.get_variable('b', [n_state], initializer=tf.constant_initializer(0))
+        g = tf.get_variable(
+            'g', [n_state], initializer=tf.constant_initializer(1))
+        b = tf.get_variable(
+            'b', [n_state], initializer=tf.constant_initializer(0))
         u = tf.reduce_mean(x, axis=axis, keepdims=True)
         s = tf.reduce_mean(tf.square(x-u), axis=axis, keepdims=True)
         x = (x - u) * tf.rsqrt(s + epsilon)
         x = x*g + b
         return x
 
+
 def split_states(x, n):
     """Reshape the last dimension of x into [n, x.shape[-1]/n]."""
     *start, m = shape_list(x)
     return tf.reshape(x, start + [n, m//n])
+
 
 def merge_states(x):
     """Smash the last two dimensions of x into a single dimension."""
     *start, a, b = shape_list(x)
     return tf.reshape(x, start + [a*b])
 
+
 def conv1d(x, scope, nf, *, w_init_stdev=0.02):
     with tf.variable_scope(scope):
         *start, nx = shape_list(x)
-        w = tf.get_variable('w', [1, nx, nf], initializer=tf.random_normal_initializer(stddev=w_init_stdev))
+        w = tf.get_variable(
+            'w', [1, nx, nf], initializer=tf.random_normal_initializer(stddev=w_init_stdev))
         b = tf.get_variable('b', [nf], initializer=tf.constant_initializer(0))
-        c = tf.reshape(tf.matmul(tf.reshape(x, [-1, nx]), tf.reshape(w, [-1, nf]))+b, start+[nf])
+        c = tf.reshape(tf.matmul(tf.reshape(
+            x, [-1, nx]), tf.reshape(w, [-1, nf]))+b, start+[nf])
         return c
+
 
 def attention_mask(nd, ns, *, dtype):
     """1's in the lower triangle, counting from the lower right corner.
 
     Same as tf.matrix_band_part(tf.ones([nd, ns]), -1, ns-nd), but doesn't produce garbage on TPUs.
     """
-    i = tf.range(nd)[:,None]
+    i = tf.range(nd)[:, None]
     j = tf.range(ns)
     m = i >= j - ns + nd
     return tf.cast(m, dtype)
@@ -76,7 +91,8 @@ def attn(x, scope, n_state, *, past, hparams):
     assert x.shape.ndims == 3  # Should be [batch, sequence, features]
     assert n_state % hparams.n_head == 0
     if past is not None:
-        assert past.shape.ndims == 5  # Should be [batch, 2, heads, sequence, features], where 2 is [k, v]
+        # Should be [batch, 2, heads, sequence, features], where 2 is [k, v]
+        assert past.shape.ndims == 5
 
     def split_heads(x):
         # From [batch, sequence, features] to [batch, heads, sequence, features]
@@ -129,20 +145,24 @@ def mlp(x, scope, n_state, *, hparams):
 def block(x, scope, *, past, hparams):
     with tf.variable_scope(scope):
         nx = x.shape[-1]
-        a, present = attn(norm(x, 'ln_1'), 'attn', nx, past=past, hparams=hparams)
+        a, present = attn(norm(x, 'ln_1'), 'attn', nx,
+                          past=past, hparams=hparams)
         x = x + a
         m = mlp(norm(x, 'ln_2'), 'mlp', nx*4, hparams=hparams)
         x = x + m
         return x, present
 
+
 def past_shape(*, hparams, batch_size=None, sequence=None):
     return [batch_size, hparams.n_layer, 2, hparams.n_head, sequence, hparams.n_embd // hparams.n_head]
+
 
 def expand_tile(value, size):
     """Add a new axis of given size."""
     value = tf.convert_to_tensor(value, name='value')
     ndims = value.shape.ndims
     return tf.tile(tf.expand_dims(value, axis=0), [size] + [1]*ndims)
+
 
 def positions_for(tokens, past_length):
     batch_size = tf.shape(tokens)[0]
@@ -154,17 +174,18 @@ def model(hparams, X, past=None, scope='model', reuse=False):
     with tf.variable_scope(scope, reuse=reuse):
         results = {}
         batch, sequence = shape_list(X)
-
         wpe = tf.get_variable('wpe', [hparams.n_ctx, hparams.n_embd],
-                             initializer=tf.random_normal_initializer(stddev=0.01))
+                              initializer=tf.random_normal_initializer(stddev=0.01))
         wte = tf.get_variable('wte', [hparams.n_vocab, hparams.n_embd],
-                             initializer=tf.random_normal_initializer(stddev=0.02))
+                              initializer=tf.random_normal_initializer(stddev=0.02))
         past_length = 0 if past is None else tf.shape(past)[-2]
-        h = tf.gather(wte, X) + tf.gather(wpe, positions_for(X, past_length))
+        h = tf.gather(wte, X) + tf.gather(wpe,
+                                          positions_for(X, past_length))
 
         # Transformer
         presents = []
-        pasts = tf.unstack(past, axis=1) if past is not None else [None] * hparams.n_layer
+        pasts = tf.unstack(past, axis=1) if past is not None else [
+            None] * hparams.n_layer
         assert len(pasts) == hparams.n_layer
         for layer, past in enumerate(pasts):
             h, present = block(h, 'h%d' % layer, past=past, hparams=hparams)
@@ -174,6 +195,7 @@ def model(hparams, X, past=None, scope='model', reuse=False):
 
         # Language model loss.  Do tokens <n predict token n?
         h_flat = tf.reshape(h, [batch*sequence, hparams.n_embd])
+        h_flat = tf.cast(h_flat, tf.float32)
         logits = tf.matmul(h_flat, wte, transpose_b=True)
         logits = tf.reshape(logits, [batch, sequence, hparams.n_vocab])
         results['logits'] = logits

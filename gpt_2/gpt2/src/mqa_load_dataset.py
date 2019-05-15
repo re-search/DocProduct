@@ -34,7 +34,7 @@ def load_dataset(enc, path, combine, pretokenize=True, topk=3):
 
             print('Pretokenizing data..')
 
-            token_lize = []
+            token_list = []
 
             for path in paths:
 
@@ -48,13 +48,13 @@ def load_dataset(enc, path, combine, pretokenize=True, topk=3):
                             line = '`QUESTION: %s `ANSWER: %s ' % (
                                 sample[i], sample[i+1]) + line
                     line = line.replace('\n', '')
-                    token_lize.append(np.stack(enc.encode(line)))
+                    token_list.append(np.stack(enc.encode(line)))
 
                 print('Pretokenization successful!')
-        np.save(pt_path, np.array(token_lize))
+            np.save(pt_path, np.array(token_list))
 
         print('Loading pretokenized data..')
-        token_chunks = np.load(pt_path)
+        token_chunks = np.load(pt_path, allow_pickle=True)
 
         # with open(pt_path, 'r', encoding='utf8') as pt:
         #     pt_reader = csv.reader(pt)

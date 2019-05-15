@@ -16,12 +16,7 @@ def train_embedding_to_gpt2_data(
     number_samples=10,
     batch_size=512
 ):
-    # qa = pd.read_hdf(args.data_path, key='qa_embedding')
     qa = pd.read_parquet(data_path)
-
-    # with Pool(cpu_count()) as p:
-    #     question_bert = p.map(eval, qa["Q_FFNN_embeds"].tolist())
-    #     answer_bert = p.map(eval, qa["A_FFNN_embeds"].tolist())
     question_bert = qa["Q_FFNN_embeds"].tolist()
     answer_bert = qa["A_FFNN_embeds"].tolist()
     question_bert = np.array(question_bert)
