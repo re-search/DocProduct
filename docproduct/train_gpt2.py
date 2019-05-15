@@ -55,6 +55,15 @@ def train_gpt2(
         config=config)
     estimator.train(
         lambda: gpt2_estimator.train_input_fn(batch_size=batch_size), max_steps=steps)
+    pred = estimator.predict(
+        lambda: gpt2_estimator.predict_input_fn('i am sick', batch_size=2)
+    )
+    # pred = estimator.predict(
+    #     lambda: gpt2_estimator.train_input_fn(batch_size=batch_size)
+    # )
+
+    for p in pred:
+        print(p)
 
 
 if __name__ == "__main__":

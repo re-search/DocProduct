@@ -38,9 +38,9 @@ def get_gpt2_model_fn(
 
     def model_fn(features, labels, mode, params):
         context = features['context']
-        loss_mask = features['loss_mask']
 
         if mode == tf_estimator.estimator.ModeKeys.TRAIN or mode == tf_estimator.estimator.ModeKeys.EVAL:
+            loss_mask = features['loss_mask']
             output = model.model(hparams=params, X=context)
             loss_mask_float = tf.cast(loss_mask, tf.float32)
             # with loss mask -- reduce mean
@@ -98,6 +98,7 @@ def get_gpt2_model_fn(
                 train_op=apply_and_reset
             )
         elif mode == tf_estimator.estimator.ModeKeys.PREDICT:
+
             output = sample.sample_sequence(
                 hparams=params, length=length,
                 start_token=None,
@@ -141,12 +142,27 @@ def train_input_fn(checkpoint_path='models/117M', data_path='gpt2_train_data/ber
             yield {'context': sampled_batch, 'loss_mask': batch_masks}
 
     output_type = {'context': tf.int32, 'loss_mask': tf.int32}
-    output_shape = {'context': (None, None), 'loss_mask': (None, None)}
+    output_shape = {'context': (batch_size, None),
+                    'loss_mask': (batch_size, None)}
 
     dataset = tf.data.Dataset.from_generator(
         sample_batch, output_types=output_type, output_shapes=output_shape)
     return dataset
 
 
-def predict_input_fn(encoder, batch_size, max_seq_len):
-    pass
+def predict_input_fn(inputs, batch_size=8, checkpoint_path='models/117M'):
+    enc = encoder.get_encoder(checkpoint_path)
+    context_token = [enc.encode(inputs)]*batch_size
+    output_shapes = {'context': (batch_size, None)}
+    output_types = {'context': tf.int32}
+
+    def g():
+        yield {'context': context_token}
+    return tf.data.Dataset.from_generator(g, output_shapes=output_shapes, output_types=output_types)
+
+
+def serving_input_fn():
+    features = {
+        'context': tf.compat.v1.placeholder(tf.int32, [None, None]),
+    }
+    return tf_estimator.estimator.export.ServingInputReceiver(features, features)
