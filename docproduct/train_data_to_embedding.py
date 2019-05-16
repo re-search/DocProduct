@@ -18,7 +18,7 @@ def read_all(data_path):
             df.columns = ['index', 'question', 'answer']
             df.drop(columns=['index'], inplace=True)
         else:
-            df = pd.read_csv(f, encoding='utf8', engine='python')
+            df = pd.read_csv(f, encoding='utf8', lineterminator='\n')
         try:
             df.drop(columns=['question_bert', 'answer_bert'], inplace=True)
         except:
@@ -30,7 +30,7 @@ def read_all(data_path):
 def train_data_to_embedding(model_path='models/bertffn_crossentropy/bertffn',
                             data_path='data/mqa_csv',
                             output_path='qa_embeddings/bertffn_crossentropy.zip',
-                            pretrained_path='pubmed_pmc_470k/'):
+                            pretrained_path='models/pubmed_pmc_470k/'):
     if os.path.basename(model_path) == 'ffn':
         ffn_weight_file = model_path
     else:
