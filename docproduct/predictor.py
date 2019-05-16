@@ -228,7 +228,7 @@ class GenerateQADoc(object):
         session_config = tf.compat.v1.ConfigProto(
             allow_soft_placement=True)
         session_config.gpu_options.allow_growth = False
-        config = tf_estimator.estimator.RunConfig(
+        config = tf.estimator.RunConfig(
             session_config=session_config)
         self.batch_size = 1
         gpt2_model_fn = gpt2_estimator.get_gpt2_model_fn(
@@ -240,13 +240,14 @@ class GenerateQADoc(object):
             top_k=0
         )
         hparams = gpt2_estimator.default_hparams()
-        with open(os.path.join(pretrained_path, 'hparams.json')) as f:
+        with open(os.path.join(gpt2_weight_file, 'hparams.json')) as f:
             hparams.override_from_dict(json.load(f))
         self.estimator = tf.estimator.Estimator(
             gpt2_model_fn,
             model_dir=gpt2_weight_file,
             params=hparams,
             config=config)
+        self.encoder = gpt2_estimator.encoder.get_encoder(gpt2_weight_file)
 
         config = tf.compat.v1.ConfigProto()
         config.gpu_options.allow_growth = True
@@ -282,16 +283,17 @@ class GenerateQADoc(object):
         gpt2_input = self._get_gpt2_inputs(
             questions, topk_question, topk_answer)
         gpt2_pred = self.estimator.predict(
-            gpt2_estimator.predict_input_fn(inputs=gpt2_input))
-        raw_output = gpt2_estimator.predictions_parsing(gpt2_pred)
-        # original_line = '`QUESTION: %s `ANSWER: ' % questions
-        # output_list = []
-        # for output_ind, output_chunk in enumerate(raw_output[0].split(original_line)):
-        #     if output_ind == 0:
-        #         pass
-        #     else:
-        #         output_list.append(output_chunk.split('`QUESTION')[0])
+            lambda: gpt2_estimator.predict_input_fn(inputs=gpt2_input, batch_size=self.batch_size))
+        raw_output = gpt2_estimator.predictions_parsing(
+            gpt2_pred, self.encoder)
+        original_line = '`QUESTION: %s `ANSWER: ' % questions
+        output_list = []
+        for output_ind, output_chunk in enumerate(raw_output[0].split(original_line)):
+            if output_ind == 0:
+                pass
+            else:
+                output_list.append(output_chunk.split('`QUESTION')[0])
 
-        # clipped_output = raw_output[0].split(
-        #     '`QUESTION')[1].split('`ANSWER:')[1]
-        return raw_output
+        clipped_output = raw_output[0].split(
+            '`QUESTION')[1].split('`ANSWER:')[1]
+        return clipped_output
