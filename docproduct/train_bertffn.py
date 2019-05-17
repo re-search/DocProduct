@@ -21,6 +21,27 @@ def train_bertffn(model_path='models/bertffn_crossentropy/bertffn',
                   loss='categorical_crossentropy',
                   pretrained_path='models/pubmed_pmc_470k/',
                   max_seq_len=256):
+    """A function to train BertFFNN similarity embedding model.
+
+    Input file format:
+        question,answer
+        my eyes hurts, go see a doctor
+
+    For more information about training details:
+    https://github.com/Santosh-Gupta/DocProduct/blob/master/README.md
+
+    Keyword Arguments:
+        model_path {str} -- Path to save embedding model weights, ends with prefix of model files (default: {'models/bertffn_crossentropy/bertffn'})
+        data_path {str} -- CSV data path (default: {'data/mqa_csv'})
+        num_epochs {int} -- Number of Epochs to train (default: {20})
+        num_gpu {int} -- Number of GPU to use(Currently only support single GPU) (default: {1})
+        batch_size {int} -- Batch size (default: {64})
+        learning_rate {float} -- learning rate (default: {2e-5})
+        validation_split {float} -- validation split (default: {0.2})
+        loss {str} -- Loss type, either MSE or crossentropy (default: {'categorical_crossentropy'})
+        pretrained_path {str} -- Pretrained bioBert model path (default: {'models/pubmed_pmc_470k/'})
+        max_seq_len {int} -- Max sequence length of model(No effects if dynamic padding is enabled) (default: {256})
+    """
     tf.compat.v1.disable_eager_execution()
     if loss == 'categorical_crossentropy':
         loss_fn = qa_pair_cross_entropy_loss

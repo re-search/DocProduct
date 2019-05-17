@@ -31,6 +31,18 @@ def train_data_to_embedding(model_path='models/bertffn_crossentropy/bertffn',
                             data_path='data/mqa_csv',
                             output_path='qa_embeddings/bertffn_crossentropy.zip',
                             pretrained_path='models/pubmed_pmc_470k/'):
+    """Function to generate similarity embeddings for QA pairs.
+
+    Input file format:
+        question,answer
+        my eyes hurts, go see a doctor
+
+    Keyword Arguments:
+        model_path {str} -- Similarity embedding model path (default: {'models/bertffn_crossentropy/bertffn'})
+        data_path {str} -- CSV data path (default: {'data/mqa_csv'})
+        output_path {str} -- Embedding output path (default: {'qa_embeddings/bertffn_crossentropy.zip'})
+        pretrained_path {str} -- Pretrained BioBert model path (default: {'models/pubmed_pmc_470k/'})
+    """
     if os.path.basename(model_path) == 'ffn':
         ffn_weight_file = model_path
     else:

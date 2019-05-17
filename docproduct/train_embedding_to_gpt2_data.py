@@ -16,6 +16,19 @@ def train_embedding_to_gpt2_data(
     number_samples=10,
     batch_size=512
 ):
+    """Function to create gpt2 training data
+
+    For each question, we take number_samples similar question/answer pair as prefix of GPT2 model.
+    For more details:
+    https://github.com/Santosh-Gupta/DocProduct/blob/master/README.md
+
+    Keyword Arguments:
+        data_path {str} -- Embedding data path, usually the output file of train_data_to_embedding (default: {'qa_embeddings/bertffn_crossentropy.zip'})
+        output_path {str} -- GPT2 training data output path (default: {'gpt2_train_data/bertffn_crossentropy_gpt2_train_data.zip'})
+        number_samples {int} -- Number of sample per question (default: {10})
+        batch_size {int} -- Retreive batch size of FAISS (default: {512})
+
+    """
     qa = pd.read_parquet(data_path)
     question_bert = qa["Q_FFNN_embeds"].tolist()
     answer_bert = qa["A_FFNN_embeds"].tolist()

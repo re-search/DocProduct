@@ -18,6 +18,27 @@ def train_gpt2(
         batch_size=4,
         num_gpu=4,
         learning_rate=0.0001):
+    """Function to train the GPT2 model
+
+    For each question, we use topk qa pairs that retreived by FAISS and the question
+    as features, and correct answer as target to train GPT2. 
+
+    Data: my eyes hurt, go see a doctor
+    Feature:
+        question: aaa, answer: bbb, question: ccc, answer: ddd, question: my eyes hurt, answer:
+    Target: 
+        go see a doctor
+
+
+    Keyword Arguments:
+        model_dir {str} -- Path to save the GPT2 model (default: {'models/gpt2'})
+        pretrained_path {str} -- Pretrained GPT2 model path, 
+            usually the output file of train_embedding_to_gpt2_data (default: {'models/117M'})
+        steps {int} -- Number of steps of training (default: {100000})
+        batch_size {int} -- Batch size per GPU (default: {4})
+        num_gpu {int} -- Number of GPU to use (default: {4})
+        learning_rate {float} -- Learning rate (default: {0.0001})
+    """
     tf.compat.v1.disable_eager_execution()
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.DEBUG)
     mirrored_strategy = tf.distribute.MirroredStrategy(
