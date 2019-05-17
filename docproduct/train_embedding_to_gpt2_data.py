@@ -36,8 +36,8 @@ def train_embedding_to_gpt2_data(
     question_index.add(question_bert)
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-
-    output = open(output_path, "w")
+    csv_path = output_path + '.csv'
+    output = open(csv_path, "w")
     writer = csv.writer(output)
 
     firstrow = ['question', 'answer']
@@ -77,7 +77,7 @@ def train_embedding_to_gpt2_data(
     output.close()
 
     # ugly fix
-    pd.read_csv(output_path, lineterminator='\n').to_parquet(
+    pd.read_csv(csv_path, lineterminator='\n').to_parquet(
         output_path, index=False)
 
 
