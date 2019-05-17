@@ -1,5 +1,6 @@
 import os
 import json
+from shutil import copyfile
 
 import tensorflow as tf
 # import tensorflow.compat.v1 as tf
@@ -7,24 +8,18 @@ import tensorflow_estimator as tf_estimator
 
 import gpt2_estimator
 
-DEVICE = ["/gpu:0", "/gpu:1"]
+DEVICE = ["/gpu:0", "/gpu:1", "/gpu:2", "/gpu:3"]
 
 
 def train_gpt2(
         model_dir='models/gpt2',
         pretrained_path='models/117M',
         steps=100000,
-        batch_size=2,
-        num_gpu=1,
+        batch_size=4,
+        num_gpu=4,
         learning_rate=0.0001):
     tf.compat.v1.disable_eager_execution()
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.DEBUG)
-    # tf.compat.v1.disable_v2_behavior()
-    # if not os.path.exists('models/117M'):
-    #     gpt2.download_gpt2()
-
-    # sess = gpt2.start_tf_sess()
-    # gpt2.finetune(sess, csv_path, steps=steps, batch_size=batch_size)
     mirrored_strategy = tf.distribute.MirroredStrategy(
         devices=DEVICE[:num_gpu])
     learning_rate = learning_rate*1.5**num_gpu
@@ -35,7 +30,7 @@ def train_gpt2(
         session_config=session_config,
         train_distribute=mirrored_strategy,
         eval_distribute=mirrored_strategy,
-        log_step_count_steps=5)
+        log_step_count_steps=500)
 
     gpt2_model_fn = gpt2_estimator.get_gpt2_model_fn(
         accumulate_gradients=5,
@@ -45,6 +40,12 @@ def train_gpt2(
         temperature=0.7,
         top_k=0
     )
+    copyfile(os.path.join(pretrained_path, 'hparams.json'),
+             model_dir)
+    copyfile(os.path.join(pretrained_path, 'vocab.bpe'),
+             model_dir)
+    copyfile(os.path.join(pretrained_path, 'encoder.json'),
+             model_dir)
     hparams = gpt2_estimator.default_hparams()
     with open(os.path.join(pretrained_path, 'hparams.json')) as f:
         hparams.override_from_dict(json.load(f))
