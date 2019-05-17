@@ -39,6 +39,8 @@ def train_gpt2(
         num_gpu {int} -- Number of GPU to use (default: {4})
         learning_rate {float} -- Learning rate (default: {0.0001})
     """
+    os.makedirs(model_dir, exist_ok=True)
+
     tf.compat.v1.disable_eager_execution()
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.DEBUG)
     mirrored_strategy = tf.distribute.MirroredStrategy(
@@ -62,11 +64,11 @@ def train_gpt2(
         top_k=0
     )
     copyfile(os.path.join(pretrained_path, 'hparams.json'),
-             model_dir)
+             os.path.join(model_dir, 'hparams.json'))
     copyfile(os.path.join(pretrained_path, 'vocab.bpe'),
-             model_dir)
+             os.path.join(model_dir, 'vocab.bpe'))
     copyfile(os.path.join(pretrained_path, 'encoder.json'),
-             model_dir)
+             os.path.join(model_dir, 'encoder.json'))
     hparams = gpt2_estimator.default_hparams()
     with open(os.path.join(pretrained_path, 'hparams.json')) as f:
         hparams.override_from_dict(json.load(f))
