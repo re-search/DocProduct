@@ -15,7 +15,7 @@ def train_gpt2(
         model_dir='models/gpt2',
         pretrained_path='models/117M',
         steps=100000,
-        batch_size=4,
+        batch_size=3,
         num_gpu=4,
         learning_rate=0.0001):
     """Function to train the GPT2 model
@@ -53,12 +53,12 @@ def train_gpt2(
         session_config=session_config,
         train_distribute=mirrored_strategy,
         eval_distribute=mirrored_strategy,
-        log_step_count_steps=500)
+        log_step_count_steps=50)
 
     gpt2_model_fn = gpt2_estimator.get_gpt2_model_fn(
-        accumulate_gradients=5,
+        accumulate_gradients=1,
         learning_rate=learning_rate,
-        length=512,
+        length=600,
         batch_size=batch_size,
         temperature=0.7,
         top_k=0

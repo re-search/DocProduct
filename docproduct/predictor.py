@@ -217,7 +217,7 @@ class RetreiveQADoc(object):
 
 class GenerateQADoc(object):
     def __init__(self,
-                 pretrained_path='pubmed_pmc_470k/',
+                 pretrained_path='models/pubmed_pmc_470k/',
                  ffn_weight_file=None,
                  bert_ffn_weight_file='models/bertffn_crossentropy/bertffn',
                  gpt2_weight_file='models/gpt2',
@@ -281,7 +281,7 @@ class GenerateQADoc(object):
                 embedding, search_by, topk, answer_only)
 
         gpt2_input = self._get_gpt2_inputs(
-            questions, topk_question, topk_answer)
+            questions[0], topk_question, topk_answer)
         gpt2_pred = self.estimator.predict(
             lambda: gpt2_estimator.predict_input_fn(inputs=gpt2_input, batch_size=self.batch_size))
         raw_output = gpt2_estimator.predictions_parsing(
@@ -297,3 +297,8 @@ class GenerateQADoc(object):
         clipped_output = raw_output[0].split(
             '`QUESTION')[1].split('`ANSWER:')[1]
         return clipped_output
+
+
+if __name__ == "__main__":
+    gen = GenerateQADoc()
+    print(gen.predict('my eyes hurt'))
