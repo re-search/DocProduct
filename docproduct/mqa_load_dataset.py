@@ -40,7 +40,7 @@ def load_dataset(enc, path, combine, pretokenize=True, topk=3):
 
                 df = pd.read_parquet(path)
 
-                for _, sample in enumerate(tqdm.tqdm(df.iterrows(), total=df.shape[0], desc='Pretokenization')):
+                for sample_ind, sample in tqdm.tqdm(df.iterrows(), total=df.shape[0], desc='Pretokenization'):
                     line = '`QUESTION: %s `ANSWER: %s' % (
                         sample[0], sample[1])
                     for i in range(2, len(sample), 2):
@@ -48,6 +48,8 @@ def load_dataset(enc, path, combine, pretokenize=True, topk=3):
                             line = '`QUESTION: %s `ANSWER: %s ' % (
                                 sample[i], sample[i+1]) + line
                     line = line.replace('\n', '')
+                    if sample_ind <= 10:
+                        print(line)
                     token_list.append(np.stack(enc.encode(line)))
 
                 print('Pretokenization successful!')

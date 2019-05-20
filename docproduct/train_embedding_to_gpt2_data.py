@@ -8,13 +8,15 @@ from glob import glob
 import faiss
 from multiprocessing import Pool, cpu_count
 from math import ceil
+from collections import defaultdict
 
 
 def train_embedding_to_gpt2_data(
     data_path='qa_embeddings/bertffn_crossentropy.zip',
     output_path='gpt2_train_data/bertffn_crossentropy_gpt2_train_data.zip',
     number_samples=10,
-    batch_size=512
+    batch_size=512,
+    search_by='answer'
 ):
     """Function to create gpt2 training data
 
@@ -49,23 +51,18 @@ def train_embedding_to_gpt2_data(
     question_index.add(question_bert)
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    csv_path = output_path + '.csv'
-    output = open(csv_path, "w")
-    writer = csv.writer(output)
 
-    firstrow = ['question', 'answer']
-    for ii in range(0, number_samples):
-        firstrow.append('question'+str(ii))
-        firstrow.append('answer'+str(ii))
+    df_dict = defaultdict(list)
 
-    writer.writerow(firstrow)
-
-    def topKforGPT2(start_ind, end_ind, topk):
-        D1, I1 = answer_index.search(
-            question_bert[start_ind:end_ind].astype('float32'), topk)
-        D2, I2 = question_index.search(
-            question_bert[start_ind:end_ind].astype('float32'), topk)
-        return I1, I2
+    def topKforGPT2(start_ind, end_ind, topk, search_by):
+        if search_by == 'answer':
+            _, I1 = answer_index.search(
+                question_bert[start_ind:end_ind].astype('float32'), topk)
+            return I1
+        else:
+            _, I2 = question_index.search(
+                question_bert[start_ind:end_ind].astype('float32'), topk)
+            return I2
 
     steps = ceil(qa.shape[0] / batch_size)
 
@@ -74,23 +71,21 @@ def train_embedding_to_gpt2_data(
         start_ind = k
         end_ind = k+batch_size
 
-        a_batch_index, q_batch_index = topKforGPT2(
-            start_ind, end_ind, int(number_samples/2))
-        for a_index, q_index in zip(a_batch_index, q_batch_index):
-            rowfill = []
-            rowfill.append(qa["question"].iloc[k])
-            rowfill.append(qa["answer"].iloc[k])
-            aaa = qa.iloc[list(a_index), :]
-            qqq = qa.iloc[list(q_index), :]
-            aaaa = [*sum(zip(list(aaa['question']), list(aaa['answer'])), ())]
-            qqqq = [*sum(zip(list(qqq['question']), list(qqq['answer'])), ())]
-            finalfill = aaaa+qqqq
-            rowfill = rowfill + finalfill
-            writer.writerow(rowfill)
-    output.close()
+        a_batch_index = topKforGPT2(
+            start_ind, end_ind, int(number_samples), search_by=search_by)
+        for i, a_index in enumerate(a_batch_index):
 
-    # ugly fix
-    pd.read_csv(csv_path, lineterminator='\n').to_parquet(
+            df_dict['question'].append(qa["question"].iloc[k+i])
+            df_dict['answer'].append(qa["answer"].iloc[k+i])
+
+            for ii in range(number_samples):
+                df_dict['question{0}'.format(ii)].append(
+                    qa.question.iloc[a_index[ii]])
+                df_dict['answer{0}'.format(ii)].append(
+                    qa.answer.iloc[a_index[ii]])
+
+    df = pd.DataFrame(df_dict)
+    df.to_parquet(
         output_path, index=False)
 
 
