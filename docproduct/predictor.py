@@ -286,17 +286,17 @@ class GenerateQADoc(object):
             lambda: gpt2_estimator.predict_input_fn(inputs=gpt2_input, batch_size=self.batch_size))
         raw_output = gpt2_estimator.predictions_parsing(
             gpt2_pred, self.encoder)
-        original_line = '`QUESTION: %s `ANSWER: ' % questions
-        output_list = []
-        for output_ind, output_chunk in enumerate(raw_output[0].split(original_line)):
-            if output_ind == 0:
-                pass
-            else:
-                output_list.append(output_chunk.split('`QUESTION')[0])
+        # original_line = '`QUESTION: %s `ANSWER: ' % questions
+        # output_list = []
+        # for output_ind, output_chunk in enumerate(raw_output[0].split(original_line)):
+        #     if output_ind == 0:
+        #         pass
+        #     else:
+        #         output_list.append(output_chunk.split('`QUESTION')[0])
 
-        clipped_output = raw_output[0].split(
-            '`QUESTION')[1].split('`ANSWER:')[1]
-        return clipped_output
+        # clipped_output = raw_output[0].split(
+        #     '`QUESTION')[1].split('`ANSWER:')[1]
+        return raw_output
 
 
 if __name__ == "__main__":

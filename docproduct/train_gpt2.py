@@ -8,6 +8,8 @@ import tensorflow_estimator as tf_estimator
 
 import gpt2_estimator
 
+from docproduct.mqa_load_dataset import Sampler, load_dataset
+
 DEVICE = ["/gpu:0", "/gpu:1", "/gpu:2", "/gpu:3"]
 
 
@@ -80,7 +82,7 @@ def train_gpt2(
 
     restore_hook = gpt2_estimator.RestoreCheckpointHook(pretrained_path)
     estimator.train(
-        lambda: gpt2_estimator.train_input_fn(batch_size=batch_size), max_steps=steps, hooks=[restore_hook])
+        lambda: gpt2_estimator.train_input_fn(batch_size=batch_size, dataset_load_fn=load_dataset, sampler=Sampler), max_steps=steps, hooks=[restore_hook])
 
     # keep as an example
     # pred = estimator.predict(
