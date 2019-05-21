@@ -17,8 +17,9 @@ def train_gpt2(
         model_dir='models/gpt2',
         pretrained_path='models/117M',
         steps=100000,
-        batch_size=3,
-        num_gpu=4,
+        batch_size=1,
+        max_seq_len=1024,
+        num_gpu=3,
         learning_rate=0.0001):
     """Function to train the GPT2 model
 
@@ -47,7 +48,7 @@ def train_gpt2(
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.DEBUG)
     mirrored_strategy = tf.distribute.MirroredStrategy(
         devices=DEVICE[:num_gpu])
-    learning_rate = learning_rate*1.5**num_gpu
+    learning_rate = learning_rate*num_gpu
     session_config = tf.compat.v1.ConfigProto(
         allow_soft_placement=True)
     session_config.gpu_options.allow_growth = True
@@ -58,12 +59,12 @@ def train_gpt2(
         log_step_count_steps=50)
 
     gpt2_model_fn = gpt2_estimator.get_gpt2_model_fn(
-        accumulate_gradients=1,
+        accumulate_gradients=3,
         learning_rate=learning_rate,
-        length=600,
+        length=max_seq_len,
         batch_size=batch_size,
         temperature=0.7,
-        top_k=0
+        top_k=1
     )
     copyfile(os.path.join(pretrained_path, 'hparams.json'),
              os.path.join(model_dir, 'hparams.json'))
@@ -82,7 +83,7 @@ def train_gpt2(
 
     restore_hook = gpt2_estimator.RestoreCheckpointHook(pretrained_path)
     estimator.train(
-        lambda: gpt2_estimator.train_input_fn(batch_size=batch_size, dataset_load_fn=load_dataset, sampler=Sampler), max_steps=steps, hooks=[restore_hook])
+        lambda: gpt2_estimator.train_input_fn(batch_size=batch_size, dataset_load_fn=load_dataset, sampler=Sampler, max_seq_len=max_seq_len), max_steps=steps, hooks=[restore_hook])
 
     # keep as an example
     # pred = estimator.predict(

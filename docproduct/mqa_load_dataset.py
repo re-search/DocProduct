@@ -8,7 +8,7 @@ import csv
 import pandas as pd
 
 
-def load_dataset(enc, path, combine, pretokenize=True, topk=3):
+def load_dataset(enc, path, combine, pretokenize=True, topk=10):
     paths = []
     if os.path.isfile(path):
         # Simple file
