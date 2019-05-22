@@ -51,7 +51,7 @@ def train_gpt2(
     learning_rate = learning_rate*num_gpu
     session_config = tf.compat.v1.ConfigProto(
         allow_soft_placement=True)
-    session_config.gpu_options.allow_growth = True
+    session_config.gpu_options.allow_growth = False
     config = tf_estimator.estimator.RunConfig(
         session_config=session_config,
         train_distribute=mirrored_strategy,
