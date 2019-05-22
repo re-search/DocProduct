@@ -1,3 +1,5 @@
+![python](https://img.shields.io/badge/python%20-3.7.1-brightgreen.svg) ![tensorflow](https://img.shields.io/badge/tensorflow-2.0.0--alpha0-orange.svg) ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)
+
 # Doc Product: Medical Q&A with Deep Language Models
 
 Download trained models and embedding file [here](https://1drv.ms/u/s!An_n1-LB8-2dgf4PU1LmjtNiMuKbDg).
@@ -8,7 +10,7 @@ Download trained models and embedding file [here](https://1drv.ms/u/s!An_n1-LB8-
 
 ## Quality medical information is valuable to everyone, but it's not always readily available. Doc Product aims to fix that.
 
-Whether you've hit your head and are unsure if you need to see a doctor, caught a bad bug halfway up the Himalayas with no idea how to treat it, or made a pact with the ancient spaghetti gods to never accept healthcare from human doctors, *Doc Product* has you covered with up-to-date information and unique AI-generated advice to address your medical concerns.
+Whether you've hit your head and are unsure if you need to see a doctor, caught a bad bug halfway up the Himalayas with no idea how to treat it, or made a pact with the ancient spaghetti gods to never accept healthcare from human doctors, *Doc Product* has you covered with up to date information and unique AI-generated advice to address your medical concerns.
 
 We wanted to use TensorFlow 2.0 to explore how well state-of-the-art natural language processing models like [BERT](https://arxiv.org/abs/1810.04805) and [GPT-2](https://openai.com/blog/better-language-models/) could respond to medical questions by retrieving and conditioning on relevant medical data, and this is the result.
 
@@ -32,11 +34,11 @@ Our project was wrought with too many challenges to count, from compressing astr
 
 ## What's next?
 
-Although *Doc Product* isn't ready for widespread commercial use, its surprisingly good performance shows that advancements in general language models like [BERT](https://arxiv.org/abs/1810.04805) and [GPT-2](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) have made previously intractable problems like medical information processing accessible to deep NLP-based approaches. Thus, we hope that our work serves to inspire others to tackle these problems and explore the newly-open NLP frontier themselves.
+Although *Doc Product* isn't ready for widespread commercial use, its surprisingly good performance shows that advancements in general language models like [BERT](https://arxiv.org/abs/1810.04805) and [GPT-2](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) have made previously intractable problems like medical information processing accessible to deep NLP-based approaches. Thus, we hope that our work serves to inspire others to tackle these problems and explore the newly open NLP frontier themselves.
 
 Nevertheless, we still plan to continue work on *Doc Product*, specifically expanding it to take advantage of the 345M, 762M, and 1.5B parameter versions of GPT-2 as OpenAI releases them as part of their [staged release program](https://openai.com/blog/better-language-models/#update). We also intend to continue training the model, since we still have quite a bit more data to go through.
 
-We are currrently working towards our next projects in scientific/medical NLP, machine learning, and information retrieval. **If you're interested in collaborating, please send an email to Research2Vec@gmail.com .**
+NOTE: We are currrently working on research in scientific/medical NLP and information retrieval. **If you're interested in collaborating, shoot us an e-mail at Research2Vec@gmail.com!**
 
 ## Try it out!
 
@@ -57,29 +59,30 @@ import tensorflow as tf
 !pip install https://github.com/Santosh-Gupta/DocProduct/archive/master.zip
 ```
  
-Our repo contains scripts on how to generate tfrecords data, training our architecture on your own Q&A data, and running our models to get answers to your own medical questions. Please see the *Google Colaboratory demos* section below for code samples to loading data/weights and running our models.
+Our repo contains scripts for generating **.tfrefords** data, training *Doc Product* on your own Q&A data, and running *Doc Product* to get answers for medical questions. Please see the **Google Colaboratory demos** section below for code samples to load data/weights and run our models.
 
 ### Colaboratory demos
 
 [Take a look at our Colab demos!](https://drive.google.com/open?id=1hSwWL_WqmcVJytMbsWSbhYxxK4KT7UMI) We plan on adding more demos as we go, allowing users to explore more of the functionalities of *Doc Product*. All new demos will be added to the same Google Drive folder.
 
-The demos include code for installing *Doc Product* via pip, downloading/loading pre-trained weights, and running *Doc Product*'s retrieval functions and fine-tunning on your own Q&A data.
+The demos include code for installing *Doc Product* via pip, downloading/loading pre-trained weights, and running *Doc Product*'s retrieval functions and fine-tuning on your own Q&A data.
 
-#### Run our retrieval model on your inputted medical question
+#### Run our interactive retrieval model to get answers to your medical questions
 https://colab.research.google.com/drive/10C0_GD9VvUIPpCscnnpmanzGUy2UllIj?authuser=6
 
 <p align="center">
   <img src="https://i.imgur.com/Z8DOXuJ.png">
 </p>
 
-#### Train your own Question and Answer retrieval model on your own Q&A data
+#### Train your own medical Q&A retrieval model
 https://colab.research.google.com/drive/1gv94blZ1dwc9S5or3268NOat_V5gtwTm?authuser=6
 
 <p align="center">
   <img src="https://snag.gy/WPdV5T.jpg">
 </p>
 
-#### [Experimental] Run the complete fine-tuned Bert+FCNN+GPT2 model to get generated answers to your inputted medical questions. [We are currently still finding new days to optimize the answer generator]
+#### [Experimental] Run the full Doc Product pipeline with BERT, FCNN, FAISS, and GPT-2 to get your medical questions answered by state-of-the-art AI.
+The end-to-end *Doc Product* demo is still **experimental**, but feel free to try it out!
 https://colab.research.google.com/drive/1ieinWiSulRpN4YjARl9qo_YhUUijZbJn?authuser=2
 
 <p align="center">
