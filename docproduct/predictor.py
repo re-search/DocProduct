@@ -296,7 +296,7 @@ class GenerateQADoc(object):
         result_list = [s for s in result_list if s]
         try:
             r = result_list[0].group(1)
-        except AttributeError:
+        except (AttributeError, IndexError):
             r = ''
         return r
 
