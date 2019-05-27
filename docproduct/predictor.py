@@ -1,20 +1,21 @@
-import os
-from collections import defaultdict
-
-import tensorflow as tf
-import numpy as np
-from time import time
-from tqdm import tqdm
-import pandas as pd
-from multiprocessing import Pool, cpu_count
-import faiss
 import json
+import os
+import re
+from collections import defaultdict
+from multiprocessing import Pool, cpu_count
+from time import time
 
+import faiss
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from tqdm import tqdm
+
+import gpt2_estimator
 from docproduct.dataset import convert_text_to_feature
 from docproduct.models import MedicalQAModelwithBert
 from docproduct.tokenization import FullTokenizer
 from keras_bert.loader import checkpoint_loader
-import gpt2_estimator
 
 
 def load_weight(model, bert_ffn_weight_file=None, ffn_weight_file=None):
@@ -290,17 +291,14 @@ class GenerateQADoc(object):
             lambda: gpt2_estimator.predict_input_fn(inputs=gpt2_input, batch_size=self.batch_size))
         raw_output = gpt2_estimator.predictions_parsing(
             gpt2_pred, self.encoder)
-        # original_line = '`QUESTION: %s `ANSWER: ' % questions
-        # output_list = []
-        # for output_ind, output_chunk in enumerate(raw_output[0].split(original_line)):
-        #     if output_ind == 0:
-        #         pass
-        #     else:
-        #         output_list.append(output_chunk.split('`QUESTION')[0])
-
-        # clipped_output = raw_output[0].split(
-        #     '`QUESTION')[1].split('`ANSWER:')[1]
-        return raw_output
+        result_list = [re.search('`ANSWER:(.*)`QUESTION:', s)
+                       for s in raw_output]
+        result_list = [s for s in result_list if s]
+        try:
+            r = result_list[0].group(1)
+        except AttributeError:
+            r = ''
+        return r
 
 
 if __name__ == "__main__":

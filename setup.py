@@ -11,10 +11,10 @@ with codecs.open('requirements.txt', 'r', 'utf8') as reader:
 
 
 setup(
-    name='MedicalQA',
+    name='docproduct',
     version='0.2.0',
     packages=find_packages(),
-    url='https://github.com/Santosh-Gupta/MedicalQA',
+    url='https://github.com/re-search/DocProduct',
     license='MIT',
     author='MedicalQATeam',
     author_email='SanGupta.ML@gmail.com',
