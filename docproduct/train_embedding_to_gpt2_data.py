@@ -31,7 +31,12 @@ def train_embedding_to_gpt2_data(
         batch_size {int} -- Retreive batch size of FAISS (default: {512})
 
     """
-    qa = pd.read_parquet(data_path)
+    _, ext = os.path.splitext(data_path)
+    if ext == '.pkl':
+        qa = pd.read_pickle(data_path)
+    else:
+        qa = pd.read_parquet(data_path)
+    # qa = pd.read_parquet(data_path)
     question_bert = qa["Q_FFNN_embeds"].tolist()
     answer_bert = qa["A_FFNN_embeds"].tolist()
     question_bert = np.array(question_bert)
