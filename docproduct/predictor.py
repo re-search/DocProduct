@@ -236,6 +236,7 @@ class GenerateQADoc(object):
         config = tf.estimator.RunConfig(
             session_config=session_config)
         self.batch_size = 1
+        self.gpt2_weight_file = gpt2_weight_file
         gpt2_model_fn = gpt2_estimator.get_gpt2_model_fn(
             accumulate_gradients=5,
             learning_rate=0.1,
@@ -288,7 +289,7 @@ class GenerateQADoc(object):
         gpt2_input = self._get_gpt2_inputs(
             questions[0], topk_question, topk_answer)
         gpt2_pred = self.estimator.predict(
-            lambda: gpt2_estimator.predict_input_fn(inputs=gpt2_input, batch_size=self.batch_size, checkpoint_path=gpt2_weight_file))
+            lambda: gpt2_estimator.predict_input_fn(inputs=gpt2_input, batch_size=self.batch_size, checkpoint_path=self.gpt2_weight_file))
         raw_output = gpt2_estimator.predictions_parsing(
             gpt2_pred, self.encoder)
         result_list = [re.search('`ANSWER:(.*)`QUESTION:', s)
