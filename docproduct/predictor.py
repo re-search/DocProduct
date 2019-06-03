@@ -298,7 +298,7 @@ class GenerateQADoc(object):
         try:
             r = result_list[0].group(1)
         except (AttributeError, IndexError):
-            r = ''
+            r = topk_answer[0]
         return r
 
 
