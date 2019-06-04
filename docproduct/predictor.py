@@ -292,14 +292,14 @@ class GenerateQADoc(object):
             lambda: gpt2_estimator.predict_input_fn(inputs=gpt2_input, batch_size=self.batch_size, checkpoint_path=self.gpt2_weight_file))
         raw_output = gpt2_estimator.predictions_parsing(
             gpt2_pred, self.encoder)
-        result_list = [re.search('`ANSWER:(.*)`QUESTION:', s)
-                       for s in raw_output]
-        result_list = [s for s in result_list if s]
-        try:
-            r = result_list[0].group(1)
-        except (AttributeError, IndexError):
-            r = topk_answer[0]
-        return r
+        # result_list = [re.search('`ANSWER:(.*)`QUESTION:', s)
+        #                for s in raw_output]
+        # result_list = [s for s in result_list if s]
+        # try:
+        #     r = result_list[0].group(1)
+        # except (AttributeError, IndexError):
+        #     r = topk_answer[0]
+        return raw_output
 
 
 if __name__ == "__main__":
