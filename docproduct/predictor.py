@@ -299,7 +299,9 @@ class GenerateQADoc(object):
         #     r = result_list[0].group(1)
         # except (AttributeError, IndexError):
         #     r = topk_answer[0]
-        return raw_output
+        refine1 = re.sub('`QUESTION:.*?`ANSWER:','' , str(raw_output[0]) , flags=re.DOTALL)
+        refine2 = refine1.split('`QUESTION: ')[0]
+        return refine2
 
 
 if __name__ == "__main__":
