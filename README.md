@@ -2,7 +2,7 @@
 
 # Doc Product: Medical Q&A with Deep Language Models
 
-Download trained models and embedding file [here](https://1drv.ms/u/s!An_n1-LB8-2dgf4PU1LmjtNiMuKbDg).
+Download trained models and embedding file [here](https://1drv.ms/u/s!An_n1-LB8-2dgoAYrXYnnBSA4d5dsg?e=i3mnFH).
 
 <p align="center">
   <img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/806/964/datas/gallery.jpg">
