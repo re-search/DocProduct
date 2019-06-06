@@ -133,3 +133,4 @@ pubmed_pmc_470k/
 gpt_2/output.txt
 models/
 qa_embeddings/
+*.code-work*

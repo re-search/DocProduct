@@ -2,7 +2,7 @@
 
 # Doc Product: Medical Q&A with Deep Language Models
 
-Download trained models and embedding file [here](https://1drv.ms/u/s!An_n1-LB8-2dgf4PU1LmjtNiMuKbDg).
+Download trained models and embedding file [here](https://1drv.ms/u/s!An_n1-LB8-2dgoAYrXYnnBSA4d5dsg?e=i3mnFH).
 
 <p align="center">
   <img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/806/964/datas/gallery.jpg">
@@ -63,19 +63,19 @@ Our repo contains scripts for generating **.tfrefords** data, training *Doc Prod
 
 ### Colaboratory demos
 
-[Take a look at our Colab demos!](https://drive.google.com/open?id=1hSwWL_WqmcVJytMbsWSbhYxxK4KT7UMI) We plan on adding more demos as we go, allowing users to explore more of the functionalities of *Doc Product*. All new demos will be added to the same Google Drive folder.
+[Take a look at our Colab demos!](https://drive.google.com/open?id=1kXqsE4N0MgfktsEJpZZn470yOZ3UQ10F) We plan on adding more demos as we go, allowing users to explore more of the functionalities of *Doc Product*. All new demos will be added to the same Google Drive folder.
 
 The demos include code for installing *Doc Product* via pip, downloading/loading pre-trained weights, and running *Doc Product*'s retrieval functions and fine-tuning on your own Q&A data.
 
 #### Run our interactive retrieval model to get answers to your medical questions
-https://colab.research.google.com/drive/10C0_GD9VvUIPpCscnnpmanzGUy2UllIj?authuser=6
+https://colab.research.google.com/drive/11hAr1qo7VCSmIjWREFwyTFblU2LVeh1R
 
 <p align="center">
   <img src="https://i.imgur.com/Z8DOXuJ.png">
 </p>
 
 #### Train your own medical Q&A retrieval model
-https://colab.research.google.com/drive/1gv94blZ1dwc9S5or3268NOat_V5gtwTm?authuser=6
+https://colab.research.google.com/drive/1Rz2rzkwWrVEXcjiQqTXhxzLCW5cXi7xA
 
 <p align="center">
   <img src="https://snag.gy/WPdV5T.jpg">
@@ -83,7 +83,7 @@ https://colab.research.google.com/drive/1gv94blZ1dwc9S5or3268NOat_V5gtwTm?authus
 
 #### [Experimental] Run the full Doc Product pipeline with BERT, FCNN, FAISS, and GPT-2 to get your medical questions answered by state-of-the-art AI.
 The end-to-end *Doc Product* demo is still **experimental**, but feel free to try it out!
-https://colab.research.google.com/drive/1ieinWiSulRpN4YjARl9qo_YhUUijZbJn?authuser=2
+https://colab.research.google.com/drive/1Bv7bpPxIImsMG4YWB_LWjDRgUHvi7pxx
 
 <p align="center">
   <img src="https://snag.gy/WU1YPE.jpg">
