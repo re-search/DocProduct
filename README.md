@@ -111,7 +111,7 @@ During training, we take a batch of medical questions and their corresponding me
 
 ![DoctorBert](https://i.imgur.com/Lpjjcvk.jpg)
 
-These embeddings are then inputted into a FCNN layer. There are separate FCNN layers for both the question and answer embeddings. 
+These embeddings are then inputted into a FCNN layer. There are separate FCNN layers for both the question and answer embeddings. To recap, we use the same weights in the Bert layer, but the questions and answers each have their own seperate FCNN layer. 
 
 ![DoctorBert](https://i.imgur.com/6HwikW2.jpg)
 
