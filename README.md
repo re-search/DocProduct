@@ -8,6 +8,8 @@ Download trained models and embedding file [here](https://1drv.ms/u/s!An_n1-LB8-
   <img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/000/806/964/datas/gallery.jpg">
 </p>
 
+Winner Top 6 Finalist of the ⚡#PoweredByTF 2.0 Challenge! https://devpost.com/software/nlp-doctor . Doc Product will be presented to the Tensorflow Engineering Team at Tensorflow Connect. Stay tuned for details. 
+
 ## Quality medical information is valuable to everyone, but it's not always readily available. Doc Product aims to fix that.
 
 Whether you've hit your head and are unsure if you need to see a doctor, caught a bad bug halfway up the Himalayas with no idea how to treat it, or made a pact with the ancient spaghetti gods to never accept healthcare from human doctors, *Doc Product* has you covered with up to date information and unique AI-generated advice to address your medical concerns.
