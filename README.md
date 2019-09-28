@@ -182,7 +182,7 @@ Explore how the recently released sciBert (from Allen AI) compares against Naver
 
 The recommendations of an open-source AI application is not a substitute for professional medical care. If your condition is worsening, please go to your primary care provider. If you are having an emergency, please go to the nearest hospital or call your country's emergency number.
 
-The purpose of this project is to explore the capabilities of deep learning language models. Although the application will help find publicly available medical advice, you are following it AT YOUR OWN RISK.
+The purpose of this project is to explore the capabilities of deep learning language models IT SHOULD NOT TO BE USED FOR ACTIONABLE MEDICAL ADVICE.
 
 <p align="center">
   <img src="https://i.ytimg.com/vi/nPemP-Q0Xn8/hqdefault.jpg">
