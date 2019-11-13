@@ -1,6 +1,5 @@
 import tensorflow as tf
 
-
 def qa_pair_loss(y_true, y_pred):
     y_true = tf.eye(tf.shape(y_pred)[0])*2-1
     q_embedding, a_embedding = tf.unstack(y_pred, axis=1)
