@@ -10,10 +10,8 @@ from keras_bert.keras_layer_normalization import LayerNormalization
 from keras_bert.keras_multi_head import MultiHeadAttention
 from keras_bert.keras_position_wise_feed_forward import FeedForward
 
-
 def gelu(x):
     return 0.5 * x * (1.0 + tf.math.erf(x / tf.sqrt(2.0)))
-
 
 class Bert(keras.Model):
     def __init__(
