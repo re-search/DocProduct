@@ -10,11 +10,16 @@ Download trained models and embedding file [here](https://1drv.ms/u/s!An_n1-LB8-
 
 Winner Top 6 Finalist of the ⚡#PoweredByTF 2.0 Challenge! https://devpost.com/software/nlp-doctor . Doc Product will be presented to the Tensorflow Engineering Team at Tensorflow Connect. Stay tuned for details. 
 
-## Quality medical information is valuable to everyone, but it's not always readily available. Doc Product aims to fix that.
-
-Whether you've hit your head and are unsure if you need to see a doctor, caught a bad bug halfway up the Himalayas with no idea how to treat it, or made a pact with the ancient spaghetti gods to never accept healthcare from human doctors, *Doc Product* has you covered with up to date information and unique AI-generated advice to address your medical concerns.
-
 We wanted to use TensorFlow 2.0 to explore how well state-of-the-art natural language processing models like [BERT](https://arxiv.org/abs/1810.04805) and [GPT-2](https://openai.com/blog/better-language-models/) could respond to medical questions by retrieving and conditioning on relevant medical data, and this is the result.
+
+## DISCLAIMER
+
+The purpose of this project is to explore the capabilities of deep learning language models for scientific encoding and retrieval IT SHOULD NOT TO BE USED FOR ACTIONABLE MEDICAL ADVICE.
+
+<p align="center">
+  <img src="https://i.ytimg.com/vi/nPemP-Q0Xn8/hqdefault.jpg">
+</p>
+
 
 ## How we built Doc Product
 
@@ -177,16 +182,6 @@ Explore if there's any practical use of this project outside of research/explora
 Explore applying the same method to other domains (ie history information retrieval, engineering information retrieval, etc.).
 
 Explore how the recently released sciBert (from Allen AI) compares against Naver's bioBert. 
-
-## DISCLAIMER
-
-The recommendations of an open-source AI application is not a substitute for professional medical care. If your condition is worsening, please go to your primary care provider. If you are having an emergency, please go to the nearest hospital or call your country's emergency number.
-
-The purpose of this project is to explore the capabilities of deep learning language models IT SHOULD NOT TO BE USED FOR ACTIONABLE MEDICAL ADVICE.
-
-<p align="center">
-  <img src="https://i.ytimg.com/vi/nPemP-Q0Xn8/hqdefault.jpg">
-</p>
 
 ## Thanks!
 
