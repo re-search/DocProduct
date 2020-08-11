@@ -16,11 +16,6 @@ We wanted to use TensorFlow 2.0 to explore how well state-of-the-art natural lan
 
 The purpose of this project is to explore the capabilities of deep learning language models for scientific encoding and retrieval IT SHOULD NOT TO BE USED FOR ACTIONABLE MEDICAL ADVICE.
 
-<p align="center">
-  <img src="https://i.ytimg.com/vi/nPemP-Q0Xn8/hqdefault.jpg">
-</p>
-
-
 ## How we built Doc Product
 
 As a group of friends with diverse backgrounds ranging from broke undergrads to data scientists to top-tier NLP researchers, we drew inspiration for our design from various different areas of machine learning. By combining the power of [transformer architectures](https://arxiv.org/abs/1706.03762), [latent vector search](https://github.com/facebookresearch/faiss), [negative sampling](https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf), and [generative pre-training](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) within TensorFlow 2.0's flexible deep learning framework, we were able to come up with a novel solution to a difficult problem that at first seemed like a herculean task.
@@ -182,6 +177,10 @@ Explore if there's any practical use of this project outside of research/explora
 Explore applying the same method to other domains (ie history information retrieval, engineering information retrieval, etc.).
 
 Explore how the recently released sciBert (from Allen AI) compares against Naver's bioBert. 
+
+<p align="center">
+  <img src="https://i.ytimg.com/vi/nPemP-Q0Xn8/hqdefault.jpg">
+</p>
 
 ## Thanks!
 
