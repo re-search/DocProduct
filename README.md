@@ -2,6 +2,8 @@
 
 # Doc Product: Medical Q&A with Deep Language Models
 
+Collaboration between Santosh Gupta, Alex Sheng, and Junpeng Ye
+
 Download trained models and embedding file [here](https://1drv.ms/u/s!An_n1-LB8-2dgoAYrXYnnBSA4d5dsg?e=i3mnFH).
 
 <p align="center">
